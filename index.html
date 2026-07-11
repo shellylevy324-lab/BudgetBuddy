@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Budget Buddy</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- HOME SCREEN -->
+
+<div id="homeScreen">
+
+<h1>
+Budget Buddy
+</h1>
+
+
+<h2>
+Transition Skills Practice
+</h2>
+
+
+<p>
+Let's practice real-world shopping skills.
+</p>
+
+
+<button id="startButton">
+
+🛒 Start Shopping
+
+</button>
+
+
+<br><br>
+
+
+<button id="teacherButton">
+
+👩‍🏫 Teacher Setup
+
+</button>
+
+
+</div>
+
+
+
+
+
+<!-- TEACHER SCREEN -->
+
+<div id="teacherScreen" class="hidden">
+
+
+<h2>
+Teacher Setup
+</h2>
+
+
+<label>
+Student Name:
+</label>
+
+<br>
+
+<input id="studentName" type="text">
+
+
+<br><br>
+
+
+<label>
+Prompt Style:
+</label>
+
+<br>
+
+
+<select id="promptStyle">
+
+<option>
+Least to Most
+</option>
+
+<option>
+Most to Least
+</option>
+
+<option>
+Baseline (No Prompt)
+</option>
+
+</select>
+
+
+<br><br>
+
+
+<label>
+Wait Time Before Prompt:
+</label>
+
+<br>
+
+
+<input id="waitTime" type="number" value="5">
+
+
+seconds
+
+
+<br><br>
+
+
+<button id="saveStudent">
+
+Save Student
+
+</button>
+
+
+<br><br>
+
+
+<button id="teacherBackButton">
+
+⬅ Back
+
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- GROCERY SCREEN -->
+
+
+<div id="groceryScreen" class="hidden">
+
+
+<h2>
+🛒 Grocery Store
+</h2>
+
+
+<div class="itemCard">
+
+
+<div class="itemImage">
+
+<img id="itemImage" 
+src="images/grocery/milk.jpg" 
+alt="Grocery Item">
+
+</div>
+
+
+
+<h2 id="itemName">
+
+Loading Item...
+
+</h2>
+
+
+
+<h3>
+
+Price:
+
+<span id="itemPrice">
+
+$0.00
+
+</span>
+
+</h3>
+
+
+<h4 id="itemCategory">
+
+</h4>
+
+
+
+</div>
+
+
+
+
+
+<h3>
+
+Your Budget:
+
+$5.00
+
+</h3>
+
+
+
+
+<p>
+
+Can you afford this item?
+
+</p>
+
+
+
+<button id="yesButton">
+
+✅ Yes
+
+</button>
+
+
+
+<button id="noButton">
+
+❌ No
+
+</button>
+
+
+
+
+<br><br>
+
+
+
+<button id="groceryBackButton">
+
+⬅ Back
+
+</button>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>

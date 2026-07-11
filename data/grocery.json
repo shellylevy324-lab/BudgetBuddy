@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Milk",
+        "price": 3.50,
+        "category": "Dairy",
+        "image": "milk.jpg"
+    },
+    {
+        "name": "Bread",
+        "price": 2.99,
+        "category": "Bakery",
+        "image": "bread.jpg"
+    },
+    {
+        "name": "Apples",
+        "price": 4.00,
+        "category": "Produce",
+        "image": "apples.jpg"
+    },
+    {
+        "name": "Cereal",
+        "price": 5.49,
+        "category": "Pantry",
+        "image": "cereal.jpg"
+    },
+    {
+        "name": "Toothpaste",
+        "price": 3.79,
+        "category": "Personal Care",
+        "image": "toothpaste.jpg"
+    }
+]

@@ -1,0 +1,176 @@
+body{
+
+margin:0;
+
+background:#eef6f8;
+
+font-family:Arial, sans-serif;
+
+}
+
+
+
+.container{
+
+width:80%;
+
+max-width:900px;
+
+margin:40px auto;
+
+background:white;
+
+padding:40px;
+
+border-radius:25px;
+
+text-align:center;
+
+box-shadow:0 8px 20px gray;
+
+}
+
+
+
+h1{
+
+font-size:50px;
+
+color:#1b6ca8;
+
+}
+
+
+
+h2{
+
+font-size:36px;
+
+}
+
+
+
+.welcome{
+
+font-size:28px;
+
+}
+
+
+
+button{
+
+display:block;
+
+width:80%;
+
+margin:20px auto;
+
+padding:25px;
+
+font-size:30px;
+
+border-radius:20px;
+
+border:none;
+
+background:#4CAF50;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+transform:scale(1.03);
+
+}
+
+
+
+.locked{
+
+background:#999;
+
+}
+
+
+
+.smallText{
+
+font-size:20px;
+
+}
+
+
+
+.hidden{
+
+display:none;
+
+}
+
+
+
+.itemCard{
+
+background:#fff4cc;
+
+padding:30px;
+
+border-radius:25px;
+
+}
+
+
+
+.itemImage img{
+
+width:250px;
+
+height:250px;
+
+object-fit:contain;
+
+border-radius:20px;
+
+}input, select{
+
+font-size:25px;
+
+padding:10px;
+
+border-radius:10px;
+
+margin:10px;
+
+}#navigation {
+
+position: fixed;
+
+top: 10px;
+
+left: 10px;
+
+z-index: 1000;
+
+}
+
+
+#navigation button {
+
+font-size: 20px;
+
+padding: 10px 15px;
+
+margin-right: 10px;
+
+border-radius: 10px;
+
+cursor: pointer;
+
+}
