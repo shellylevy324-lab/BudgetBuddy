@@ -1,218 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Buddy</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Buddy</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main class="container">
 
-    <section id="homeScreen" class="screen">
-        <h1>Budget Buddy</h1>
-        <h2>Transition Skills Practice</h2>
-        <div class="homeCard">
-            <label for="homeStudentSelect">Student</label>
-            <select id="homeStudentSelect"></select>
-            <button id="startButton" class="primaryButton" type="button">🛒 Start Shopping</button>
-            <button id="teacherButton" class="secondaryButton" type="button">👩‍🏫 Teacher Platform</button>
-        </div>
-    </section>
+  <section id="homeScreen" class="screen">
+    <h1>Budget Buddy</h1>
+    <h2>Transition Skills Practice</h2>
+    <div class="homeCard">
+      <label for="homeStudentSelect">Student</label>
+      <select id="homeStudentSelect"></select>
+      <button id="startButton" class="primaryButton" type="button">🛒 Start Shopping</button>
+      <button id="teacherButton" class="secondaryButton" type="button">👩‍🏫 Teacher Platform</button>
+    </div>
+  </section>
 
-    <section id="teacherScreen" class="screen hidden">
-        <header class="screenHeader">
-            <button id="teacherBackButton" class="navigationButton" type="button">⬅ Back</button>
-            <h2>Teacher Platform</h2>
-        </header>
+  <section id="teacherScreen" class="screen hidden">
+    <header class="screenHeader">
+      <button id="teacherBackButton" class="navigationButton" type="button">⬅ Back</button>
+      <h2>Teacher Platform</h2>
+    </header>
 
-        <nav class="teacherTabs" aria-label="Teacher platform sections">
-            <button id="studentsTabButton" class="tabButton active" type="button">Students</button>
-            <button id="reportsTabButton" class="tabButton" type="button">Session Reports</button>
-        </nav>
+    <nav class="teacherTabs" aria-label="Teacher platform sections">
+      <button id="studentsTabButton" class="tabButton active" type="button">Students</button>
+      <button id="reportsTabButton" class="tabButton" type="button">Session Reports</button>
+      <button id="dataTabButton" class="tabButton" type="button">Import / Export</button>
+    </nav>
 
-        <div id="studentsPanel" class="teacherPanel">
-            <div class="managerLayout">
-                <section class="studentListCard">
-                    <div class="sectionTitleRow">
-                        <h3>Students</h3>
-                        <button id="addStudentButton" class="smallButton" type="button">+ Add Student</button>
-                    </div>
-                    <div id="studentList" class="studentList"></div>
-                </section>
+    <div id="studentsPanel" class="teacherPanel">
+      <div class="managerLayout">
+        <section class="studentListCard">
+          <div class="sectionTitleRow">
+            <h3>Students</h3>
+            <button id="addStudentButton" class="smallButton" type="button">+ Add Student</button>
+          </div>
+          <div id="studentList" class="studentList"></div>
+        </section>
 
-                <section class="settingsCard">
-                    <h3 id="profileFormTitle">Edit Student</h3>
-                    <input id="studentId" type="hidden">
+        <section class="settingsCard">
+          <h3 id="profileFormTitle">Edit Student</h3>
+          <input id="studentId" type="hidden">
 
-                    <div class="formGroup">
-                        <label for="studentName">Student Name</label>
-                        <input id="studentName" type="text" placeholder="Enter student name" autocomplete="off">
-                    </div>
+          <div class="formGroup">
+            <label for="studentName">Student Name</label>
+            <input id="studentName" type="text" placeholder="Enter student name" autocomplete="off">
+          </div>
 
-                    <div class="formGroup">
-                        <label for="sessionLength">Number of Trials</label>
-                        <select id="sessionLength">
-                            <option value="5">5 Trials</option>
-                            <option value="10">10 Trials</option>
-                            <option value="20">20 Trials</option>
-                            <option value="30">30 Trials</option>
-                        </select>
-                    </div>
+          <div class="formGroup">
+            <label for="sessionLength">Number of Trials</label>
+            <select id="sessionLength">
+              <option value="5">5 Trials</option>
+              <option value="10">10 Trials</option>
+              <option value="20">20 Trials</option>
+              <option value="30">30 Trials</option>
+            </select>
+          </div>
 
-                    <div class="formGroup">
-                        <label for="promptStyle">Prompting Plan</label>
-                        <select id="promptStyle">
-                            <option value="least-to-most">Least to Most</option>
-                            <option value="most-to-least">Most to Least</option>
-                            <option value="baseline">Baseline — No Prompts</option>
-                        </select>
-                    </div>
+          <div class="formGroup">
+            <label for="promptStyle">Prompting Plan</label>
+            <select id="promptStyle">
+              <option value="least-to-most">Least-to-Most Visual Prompts</option>
+              <option value="baseline">Baseline — No Prompts</option>
+            </select>
+          </div>
 
-                    <div class="formGroup">
-                        <label for="waitTime">Wait Time Before Prompt</label>
-                        <div class="numberInputRow">
-                            <input id="waitTime" type="number" min="1" max="60" step="1" value="10">
-                            <span>seconds</span>
-                        </div>
-                    </div>
-
-                    <div class="profileButtons">
-                        <button id="saveStudent" class="primaryButton" type="button">Save Student</button>
-                        <button id="deleteStudentButton" class="dangerButton" type="button">Delete Student</button>
-                    </div>
-
-                    <div id="settingsMessage" class="settingsMessage" role="status" aria-live="polite"></div>
-                </section>
+          <div class="formGroup">
+            <label for="waitTime">Independent Wait Time</label>
+            <div class="numberInputRow">
+              <input id="waitTime" type="number" min="1" max="60" step="1" value="10">
+              <span>seconds</span>
             </div>
-        </div>
+            <p class="fieldHelp">The first prompt appears after this delay.</p>
+          </div>
 
-        <div id="reportsPanel" class="teacherPanel hidden">
-            <section class="reportsToolbar">
-                <div class="formGroup compactGroup">
-                    <label for="reportStudentFilter">Student</label>
-                    <select id="reportStudentFilter"></select>
-                </div>
-
-                <div class="toolbarButtons">
-                    <button id="exportCsvButton" class="secondaryButton compactButton" type="button">Export CSV</button>
-                    <button id="clearReportsButton" class="dangerButton compactButton" type="button">Clear Saved Reports</button>
-                </div>
-            </section>
-
-            <section id="reportSummaryCards" class="summaryGrid"></section>
-
-            <section class="reportTableCard">
-                <h3>Recent Sessions</h3>
-                <div class="tableScroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Student</th>
-                                <th>Trials</th>
-                                <th>Accuracy</th>
-                                <th>Avg. Latency</th>
-                                <th>Median Latency</th>
-                                <th>Rapid Responses</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sessionTableBody"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="reportTableCard">
-                <h3>Selected Session Trial Details</h3>
-                <p id="selectedSessionLabel" class="mutedText">Select a session above to view trial-by-trial data.</p>
-                <div class="tableScroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Trial</th>
-                                <th>Item</th>
-                                <th>Price</th>
-                                <th>Budget</th>
-                                <th>Response</th>
-                                <th>Correct</th>
-                                <th>Latency</th>
-                            </tr>
-                        </thead>
-                        <tbody id="trialDetailBody"></tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-    </section>
-
-    <section id="welcomeScreen" class="screen hidden">
-        <div class="welcomeCard">
-            <p class="welcomeIcon">🛒</p>
-            <h1 id="welcomeStudentName">Welcome!</h1>
-            <p id="welcomeSessionDetails">You will complete 10 shopping trials.</p>
-            <p class="welcomeDirections">Look at the price and your budget. Decide whether you can afford the item.</p>
-            <button id="beginSessionButton" class="primaryButton" type="button">▶ Begin Session</button>
-            <button id="welcomeBackButton" class="secondaryButton" type="button">Back</button>
-        </div>
-    </section>
-
-    <section id="groceryScreen" class="screen hidden">
-        <header class="activityHeader">
-            <div>
-                <p class="activityLabel">🛒 Grocery Shopping</p>
-                <h2 id="studentGreeting">Shopping Practice</h2>
+          <div class="formGroup">
+            <label for="promptStepTime">Time Between Prompt Levels</label>
+            <div class="numberInputRow">
+              <input id="promptStepTime" type="number" min="2" max="60" step="1" value="5">
+              <span>seconds</span>
             </div>
-            <button id="endSessionButton" class="navigationButton" type="button">End Session</button>
-        </header>
+          </div>
 
-        <div class="trialProgress">
-            <p id="trialCounter">Trial 1 of 10</p>
-            <div class="progressTrack" aria-hidden="true">
-                <div id="progressBar" class="progressBar"></div>
-            </div>
+          <div class="formGroup checkboxGroup">
+            <input id="audioSdEnabled" type="checkbox" checked>
+            <label for="audioSdEnabled">
+              Read “Can I afford this item?” aloud at the start of each trial
+            </label>
+          </div>
+
+          <div class="profileButtons">
+            <button id="saveStudent" class="primaryButton" type="button">Save Student</button>
+            <button id="deleteStudentButton" class="dangerButton" type="button">Delete Student</button>
+          </div>
+
+          <div id="settingsMessage" class="settingsMessage" role="status" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+
+    <div id="reportsPanel" class="teacherPanel hidden">
+      <section class="reportsToolbar">
+        <div class="formGroup compactGroup">
+          <label for="reportStudentFilter">Student</label>
+          <select id="reportStudentFilter"></select>
         </div>
-
-        <div id="feedbackArea" class="feedbackArea hidden" role="status" aria-live="assertive"></div>
-
-        <div id="trialContent">
-            <article class="itemCard">
-                <div class="itemImage"><img id="itemImage" src="" alt=""></div>
-                <h2 id="itemName">Loading item...</h2>
-                <p id="itemCategory" class="itemCategory"></p>
-                <div class="priceDisplay">
-                    <span>Price</span>
-                    <strong id="itemPrice">$0.00</strong>
-                </div>
-            </article>
-
-            <section class="budgetCard">
-                <span>Your Budget</span>
-                <strong id="budgetDisplay">$0.00</strong>
-            </section>
-
-            <section class="questionArea">
-                <h2>Can you afford this item?</h2>
-                <div class="answerButtons">
-                    <button id="yesButton" class="answerButton yesButton" type="button">✓ Yes</button>
-                    <button id="noButton" class="answerButton noButton" type="button">✕ No</button>
-                </div>
-            </section>
+        <div class="toolbarButtons">
+          <button id="exportCsvButton" class="secondaryButton compactButton" type="button">Export CSV</button>
+          <button id="clearReportsButton" class="dangerButton compactButton" type="button">Clear Saved Reports</button>
         </div>
-    </section>
+      </section>
 
-    <section id="completeScreen" class="screen hidden">
-        <div class="completeCard">
-            <h1>Session Complete</h1>
-            <p class="celebrationIcon">🎉</p>
-            <p id="completionMessage">Nice work completing your shopping practice!</p>
-            <button id="newSessionButton" class="primaryButton" type="button">Start Another Session</button>
-            <button id="viewReportButton" class="secondaryButton" type="button">Teacher: View Session Report</button>
-            <button id="completeHomeButton" class="secondaryButton" type="button">Return Home</button>
+      <section id="reportSummaryCards" class="summaryGrid"></section>
+
+      <section class="reportTableCard">
+        <h3>Recent Sessions</h3>
+        <div class="tableScroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th><th>Student</th><th>Trials</th><th>Accuracy</th>
+                <th>Independent</th><th>Avg. Latency</th><th>Highest Prompt</th>
+              </tr>
+            </thead>
+            <tbody id="sessionTableBody"></tbody>
+          </table>
         </div>
-    </section>
+      </section>
 
-    <footer class="appFooter">Budget Buddy v0.5 — Latency & Teacher Platform Build</footer>
+      <section class="reportTableCard">
+        <h3>Selected Session Trial Details</h3>
+        <p id="selectedSessionLabel" class="mutedText">Select a session above.</p>
+        <div class="tableScroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Trial</th><th>Item</th><th>Price</th><th>Budget</th><th>Response</th>
+                <th>Correct</th><th>Total Latency</th><th>Prompt Level</th><th>Post-Prompt Latency</th>
+              </tr>
+            </thead>
+            <tbody id="trialDetailBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <div id="dataPanel" class="teacherPanel hidden">
+      <section class="dataCard">
+        <h3>Classroom Backup</h3>
+        <p>Export students, settings, and reports into one file. Import it on another device.</p>
+        <button id="exportClassroomButton" class="primaryButton" type="button">Export Classroom Backup</button>
+        <label class="fileImportLabel" for="importClassroomInput">Import Classroom Backup</label>
+        <input id="importClassroomInput" type="file" accept=".json,application/json">
+        <div id="dataMessage" class="settingsMessage" role="status" aria-live="polite"></div>
+        <p class="privacyNote">This is a manual transfer, not automatic synchronization.</p>
+      </section>
+    </div>
+  </section>
+
+  <section id="welcomeScreen" class="screen hidden">
+    <div class="welcomeCard">
+      <p class="welcomeIcon">🛒</p>
+      <h1 id="welcomeStudentName">Welcome!</h1>
+      <p id="welcomeSessionDetails">You will complete 10 shopping trials.</p>
+      <p class="welcomeDirections">Look at the price and your budget. Decide whether you can afford the item.</p>
+      <button id="beginSessionButton" class="primaryButton" type="button">▶ Begin Session</button>
+      <button id="welcomeBackButton" class="secondaryButton" type="button">Back</button>
+    </div>
+  </section>
+
+  <section id="groceryScreen" class="screen hidden">
+    <header class="activityHeader">
+      <div>
+        <p class="activityLabel">🛒 Grocery Shopping</p>
+        <h2 id="studentGreeting">Shopping Practice</h2>
+      </div>
+      <div class="teacherStatus"><span id="teacherPromptStatus">Independent</span></div>
+      <button id="endSessionButton" class="navigationButton" type="button">End Session</button>
+    </header>
+
+    <div class="trialProgress">
+      <p id="trialCounter">Trial 1 of 10</p>
+      <div class="progressTrack" aria-hidden="true">
+        <div id="progressBar" class="progressBar"></div>
+      </div>
+    </div>
+
+    <div id="promptArea" class="promptArea hidden" role="status" aria-live="polite">
+      <div id="promptMessage"></div>
+    </div>
+
+    <div id="feedbackArea" class="feedbackArea hidden" role="status" aria-live="assertive"></div>
+
+    <div id="trialContent">
+      <article class="itemCard">
+        <div class="itemImage"><img id="itemImage" src="" alt=""></div>
+        <h2 id="itemName">Loading item...</h2>
+        <p id="itemCategory" class="itemCategory"></p>
+        <div id="priceDisplay" class="priceDisplay">
+          <span>Price</span>
+          <strong id="itemPrice">$0.00</strong>
+        </div>
+      </article>
+
+      <section id="budgetCard" class="budgetCard">
+        <span>Your Budget</span>
+        <strong id="budgetDisplay">$0.00</strong>
+      </section>
+
+      <section class="questionArea">
+        <div class="questionHeadingRow">
+          <h2>Can you afford this item?</h2>
+          <button
+            id="repeatSdButton"
+            class="audioButton"
+            type="button"
+            aria-label="Repeat the question aloud"
+            title="Repeat the question"
+          >
+            🔊 Repeat
+          </button>
+        </div>
+        <div class="answerButtons">
+          <button id="yesButton" class="answerButton yesButton" type="button">✓ Yes</button>
+          <button id="noButton" class="answerButton noButton" type="button">✕ No</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section id="completeScreen" class="screen hidden">
+    <div class="completeCard">
+      <h1>Session Complete</h1>
+      <p class="celebrationIcon">🎉</p>
+      <p id="completionMessage">Nice work completing your shopping practice!</p>
+      <button id="newSessionButton" class="primaryButton" type="button">Start Another Session</button>
+      <button id="viewReportButton" class="secondaryButton" type="button">Teacher: View Session Report</button>
+      <button id="completeHomeButton" class="secondaryButton" type="button">Return Home</button>
+    </div>
+  </section>
+
+  <footer class="appFooter">Budget Buddy v0.6.1 — Reduced-Stimulation Audio Build</footer>
 </main>
+
 <script src="script.js"></script>
 </body>
 </html>
