@@ -165,3 +165,10 @@ The white background remains unchanged throughout the sequence.
 - The comparison band now shows the live Cart Total rather than the first grocery item.
 - Cart Total updates inside the comparison band whenever the student selects or removes an item.
 - The visual prompt remains available because it now accurately compares Cart Total with Budget.
+
+
+## v0.12.3
+- Level 3 trials are now guaranteed to have at least one valid cart solution.
+- After grocery choices are generated, the app calculates the cost of the required number of cheapest items.
+- If the student-profile budget is too low, the trial budget is automatically raised to that minimum solvable amount.
+- This prevents students from becoming trapped in an impossible trial.

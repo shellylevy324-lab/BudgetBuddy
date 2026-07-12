@@ -1,5 +1,22 @@
 # Budget Buddy Changelog
 
+## v0.12.3 — Solvable Cart Trials
+
+### Fixed
+- Level 3 could generate a budget too small for any valid required-item combination
+- Level 3 now guarantees at least one affordable cart solution
+- The trial budget is raised only when needed to match the cheapest valid combination
+
+### Preserved
+- Student-specific budget settings
+- Live Cart Total and Money Left
+- Teaching correction flow
+- Baseline first-submission measurement
+- Prompting and reinforcement systems
+
+---
+
+
 ## v0.12.2 — Live Cart Comparison Prompt
 
 ### Fixed

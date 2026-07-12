@@ -71,6 +71,36 @@ function buildCartTrial(){
     appState.cartAttempts=0;
 }
 
+
+function getMinimumSolvableCartBudget(){
+    if(!isCartBuilderLevel() || !appState.cartChoices.length){
+        return 0;
+    }
+
+    const target=Math.max(
+        2,
+        Math.min(
+            4,
+            Number(appState.currentStudent.cartTargetCount)||2
+        )
+    );
+
+    const cheapestPrices=appState.cartChoices
+        .map(function(item){
+            return Number(item.price);
+        })
+        .sort(function(a,b){
+            return a-b;
+        })
+        .slice(0,target);
+
+    return Number(
+        cheapestPrices.reduce(function(total,price){
+            return total+price;
+        },0).toFixed(2)
+    );
+}
+
 function getCartTotal(){
     return Number(
         appState.selectedCartIndexes.reduce(function(total,index){
@@ -477,6 +507,15 @@ function loadNextTrial(){
     }
 
     appState.currentBudget=getRandomBudget();
+
+    if(isCartBuilderLevel()){
+        const minimumSolvableBudget=
+            getMinimumSolvableCartBudget();
+
+        if(appState.currentBudget<minimumSolvableBudget){
+            appState.currentBudget=minimumSolvableBudget;
+        }
+    }
     appState.acceptingResponse=true;
 
     updateTrialCounter();
@@ -785,4 +824,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.12.2 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.12.3 loaded successfully");
