@@ -90,3 +90,32 @@
         width: 100%;
     }
 }
+
+
+/* =====================================
+   v0.6.2 — Refined prompt sequence
+===================================== */
+
+.promptArea {
+    font-size: 1.25rem;
+    font-weight: 900;
+    border-width: 3px;
+}
+
+.promptVisual {
+    border-color: #3182ce;
+}
+
+.promptGesture {
+    border-color: #d69e2e;
+}
+
+.promptCompare #priceDisplay,
+.promptCompare #budgetCard {
+    box-shadow: 0 0 0 5px rgba(49, 130, 206, 0.35);
+    border-color: #3182ce;
+}
+
+.promptGesture .correctChoice {
+    box-shadow: 0 0 0 6px rgba(214, 158, 46, 0.42);
+}

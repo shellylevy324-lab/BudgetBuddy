@@ -42,3 +42,12 @@ Use test names, initials, or approved student codes until your school has review
 - Added automatic audio for “Can I afford this item?”
 - Added a Repeat audio button on the student activity.
 - Audio uses the browser's built-in speech synthesis and does not require an audio file.
+
+
+## v0.6.2 prompt sequence
+1. Initial spoken SD: “Can I afford this item?”
+2. Visual prompt: price and budget are highlighted and bolded
+3. Secondary spoken prompt: “Look at your budget. Do you have enough to buy this item?”
+4. Gestural prompt: hand icon points to the correct answer
+
+The white background remains unchanged throughout the sequence.

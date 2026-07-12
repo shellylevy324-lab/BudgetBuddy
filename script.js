@@ -1,5 +1,5 @@
 const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="budgetBuddySelectedStudent",SESSION_STORAGE_KEY="budgetBuddySessions",nextTrialDelayMilliseconds=1800,rapidResponseThresholdSeconds=1;
-const PROMPT_LEVELS={independent:0,visual:1,gesture:2,model:3},PROMPT_LABELS={independent:"Independent",visual:"Visual comparison prompt",gesture:"Gestural answer prompt",model:"Model answer prompt"};
+const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
 const appState={students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,responses:[],items:[],shuffledItems:[],currentItem:null,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],acceptingResponse:false};
@@ -45,14 +45,14 @@ function getNextItem(){if(!appState.shuffledItems.length)appState.shuffledItems=
 function getRandomBudget(){return budgetOptions[Math.floor(Math.random()*budgetOptions.length)]}
 
 function clearPromptTimers(){appState.promptTimeouts.forEach(clearTimeout);appState.promptTimeouts=[]}
-function resetPromptDisplay(){promptArea.className="promptArea hidden";promptMessage.textContent="";teacherPromptStatus.textContent="Independent";groceryScreen.classList.remove("promptCompare","promptGesture","promptModel");yesButton.classList.remove("correctChoice");noButton.classList.remove("correctChoice")}
+function resetPromptDisplay(){promptArea.className="promptArea hidden";promptMessage.textContent="";teacherPromptStatus.textContent="Independent";groceryScreen.classList.remove("promptCompare","promptGesture");yesButton.classList.remove("correctChoice");noButton.classList.remove("correctChoice")}
 function getCorrectAnswer(){return Number(appState.currentBudget)>=Number(appState.currentItem.price)?"yes":"no"}
 function getCorrectButton(){return getCorrectAnswer()==="yes"?yesButton:noButton}
-function schedulePrompts(){clearPromptTimers();resetPromptDisplay();appState.currentPromptLevel="independent";appState.firstPromptAt=null;if(appState.currentStudent.promptStyle==="baseline"){teacherPromptStatus.textContent="Baseline — no prompts";return}const first=appState.currentStudent.waitTimeSeconds*1000,step=appState.currentStudent.promptStepTimeSeconds*1000;appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("visual"),first));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("gesture"),first+step));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("model"),first+step*2))}
-function deliverPrompt(level){if(!appState.acceptingResponse)return;appState.currentPromptLevel=level;if(appState.firstPromptAt===null)appState.firstPromptAt=performance.now();resetPromptDisplay();appState.currentPromptLevel=level;promptArea.classList.remove("hidden");teacherPromptStatus.textContent=PROMPT_LABELS[level];if(level==="visual"){promptArea.classList.add("promptVisual");promptMessage.textContent="Look at the price. Then look at your budget.";groceryScreen.classList.add("promptCompare")}if(level==="gesture"){promptArea.classList.add("promptGesture");promptMessage.textContent="Think about which answer matches.";groceryScreen.classList.add("promptGesture");getCorrectButton().classList.add("correctChoice")}if(level==="model"){promptArea.classList.add("promptModel");promptMessage.textContent="The matching answer is shown.";groceryScreen.classList.add("promptModel");getCorrectButton().classList.add("correctChoice")}}
+function schedulePrompts(){clearPromptTimers();resetPromptDisplay();appState.currentPromptLevel="independent";appState.firstPromptAt=null;if(appState.currentStudent.promptStyle==="baseline"){teacherPromptStatus.textContent="Baseline — no prompts";return}const first=appState.currentStudent.waitTimeSeconds*1000,step=appState.currentStudent.promptStepTimeSeconds*1000;appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("visual"),first));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("audio"),first+step));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("gesture"),first+step*2))}
+function deliverPrompt(level){if(!appState.acceptingResponse)return;appState.currentPromptLevel=level;if(appState.firstPromptAt===null)appState.firstPromptAt=performance.now();resetPromptDisplay();appState.currentPromptLevel=level;promptArea.classList.remove("hidden");teacherPromptStatus.textContent=PROMPT_LABELS[level];if(level==="visual"){promptArea.classList.add("promptVisual");promptMessage.textContent="Compare the price and your budget.";groceryScreen.classList.add("promptCompare")}if(level==="audio"){promptArea.classList.add("promptVisual");promptMessage.textContent="Listen to the next clue.";speakSecondaryPrompt()}if(level==="gesture"){promptArea.classList.add("promptGesture");promptMessage.textContent="Look at the answer choice.";groceryScreen.classList.add("promptGesture");getCorrectButton().classList.add("correctChoice")}}
 
 
-function speakInstructionalCue(){
+function speakText(text){
     if(!("speechSynthesis" in window)){
         console.warn("Speech synthesis is not supported in this browser.");
         return;
@@ -60,16 +60,21 @@ function speakInstructionalCue(){
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(
-        "Can I afford this item?"
-    );
-
+    const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "en-US";
     utterance.rate = 0.88;
     utterance.pitch = 1;
     utterance.volume = 1;
 
     window.speechSynthesis.speak(utterance);
+}
+
+function speakInstructionalCue(){
+    speakText("Can I afford this item?");
+}
+
+function speakSecondaryPrompt(){
+    speakText("Look at your budget. Do you have enough to buy this item?");
 }
 
 async function startSession(){if(!appState.currentStudent)appState.currentStudent=getSelectedStudent();if(!appState.currentStudent)return;disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);loadNextTrial()}catch(e){console.error(e);alert("The grocery items could not be loaded.")}}
@@ -122,4 +127,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.6.1 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.6.2 loaded successfully");
