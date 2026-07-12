@@ -1,5 +1,15 @@
 # Budget Buddy Changelog
 
+## v0.10.2 — Navigation Hotfix
+
+### Fixed
+- Home-page navigation failure when a cached HTML file loaded with the newer script
+- Level 2 comparison band now shows Total Cost instead of a single item price
+- Added versioned CSS and JavaScript URLs to reduce browser caching issues
+
+---
+
+
 ## v0.10.1 — Grocery List Affordability Build
 
 ### Added

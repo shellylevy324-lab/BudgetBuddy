@@ -132,9 +132,17 @@ function deliverPrompt(level){
     promptMessage.textContent="";
     teacherPromptStatus.textContent=PROMPT_LABELS[level];
 
+    const comparisonCost=isListAffordabilityLevel()
+        ? appState.currentListTotal
+        : appState.currentItem.price;
+
+    const comparisonLabel=isListAffordabilityLevel()
+        ? "Total Cost"
+        : "Price";
+
     const comparisonHtml=
-        '<div class="comparisonValue"><span>Price</span><strong>'+
-        formatCurrency(appState.currentItem.price)+
+        '<div class="comparisonValue"><span>'+comparisonLabel+'</span><strong>'+
+        formatCurrency(comparisonCost)+
         '</strong></div><div class="comparisonArrow">↔</div><div class="comparisonValue"><span>Your Budget</span><strong>'+
         formatCurrency(appState.currentBudget)+
         '</strong></div>';
@@ -310,6 +318,7 @@ async function importClassroomBackup(e){const file=e.target.files[0];if(!file)re
 
 
 function updateActivityLevelDisplay(){
+    if(!activityLevelInput||!listItemCountGroup){return}
     const isList=activityLevelInput.value==="list-affordability";
     listItemCountGroup.classList.toggle("hidden",!isList);
 }
@@ -367,13 +376,13 @@ function updateBudgetModeDisplay(){
     }
 }
 
-activityLevelInput.addEventListener("change",updateActivityLevelDisplay);
-budgetModeInput.addEventListener("change",updateBudgetModeDisplay);
-minimumBudgetInput.addEventListener("change",function(){
+if(activityLevelInput){activityLevelInput.addEventListener("change",updateActivityLevelDisplay)}
+if(budgetModeInput){budgetModeInput.addEventListener("change",updateBudgetModeDisplay)}
+if(minimumBudgetInput){minimumBudgetInput.addEventListener("change",function(){
     if(budgetModeInput.value==="fixed"){
         maximumBudgetInput.value=minimumBudgetInput.value;
     }
-});
+})}
 
 homeStudentSelect.onchange=()=>{appState.selectedStudentId=homeStudentSelect.value;saveSelectedStudentId()};
 startButton.onclick=openStudentWelcome;
@@ -400,4 +409,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.10.1 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.10.2 loaded successfully");

@@ -135,3 +135,10 @@ The white background remains unchanged throughout the sequence.
 - Added Level 2: grocery-list affordability.
 - Teachers choose 2–5 random items for Level 2.
 - Students decide whether the total cost of the whole list fits their budget.
+
+
+## v0.10.2
+- Fixed a startup/navigation failure caused by mismatched cached HTML and JavaScript.
+- Added cache-busting version tags for CSS and JavaScript.
+- Added defensive initialization for new Level 2 controls.
+- Corrected the Level 2 comparison band to show Total Cost.
