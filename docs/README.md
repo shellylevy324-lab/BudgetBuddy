@@ -60,3 +60,10 @@ The white background remains unchanged throughout the sequence.
 - The final correct answer enlarges substantially.
 - The hand icon and enlarged answer remain until the student responds.
 - Prompt emphasis is stable rather than pulsing.
+
+## v0.6.4
+- Added a single blue rounded comparison band spanning the page.
+- Price and budget are shown side by side in that band.
+- The comparison band stays visible through later prompt levels.
+- Added a reliable hand element that moves into the correct answer button.
+- The hand remains visible until the student responds.
