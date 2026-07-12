@@ -152,3 +152,9 @@ The white background remains unchanged throughout the sequence.
 - Students submit the cart when the required number of items is selected.
 - Teaching mode allows correction after an over-budget cart.
 - Baseline records the first submitted cart without feedback.
+
+
+## v0.12.1
+- Fixed Level 3 so grocery choices are created before the cart screen renders.
+- Cart item cards now appear immediately at the start of every Level 3 trial.
+- Added cache-busting version tags for the hotfix.

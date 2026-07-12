@@ -411,7 +411,50 @@ function deliverCorrectReinforcement(){
 }
 
 async function startSession(){if(!appState.currentStudent)appState.currentStudent=getSelectedStudent();if(!appState.currentStudent)return;disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);loadNextTrial()}catch(e){console.error(e);alert("The grocery items could not be loaded.")}}
-function loadNextTrial(){clearPromptTimers();hideFeedback();resetPromptDisplay();if(appState.currentTrial>=appState.currentStudent.totalTrials){finishSession();return}appState.currentTrial++;if(isListAffordabilityLevel()){buildCurrentListTrial();appState.currentItem=appState.currentListItems[0]}else{appState.currentItem=getNextItem();appState.currentListItems=[];appState.currentListTotal=0}appState.currentBudget=getRandomBudget();appState.acceptingResponse=true;updateTrialCounter();displayCurrentTrial();enableAnswerButtons();appState.trialStartedAt=performance.now();schedulePrompts();if(appState.currentStudent.audioSdEnabled!==false){window.setTimeout(speakInstructionalCue,150)}}
+function loadNextTrial(){
+    clearPromptTimers();
+    hideFeedback();
+    resetPromptDisplay();
+
+    if(appState.currentTrial>=appState.currentStudent.totalTrials){
+        finishSession();
+        return;
+    }
+
+    appState.currentTrial+=1;
+
+    if(isCartBuilderLevel()){
+        buildCartTrial();
+        appState.currentItem=appState.cartChoices[0]||null;
+        appState.currentListItems=[];
+        appState.currentListTotal=0;
+    }else if(isListAffordabilityLevel()){
+        buildCurrentListTrial();
+        appState.currentItem=appState.currentListItems[0]||null;
+        appState.cartChoices=[];
+        appState.selectedCartIndexes=[];
+    }else{
+        appState.currentItem=getNextItem();
+        appState.currentListItems=[];
+        appState.currentListTotal=0;
+        appState.cartChoices=[];
+        appState.selectedCartIndexes=[];
+    }
+
+    appState.currentBudget=getRandomBudget();
+    appState.acceptingResponse=true;
+
+    updateTrialCounter();
+    displayCurrentTrial();
+    enableAnswerButtons();
+
+    appState.trialStartedAt=performance.now();
+    schedulePrompts();
+
+    if(appState.currentStudent.audioSdEnabled!==false){
+        window.setTimeout(speakInstructionalCue,150);
+    }
+}
 function updateTrialCounter(){const t=appState.currentStudent.totalTrials;trialCounter.textContent="Trial "+appState.currentTrial+" of "+t;progressBar.style.width=(appState.currentTrial/t*100)+"%"}
 function displayCurrentTrial(){
     budgetDisplay.textContent=formatCurrency(appState.currentBudget);
@@ -707,4 +750,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.12 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.12.1 loaded successfully");

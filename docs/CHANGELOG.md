@@ -1,5 +1,14 @@
 # Budget Buddy Changelog
 
+## v0.12.1 — Cart Options Hotfix
+
+### Fixed
+- Level 3 now builds the grocery-choice set before rendering the cart.
+- Grocery item options now appear on every Level 3 trial.
+- Updated cache-busting version tags.
+
+---
+
 ## v0.12 — Decision-Making Cart Build
 
 ### Added
