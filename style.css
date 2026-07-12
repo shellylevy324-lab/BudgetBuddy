@@ -119,3 +119,57 @@
 .promptGesture .correctChoice {
     box-shadow: 0 0 0 6px rgba(214, 158, 46, 0.42);
 }
+
+
+/* =====================================
+   v0.6.3 — Stronger, persistent prompts
+===================================== */
+
+/* Visual price comparison prompt:
+   enlarge and thicken both money displays. */
+.promptCompare #priceDisplay,
+.promptCompare #budgetCard {
+    transform: scale(1.1);
+    border: 5px solid #3182ce;
+    box-shadow:
+        0 0 0 4px rgba(49, 130, 206, 0.24),
+        0 8px 18px rgba(31, 41, 51, 0.18);
+    transition:
+        transform 0.2s ease,
+        border-width 0.2s ease,
+        box-shadow 0.2s ease;
+    z-index: 2;
+}
+
+.promptCompare #itemPrice,
+.promptCompare #budgetDisplay {
+    font-size: 2.25rem;
+    font-weight: 900;
+}
+
+/* Final gestural/modeling prompt:
+   keep the correct answer enlarged until a response. */
+.promptGesture .correctChoice {
+    transform: scale(1.18);
+    border: 5px solid #d69e2e;
+    box-shadow:
+        0 0 0 6px rgba(214, 158, 46, 0.34),
+        0 10px 22px rgba(31, 41, 51, 0.22);
+    z-index: 3;
+    transition:
+        transform 0.2s ease,
+        border-width 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.promptGesture .correctChoice::before {
+    top: -52px;
+    font-size: 2.8rem;
+}
+
+/* Keep enlargement stable rather than pulsing. */
+.promptCompare #priceDisplay,
+.promptCompare #budgetCard,
+.promptGesture .correctChoice {
+    animation: none !important;
+}

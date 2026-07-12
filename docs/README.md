@@ -51,3 +51,12 @@ Use test names, initials, or approved student codes until your school has review
 4. Gestural prompt: hand icon points to the correct answer
 
 The white background remains unchanged throughout the sequence.
+
+
+## v0.6.3
+- Price and budget displays enlarge during the visual prompt.
+- Price and budget borders are thicker and more pronounced.
+- Visual emphasis stays on screen through later prompt levels.
+- The final correct answer enlarges substantially.
+- The hand icon and enlarged answer remain until the student responds.
+- Prompt emphasis is stable rather than pulsing.
