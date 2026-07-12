@@ -124,3 +124,14 @@ The same teacher platform, prompting engine, and data system may support:
 - Shared classroom data
 - Secure authentication
 - Cloud synchronization
+
+
+## Current Development Step
+### v0.9 — Budget Difficulty Foundation
+Student profiles now control:
+- Fixed versus randomized budgets
+- Minimum budget
+- Maximum budget
+- Whole-dollar versus 50-cent increments
+
+This prepares the application for multiple-item purchasing and running remaining budgets.

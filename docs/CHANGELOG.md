@@ -1,5 +1,25 @@
 # Budget Buddy Changelog
 
+## v0.9 — Student Budget Range Build
+
+### Added
+- Fixed budget option per student
+- Random minimum/maximum budget range per student
+- Whole-dollar budget option
+- 50-cent increment option
+- Budget settings included in classroom backup files
+
+### Preserved
+- Baseline fidelity
+- Reinforcement profiles
+- Prompting hierarchy
+- Session reports
+- Import/export
+- One-screen student layout
+
+---
+
+
 ## v0.8 — Reinforcement Profile Build
 
 ### Added

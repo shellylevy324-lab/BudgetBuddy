@@ -553,3 +553,35 @@
         animation: none;
     }
 }
+
+
+/* =====================================
+   Budget Buddy v0.9 — Budget settings
+===================================== */
+
+.budgetSettingsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.moneyInputRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.moneyInputRow span {
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.moneyInputRow input {
+    flex: 1;
+}
+
+@media (max-width: 620px) {
+    .budgetSettingsGrid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -121,3 +121,10 @@ The white background remains unchanged throughout the sequence.
 - `docs/VISION.md` — long-term roadmap and future skill progression
 - `docs/CHANGELOG.md` — release history
 - `docs/InstructionalFramework.md` — assessment, prompting, and reinforcement principles
+
+
+## v0.9
+- Added student-specific fixed budgets.
+- Added student-specific randomized budget ranges.
+- Added whole-dollar or 50-cent budget increments.
+- Budget settings are saved with each student profile.
