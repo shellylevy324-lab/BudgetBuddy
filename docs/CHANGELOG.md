@@ -1,5 +1,30 @@
 # Budget Buddy Changelog
 
+## v0.12 — Decision-Making Cart Build
+
+### Added
+- Level 3: Choose Items Within Budget
+- Teacher-selected purchase target of 2–4 items
+- Teacher-selected choice set of 4–5 items
+- Tap-to-select cart choices
+- Live Cart Total
+- Live Money Left
+- Check My Cart action
+- Correction opportunity in teaching mode
+- First-submission measurement in baseline
+- Cart attempt count in trial records
+
+### Preserved
+- Level 1 single-item affordability
+- Level 2 grocery-list affordability
+- Baseline fidelity
+- Prompting and reinforcement profiles
+- Budget ranges
+- Reports and import/export
+
+---
+
+
 ## v0.10.2 — Navigation Hotfix
 
 ### Fixed

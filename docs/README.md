@@ -142,3 +142,13 @@ The white background remains unchanged throughout the sequence.
 - Added cache-busting version tags for CSS and JavaScript.
 - Added defensive initialization for new Level 2 controls.
 - Corrected the Level 2 comparison band to show Total Cost.
+
+
+## v0.12
+- Added Level 3: Choose Items Within Budget.
+- Teachers select how many items the student must choose.
+- Students tap items to add or remove them from a cart.
+- Cart Total and Money Left update immediately.
+- Students submit the cart when the required number of items is selected.
+- Teaching mode allows correction after an over-budget cart.
+- Baseline records the first submitted cart without feedback.

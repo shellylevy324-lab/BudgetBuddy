@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.10.2">
+  <link rel="stylesheet" href="style.css?v=0.12">
 </head>
 <body>
 <main class="container">
@@ -101,9 +101,31 @@
             <select id="activityLevel">
               <option value="single-item">Level 1 — One Item</option>
               <option value="list-affordability">Level 2 — Grocery List Affordability</option>
+              <option value="cart-builder">Level 3 — Choose Items Within Budget</option>
             </select>
             <p class="fieldHelp">
               Level 1 asks whether one item fits the budget. Level 2 asks whether every item on a short grocery list fits the budget.
+            </p>
+          </div>
+
+
+          <div class="formGroup hidden" id="cartTargetCountGroup">
+            <label for="cartTargetCount">Items Student Must Choose</label>
+            <select id="cartTargetCount">
+              <option value="2">2 Items</option>
+              <option value="3">3 Items</option>
+              <option value="4">4 Items</option>
+            </select>
+          </div>
+
+          <div class="formGroup hidden" id="cartOptionCountGroup">
+            <label for="cartOptionCount">Choices Shown</label>
+            <select id="cartOptionCount">
+              <option value="4">4 Choices</option>
+              <option value="5">5 Choices</option>
+            </select>
+            <p class="fieldHelp">
+              The student selects the required number of items while staying within budget.
             </p>
           </div>
 
@@ -311,6 +333,27 @@
         </div>
       </article>
 
+
+      <article id="cartBuilderCard" class="cartBuilderCard hidden">
+        <div class="cartBuilderHeader">
+          <h2>Choose Your Items</h2>
+          <span id="cartSelectionCount">0 of 2 selected</span>
+        </div>
+
+        <div id="cartChoiceGrid" class="cartChoiceGrid"></div>
+
+        <div class="cartTotals">
+          <div>
+            <span>Cart Total</span>
+            <strong id="cartTotal">$0.00</strong>
+          </div>
+          <div>
+            <span>Money Left</span>
+            <strong id="remainingBudget">$0.00</strong>
+          </div>
+        </div>
+      </article>
+
       <section id="budgetCard" class="budgetCard">
         <span>Your Budget</span>
         <strong id="budgetDisplay">$0.00</strong>
@@ -329,7 +372,7 @@
             🔊 Repeat
           </button>
         </div>
-        <div class="answerButtons">
+        <div id="yesNoAnswerButtons" class="answerButtons">
           <button id="yesButton" class="answerButton yesButton" type="button">
             <span class="buttonArrow hidden" aria-hidden="true">➜</span>
             <span>✓ Yes</span>
@@ -340,6 +383,10 @@
             <span>✕ No</span>
           </button>
         </div>
+
+        <button id="checkCartButton" class="primaryButton checkCartButton hidden" type="button">
+          Check My Cart
+        </button>
       </section>
     </div>
   </section>
@@ -357,9 +404,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.10.2 — Navigation Hotfix</footer>
+  <footer class="appFooter">Budget Buddy v0.12 — Decision-Making Cart Build</footer>
 </main>
 
-<script src="script.js?v=0.10.2"></script>
+<script src="script.js?v=0.12"></script>
 </body>
 </html>

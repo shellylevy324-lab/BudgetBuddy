@@ -146,3 +146,13 @@ Future levels:
 - Add items to a cart
 - Track a running remaining budget
 - Complete checkout with cash or card
+
+
+## Current Development Step
+### v0.12 — Decision-Making Cart
+Students now choose a required number of items while remaining within budget.
+
+Next planned milestone:
+- Checkout and purchasing routines
+- Cash versus card
+- Receipt and task completion
