@@ -67,3 +67,31 @@ The white background remains unchanged throughout the sequence.
 - The comparison band stays visible through later prompt levels.
 - Added a reliable hand element that moves into the correct answer button.
 - The hand remains visible until the student responds.
+
+
+## v0.6.5
+- Converted the visual comparison prompt into one continuous blue rounded rectangle.
+- Price and budget remain on the same horizontal line on laptop and desktop screens.
+- Removed enlargement from the original price and budget cards so they no longer push outside the viewport.
+- Added responsive sizing to prevent the comparison border from being clipped.
+- On very narrow screens, the comparison values remain inside one rounded box and stack vertically.
+
+
+## v0.6.6
+- Replaced the emoji hand with a simple black line-drawing SVG.
+- The hand is stored at `assets/images/prompts/pointing-hand.svg`.
+- The hand points toward the enlarged correct answer and remains until the student responds.
+- The graphic is intentionally simple so the answer button remains the primary focus.
+
+
+## Version 0.7
+- The pointing-hand graphic is now placed inside the correct answer button.
+- The correct answer enlarges and remains enlarged until the student responds.
+- The incorrect answer remains available but is slightly faded during the final prompt.
+- The comparison band remains visible during later prompt levels.
+- Prompt visuals are stable and do not pulse or flash.
+- The final prompting sequence is:
+  1. Spoken SD
+  2. Unified visual price/budget comparison
+  3. Secondary spoken cue
+  4. Enlarged modeled answer with line-drawing hand

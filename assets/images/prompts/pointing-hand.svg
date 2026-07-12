@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 130" role="img" aria-labelledby="title">
+  <title id="title">Pointing hand</title>
+  <g fill="none" stroke="#1f2933" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 64 H105" />
+    <path d="M91 43 L115 64 L91 85" />
+    <path d="M112 64 C130 64 139 58 150 46" />
+    <path d="M150 46 C160 35 173 34 180 43" />
+    <path d="M180 43 C188 52 184 64 176 70" />
+    <path d="M176 70 C187 76 189 89 181 98" />
+    <path d="M181 98 C171 109 151 109 137 102" />
+    <path d="M137 102 L118 92" />
+  </g>
+</svg>

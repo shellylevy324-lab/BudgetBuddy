@@ -11,7 +11,7 @@ const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profil
 const reportStudentFilter=$("reportStudentFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
 const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
 const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
-const studentGreeting=$("studentGreeting"),teacherPromptStatus=$("teacherPromptStatus"),trialCounter=$("trialCounter"),progressBar=$("progressBar"),promptArea=$("promptArea"),promptMessage=$("promptMessage"),itemImage=$("itemImage"),itemName=$("itemName"),itemCategory=$("itemCategory"),itemPrice=$("itemPrice"),budgetDisplay=$("budgetDisplay"),repeatSdButton=$("repeatSdButton"),yesButton=$("yesButton"),noButton=$("noButton"),gestureHand=$("gestureHand"),feedbackArea=$("feedbackArea"),trialContent=$("trialContent"),endSessionButton=$("endSessionButton");
+const studentGreeting=$("studentGreeting"),teacherPromptStatus=$("teacherPromptStatus"),trialCounter=$("trialCounter"),progressBar=$("progressBar"),promptArea=$("promptArea"),promptMessage=$("promptMessage"),itemImage=$("itemImage"),itemName=$("itemName"),itemCategory=$("itemCategory"),itemPrice=$("itemPrice"),budgetDisplay=$("budgetDisplay"),repeatSdButton=$("repeatSdButton"),yesButton=$("yesButton"),noButton=$("noButton"),feedbackArea=$("feedbackArea"),trialContent=$("trialContent"),endSessionButton=$("endSessionButton");
 const completionMessage=$("completionMessage"),newSessionButton=$("newSessionButton"),viewReportButton=$("viewReportButton"),completeHomeButton=$("completeHomeButton");
 const screens=[homeScreen,teacherScreen,welcomeScreen,groceryScreen,completeScreen];
 
@@ -45,8 +45,47 @@ function getNextItem(){if(!appState.shuffledItems.length)appState.shuffledItems=
 function getRandomBudget(){return budgetOptions[Math.floor(Math.random()*budgetOptions.length)]}
 
 function clearPromptTimers(){appState.promptTimeouts.forEach(clearTimeout);appState.promptTimeouts=[]}
-function resetPromptDisplay(){promptArea.className="promptArea hidden";promptMessage.textContent="";teacherPromptStatus.textContent="Independent";groceryScreen.classList.remove("promptCompare","promptGesture");yesButton.classList.remove("correctChoice");noButton.classList.remove("correctChoice");gestureHand.classList.add("hidden");document.querySelector(".questionArea").appendChild(gestureHand)}
-function showGestureHand(){const correctButton=getCorrectButton();correctButton.appendChild(gestureHand);gestureHand.classList.remove("hidden")}
+function resetPromptDisplay(){
+    promptArea.className="promptArea hidden";
+    promptMessage.textContent="";
+    teacherPromptStatus.textContent="Independent";
+
+    groceryScreen.classList.remove(
+        "promptCompare",
+        "promptGesture"
+    );
+
+    [yesButton,noButton].forEach(function(button){
+        button.classList.remove(
+            "correctChoice",
+            "deemphasizedChoice"
+        );
+
+        const hand=button.querySelector(".buttonHand");
+
+        if(hand){
+            hand.classList.add("hidden");
+        }
+    });
+}
+function showGesturePrompt(){
+    const correctButton=getCorrectButton();
+    const incorrectButton=
+        correctButton===yesButton
+            ? noButton
+            : yesButton;
+
+    correctButton.classList.add("correctChoice");
+    incorrectButton.classList.add("deemphasizedChoice");
+
+    const hand=
+        correctButton.querySelector(".buttonHand");
+
+    if(hand){
+        hand.classList.remove("hidden");
+    }
+}
+
 function getCorrectAnswer(){return Number(appState.currentBudget)>=Number(appState.currentItem.price)?"yes":"no"}
 function getCorrectButton(){return getCorrectAnswer()==="yes"?yesButton:noButton}
 function schedulePrompts(){clearPromptTimers();resetPromptDisplay();appState.currentPromptLevel="independent";appState.firstPromptAt=null;if(appState.currentStudent.promptStyle==="baseline"){teacherPromptStatus.textContent="Baseline — no prompts";return}const first=appState.currentStudent.waitTimeSeconds*1000,step=appState.currentStudent.promptStepTimeSeconds*1000;appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("visual"),first));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("audio"),first+step));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("gesture"),first+step*2))}
@@ -128,4 +167,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.6.4 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.7 loaded successfully");
