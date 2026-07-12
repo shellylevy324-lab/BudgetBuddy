@@ -95,3 +95,14 @@ The white background remains unchanged throughout the sequence.
   2. Unified visual price/budget comparison
   3. Secondary spoken cue
   4. Enlarged modeled answer with line-drawing hand
+
+
+## Version 0.7.1
+- Fixed a JavaScript syntax error that prevented students and navigation from loading.
+- Restored the final hand prompt inside the correct answer button.
+
+
+## v0.7.2
+- Replaced the hand graphic with a simple blue/white instructional arrow inside the correct answer button.
+- Preserved the unified comparison band, audio cue, enlarged correct answer, and faded incorrect answer.
+- Removed dependency on the hand image for the final prompt.

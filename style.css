@@ -440,3 +440,68 @@
         transform: scale(0.98);
     }
 }
+
+
+/* =====================================
+   Budget Buddy v0.7.2
+   Final modeled-response arrow
+===================================== */
+
+/* Hide the retired hand graphic rules. */
+.buttonHand,
+.gestureHand {
+    display: none !important;
+}
+
+/* A simple arrow is part of the correct answer button. */
+.buttonArrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: #ffffff;
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 2px 2px rgba(31, 41, 51, 0.25);
+}
+
+.buttonArrow.hidden {
+    display: none !important;
+}
+
+/* The correct button remains the primary cue. */
+.promptGesture .correctChoice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    transform: scale(1.16);
+    border: 6px solid #d69e2e;
+    box-shadow:
+        0 0 0 6px rgba(214, 158, 46, 0.28),
+        0 12px 24px rgba(31, 41, 51, 0.22);
+    z-index: 4;
+    animation: none !important;
+}
+
+.promptGesture .deemphasizedChoice {
+    opacity: 0.52;
+    transform: scale(0.96);
+}
+
+/* Disable all older pseudo-element hand/arrow attempts. */
+.promptGesture .correctChoice::before {
+    content: none !important;
+}
+
+@media (max-width: 820px) {
+    .buttonArrow {
+        font-size: 2.3rem;
+    }
+
+    .promptGesture .correctChoice {
+        transform: scale(1.08);
+        gap: 10px;
+    }
+}

@@ -61,7 +61,7 @@ function resetPromptDisplay(){
             "deemphasizedChoice"
         );
 
-        const hand=button.querySelector(".buttonHand");
+        const hand=button.querySelector(".buttonArrow");
 
         if(hand){
             hand.classList.add("hidden");
@@ -79,7 +79,7 @@ function showGesturePrompt(){
     incorrectButton.classList.add("deemphasizedChoice");
 
     const hand=
-        correctButton.querySelector(".buttonHand");
+        correctButton.querySelector(".buttonArrow");
 
     if(hand){
         hand.classList.remove("hidden");
@@ -89,8 +89,48 @@ function showGesturePrompt(){
 function getCorrectAnswer(){return Number(appState.currentBudget)>=Number(appState.currentItem.price)?"yes":"no"}
 function getCorrectButton(){return getCorrectAnswer()==="yes"?yesButton:noButton}
 function schedulePrompts(){clearPromptTimers();resetPromptDisplay();appState.currentPromptLevel="independent";appState.firstPromptAt=null;if(appState.currentStudent.promptStyle==="baseline"){teacherPromptStatus.textContent="Baseline — no prompts";return}const first=appState.currentStudent.waitTimeSeconds*1000,step=appState.currentStudent.promptStepTimeSeconds*1000;appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("visual"),first));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("audio"),first+step));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("gesture"),first+step*2))}
-function deliverPrompt(level){if(!appState.acceptingResponse)return;appState.currentPromptLevel=level;if(appState.firstPromptAt===null)appState.firstPromptAt=performance.now();promptArea.className="promptArea";promptMessage.textContent="";teacherPromptStatus.textContent=PROMPT_LABELS[level];if(level==="visual"){promptArea.classList.add("promptVisual","comparisonBand");promptMessage.innerHTML='<div class="comparisonValue"><span>Price</span><strong>'+formatCurrency(appState.currentItem.price)+'</strong></div><div class="comparisonArrow">↔</div><div class="comparisonValue"><span>Your Budget</span><strong>'+formatCurrency(appState.currentBudget)+'</strong></div>';groceryScreen.classList.add("promptCompare")}if(level==="audio"){promptArea.classList.add("promptVisual","comparisonBand");promptMessage.innerHTML='<div class="comparisonValue"><span>Price</span><strong>'+formatCurrency(appState.currentItem.price)+'</strong></div><div class="comparisonArrow">↔</div><div class="comparisonValue"><span>Your Budget</span><strong>'+formatCurrency(appState.currentBudget)+'</strong></div>';groceryScreen.classList.add("promptCompare");speakSecondaryPrompt()}if(level==="gesture"){promptArea.classList.add("promptVisual","comparisonBand");promptMessage.innerHTML='<div class="comparisonValue"><span>Price</span><strong>'+formatCurrency(appState.currentItem.price)+'</strong></div><div class="comparisonArrow">↔</div><div class="comparisonValue"><span>Your Budget</span><strong>'+formatCurrency(appState.currentBudget)+'</strong></div>';groceryScreen.classList.add("promptCompare","promptGesture");getCorrectButton().classList.add("correctChoice");showGestureHand()}
+function deliverPrompt(level){
+    if(!appState.acceptingResponse){
+        return;
+    }
 
+    appState.currentPromptLevel=level;
+
+    if(appState.firstPromptAt===null){
+        appState.firstPromptAt=performance.now();
+    }
+
+    promptArea.className="promptArea";
+    promptMessage.textContent="";
+    teacherPromptStatus.textContent=PROMPT_LABELS[level];
+
+    const comparisonHtml=
+        '<div class="comparisonValue"><span>Price</span><strong>'+
+        formatCurrency(appState.currentItem.price)+
+        '</strong></div><div class="comparisonArrow">↔</div><div class="comparisonValue"><span>Your Budget</span><strong>'+
+        formatCurrency(appState.currentBudget)+
+        '</strong></div>';
+
+    if(level==="visual"){
+        promptArea.classList.add("promptVisual","comparisonBand");
+        promptMessage.innerHTML=comparisonHtml;
+        groceryScreen.classList.add("promptCompare");
+    }
+
+    if(level==="audio"){
+        promptArea.classList.add("promptVisual","comparisonBand");
+        promptMessage.innerHTML=comparisonHtml;
+        groceryScreen.classList.add("promptCompare");
+        speakSecondaryPrompt();
+    }
+
+    if(level==="gesture"){
+        promptArea.classList.add("promptVisual","comparisonBand");
+        promptMessage.innerHTML=comparisonHtml;
+        groceryScreen.classList.add("promptCompare","promptGesture");
+        showGesturePrompt();
+    }
+}
 
 function speakText(text){
     if(!("speechSynthesis" in window)){
@@ -167,4 +207,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.7 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.7.2 loaded successfully");
