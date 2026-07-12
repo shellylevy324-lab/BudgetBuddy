@@ -135,3 +135,15 @@ Student profiles now control:
 - Whole-dollar versus 50-cent increments
 
 This prepares the application for multiple-item purchasing and running remaining budgets.
+
+
+## Current Development Step
+### v0.10 — Shopping Lists
+Students can now work through:
+- Random grocery lists
+- Teacher-created custom lists
+- Visible list progress
+- Completed-item checkmarks
+
+Next planned step:
+- Running remaining budget across multiple purchases

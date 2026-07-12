@@ -1,5 +1,31 @@
 # Budget Buddy Changelog
 
+## v0.10 — Shopping Lists Build
+
+### Added
+- Random shopping-list generation
+- Student-specific shopping-list length
+- Custom shopping lists using grocery item names
+- On-screen list progress
+- Current-item highlight
+- Completed-item checkmarks
+- Items-remaining counter
+
+### Changed
+- Session length follows the active shopping list
+- Shopping-list settings are included in classroom backups
+
+### Preserved
+- Baseline fidelity
+- Prompting hierarchy
+- Reinforcement profiles
+- Student budget ranges
+- Session reports
+- Import/export
+
+---
+
+
 ## v0.9 — Student Budget Range Build
 
 ### Added

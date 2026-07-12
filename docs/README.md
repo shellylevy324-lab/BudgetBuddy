@@ -128,3 +128,11 @@ The white background remains unchanged throughout the sequence.
 - Added student-specific randomized budget ranges.
 - Added whole-dollar or 50-cent budget increments.
 - Budget settings are saved with each student profile.
+
+
+## v0.10
+- Added random shopping lists from grocery data.
+- Added custom shopping lists per student.
+- Added visible list progress during sessions.
+- Added current-item and completed-item indicators.
+- Session trial count now follows shopping-list length.

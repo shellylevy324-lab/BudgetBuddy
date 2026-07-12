@@ -95,6 +95,38 @@
 
 
 
+
+          <div class="formGroup">
+            <label for="shoppingListMode">Shopping List</label>
+            <select id="shoppingListMode">
+              <option value="random">Random List</option>
+              <option value="custom">Custom List</option>
+            </select>
+          </div>
+
+          <div class="formGroup" id="shoppingListLengthGroup">
+            <label for="shoppingListLength">Number of Items</label>
+            <select id="shoppingListLength">
+              <option value="1">1 Item</option>
+              <option value="2">2 Items</option>
+              <option value="3">3 Items</option>
+              <option value="4">4 Items</option>
+              <option value="5">5 Items</option>
+            </select>
+          </div>
+
+          <div class="formGroup hidden" id="customShoppingListGroup">
+            <label for="customShoppingList">Custom Item Names</label>
+            <textarea
+              id="customShoppingList"
+              rows="5"
+              placeholder="Enter one item per line&#10;Milk&#10;Bread&#10;Apples"
+            ></textarea>
+            <p class="fieldHelp">
+              Items must match names in <code>data/grocery.json</code>.
+            </p>
+          </div>
+
           <div class="formGroup">
             <label for="budgetMode">Budget Setting</label>
             <select id="budgetMode">
@@ -256,6 +288,14 @@
       <button id="endSessionButton" class="navigationButton" type="button">End Session</button>
     </header>
 
+    <section class="shoppingListPanel" aria-label="Shopping list">
+      <div class="shoppingListHeader">
+        <h3>Shopping List</h3>
+        <span id="itemsRemainingLabel">1 item left</span>
+      </div>
+      <div id="shoppingListDisplay" class="shoppingListDisplay"></div>
+    </section>
+
     <div class="trialProgress">
       <p id="trialCounter">Trial 1 of 10</p>
       <div class="progressTrack" aria-hidden="true">
@@ -326,7 +366,7 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.9 — Student Budget Range Build</footer>
+  <footer class="appFooter">Budget Buddy v0.10 — Shopping Lists Build</footer>
 </main>
 
 <script src="script.js"></script>
