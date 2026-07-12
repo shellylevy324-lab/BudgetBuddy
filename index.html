@@ -93,6 +93,45 @@
             </label>
           </div>
 
+
+          <div class="formGroup">
+            <label for="reinforcementType">Correct-Response Reinforcement</label>
+            <select id="reinforcementType">
+              <option value="text">Written Praise</option>
+              <option value="text-sound">Written Praise + Chime</option>
+              <option value="none">None</option>
+            </select>
+            <p class="fieldHelp">
+              Baseline sessions always suppress trial-by-trial reinforcement.
+            </p>
+          </div>
+
+          <div class="formGroup">
+            <label for="praiseText">Personalized Praise</label>
+            <input
+              id="praiseText"
+              type="text"
+              maxlength="80"
+              value="Nice job!"
+              placeholder="Example: Great comparing!"
+            >
+          </div>
+
+          <div class="formGroup">
+            <label for="feedbackDuration">Reinforcement Duration</label>
+            <div class="numberInputRow">
+              <input
+                id="feedbackDuration"
+                type="number"
+                min="1"
+                max="10"
+                step="1"
+                value="2"
+              >
+              <span>seconds</span>
+            </div>
+          </div>
+
           <div class="profileButtons">
             <button id="saveStudent" class="primaryButton" type="button">Save Student</button>
             <button id="deleteStudentButton" class="dangerButton" type="button">Delete Student</button>
@@ -243,7 +282,9 @@
   <section id="completeScreen" class="screen hidden">
     <div class="completeCard">
       <h1>Session Complete</h1>
-      <p class="celebrationIcon">🎉</p>
+      <div class="completionAnimation" aria-hidden="true">
+        <span>✨</span><span>🎉</span><span>✨</span>
+      </div>
       <p id="completionMessage">Nice work completing your shopping practice!</p>
       <button id="newSessionButton" class="primaryButton" type="button">Start Another Session</button>
       <button id="viewReportButton" class="secondaryButton" type="button">Teacher: View Session Report</button>
@@ -251,7 +292,7 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.7.2 — Classroom Prompting Release</footer>
+  <footer class="appFooter">Budget Buddy v0.8 — Reinforcement Profile Build</footer>
 </main>
 
 <script src="script.js"></script>

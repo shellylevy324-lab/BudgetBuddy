@@ -106,3 +106,18 @@ The white background remains unchanged throughout the sequence.
 - Replaced the hand graphic with a simple blue/white instructional arrow inside the correct answer button.
 - Preserved the unified comparison band, audio cue, enlarged correct answer, and faded incorrect answer.
 - Removed dependency on the hand image for the final prompt.
+
+
+## v0.8
+- Added student-specific reinforcement profiles.
+- Baseline suppresses trial-by-trial reinforcement and error correction.
+- Teaching sessions can use written praise or written praise with a gentle chime.
+- Added student-specific praise text and feedback duration.
+- Added a universal completion animation independent of accuracy.
+- Added VISION.md to preserve the long-term roadmap.
+
+
+## Documentation
+- `docs/VISION.md` — long-term roadmap and future skill progression
+- `docs/CHANGELOG.md` — release history
+- `docs/InstructionalFramework.md` — assessment, prompting, and reinforcement principles
