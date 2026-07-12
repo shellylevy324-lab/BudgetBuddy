@@ -1,75 +1,44 @@
-# Budget Buddy
+# Budget Buddy v0.6
 
-## Purpose
+## New
+- Baseline mode with no automated prompts
+- Least-to-most visual prompting
+- Student-specific independent wait time
+- Student-specific time between prompt levels
+- Visual comparison prompt
+- Gestural answer prompt
+- Model answer prompt
+- Prompt level reporting
+- Independent-response percentage
+- Post-prompt latency reporting
+- Classroom backup export/import
 
-Budget Buddy is an interactive instructional program designed to teach transition-age students with intellectual and developmental disabilities real-world community and vocational skills.
+## Prompt sequence
+For Least-to-Most Visual Prompts:
 
-The project is being developed using evidence-based instructional practices commonly used in ABA and special education, including:
+1. Independent opportunity
+2. Visual comparison prompt
+3. Gestural answer prompt
+4. Model answer prompt
 
-* Least-to-most prompting
-* Customizable prompt hierarchies
-* Prompt fading
-* Latency measurement
-* Errorless learning when appropriate
-* Data collection for instructional decision-making
+## Moving data to another device
+1. Open Teacher Platform.
+2. Select Import / Export.
+3. Export Classroom Backup.
+4. Move the downloaded JSON file to the other device.
+5. Open Budget Buddy there.
+6. Import Classroom Backup.
 
-The first instructional module is Grocery Shopping.
+This is manual transfer, not automatic cloud synchronization.
 
-Future modules will include additional community and vocational skills such as:
+## Privacy
+Use test names, initials, or approved student codes until your school has reviewed the data-handling process.
 
-* Coffee Shop
-* Clothing Store
-* Public Transportation
-* Restaurant Ordering
-* Workplace Skills
-* Banking
-* Community Safety
 
----
-
-## Current Version
-
-Version 0.3 (Development)
-
----
-
-## Current Features
-
-* Home Dashboard
-* Grocery Shopping module
-* Teacher Setup
-* Student profile framework
-* Grocery item database
-* Image support
-* Navigation system
-
----
-
-## Planned Features
-
-* Student budgets
-* Purchasing decisions
-* Prompt hierarchy customization
-* Latency tracking
-* Session reports
-* Google Sheets data export
-* Progress graphs
-* Multiple instructional modules
-
----
-
-## Folder Structure
-
-* data/ - JSON databases
-* images/ - instructional photographs
-* sounds/ - audio prompts and reinforcement
-* reports/ - exported session reports
-* docs/ - project documentation
-* archive/ - previous versions
-* icons/ - interface graphics
-
----
-
-## Project Goal
-
-Create a professional-quality instructional platform that allows special education teachers to provide consistent, data-driven community instruction across students, staff, and instructional settings.
+## v0.6.1
+- Prompt backgrounds remain white across all prompt levels.
+- Removed pulsing background changes.
+- Added student-specific spoken SD setting.
+- Added automatic audio for “Can I afford this item?”
+- Added a Repeat audio button on the student activity.
+- Audio uses the browser's built-in speech synthesis and does not require an audio file.
