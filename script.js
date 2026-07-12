@@ -175,6 +175,14 @@ function toggleCartChoice(index){
     }
 
     renderCartBuilder();
+
+    if(
+        appState.currentPromptLevel==="visual" ||
+        appState.currentPromptLevel==="audio" ||
+        appState.currentPromptLevel==="gesture"
+    ){
+        promptMessage.innerHTML=buildComparisonPrompt();
+    }
 }
 
 function getRandomBudget(){
@@ -252,6 +260,33 @@ function showGesturePrompt(){
 function getCorrectAnswer(){const cost=isListAffordabilityLevel()?appState.currentListTotal:Number(appState.currentItem.price);return Number(appState.currentBudget)>=Number(cost)?"yes":"no"}
 function getCorrectButton(){return getCorrectAnswer()==="yes"?yesButton:noButton}
 function schedulePrompts(){clearPromptTimers();resetPromptDisplay();appState.currentPromptLevel="independent";appState.firstPromptAt=null;if(appState.currentStudent.promptStyle==="baseline"){teacherPromptStatus.textContent="Baseline — no prompts";return}const first=appState.currentStudent.waitTimeSeconds*1000,step=appState.currentStudent.promptStepTimeSeconds*1000;appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("visual"),first));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("audio"),first+step));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("gesture"),first+step*2))}
+
+function buildComparisonPrompt(){
+    const comparisonLabel=
+        isCartBuilderLevel()
+            ? "Cart Total"
+            : isListAffordabilityLevel()
+                ? "Total Cost"
+                : "Price";
+
+    const comparisonValue=
+        isCartBuilderLevel()
+            ? getCartTotal()
+            : isListAffordabilityLevel()
+                ? appState.currentListTotal
+                : appState.currentItem.price;
+
+    return '<div class="comparisonValue"><span>'+
+        comparisonLabel+
+        '</span><strong>'+
+        formatCurrency(comparisonValue)+
+        '</strong></div>'+
+        '<div class="comparisonArrow">↔</div>'+
+        '<div class="comparisonValue"><span>Your Budget</span><strong>'+
+        formatCurrency(appState.currentBudget)+
+        '</strong></div>';
+}
+
 function deliverPrompt(level){
     if(!appState.acceptingResponse){
         return;
@@ -750,4 +785,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.12.1 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.12.2 loaded successfully");

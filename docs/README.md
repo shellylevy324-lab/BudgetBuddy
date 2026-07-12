@@ -158,3 +158,10 @@ The white background remains unchanged throughout the sequence.
 - Fixed Level 3 so grocery choices are created before the cart screen renders.
 - Cart item cards now appear immediately at the start of every Level 3 trial.
 - Added cache-busting version tags for the hotfix.
+
+
+## v0.12.2
+- Fixed Level 3 visual prompting.
+- The comparison band now shows the live Cart Total rather than the first grocery item.
+- Cart Total updates inside the comparison band whenever the student selects or removes an item.
+- The visual prompt remains available because it now accurately compares Cart Total with Budget.

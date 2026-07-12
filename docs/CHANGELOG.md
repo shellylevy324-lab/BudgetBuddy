@@ -1,5 +1,21 @@
 # Budget Buddy Changelog
 
+## v0.12.2 — Live Cart Comparison Prompt
+
+### Fixed
+- Level 3 comparison band previously showed the first listed item price
+- Level 3 now compares the live Cart Total with the student's Budget
+- Comparison band updates immediately after each cart selection or removal
+
+### Preserved
+- Level 1 and Level 2 comparison prompts
+- Level 3 audio prompting
+- Baseline fidelity
+- Cart selection and correction flow
+
+---
+
+
 ## v0.12.1 — Cart Options Hotfix
 
 ### Fixed
