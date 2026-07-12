@@ -97,34 +97,24 @@
 
 
           <div class="formGroup">
-            <label for="shoppingListMode">Shopping List</label>
-            <select id="shoppingListMode">
-              <option value="random">Random List</option>
-              <option value="custom">Custom List</option>
+            <label for="activityLevel">Shopping Level</label>
+            <select id="activityLevel">
+              <option value="single-item">Level 1 — One Item</option>
+              <option value="list-affordability">Level 2 — Grocery List Affordability</option>
             </select>
+            <p class="fieldHelp">
+              Level 1 asks whether one item fits the budget. Level 2 asks whether every item on a short grocery list fits the budget.
+            </p>
           </div>
 
-          <div class="formGroup" id="shoppingListLengthGroup">
-            <label for="shoppingListLength">Number of Items</label>
-            <select id="shoppingListLength">
-              <option value="1">1 Item</option>
+          <div class="formGroup hidden" id="listItemCountGroup">
+            <label for="listItemCount">Items on Grocery List</label>
+            <select id="listItemCount">
               <option value="2">2 Items</option>
               <option value="3">3 Items</option>
               <option value="4">4 Items</option>
               <option value="5">5 Items</option>
             </select>
-          </div>
-
-          <div class="formGroup hidden" id="customShoppingListGroup">
-            <label for="customShoppingList">Custom Item Names</label>
-            <textarea
-              id="customShoppingList"
-              rows="5"
-              placeholder="Enter one item per line&#10;Milk&#10;Bread&#10;Apples"
-            ></textarea>
-            <p class="fieldHelp">
-              Items must match names in <code>data/grocery.json</code>.
-            </p>
           </div>
 
           <div class="formGroup">
@@ -288,14 +278,6 @@
       <button id="endSessionButton" class="navigationButton" type="button">End Session</button>
     </header>
 
-    <section class="shoppingListPanel" aria-label="Shopping list">
-      <div class="shoppingListHeader">
-        <h3>Shopping List</h3>
-        <span id="itemsRemainingLabel">1 item left</span>
-      </div>
-      <div id="shoppingListDisplay" class="shoppingListDisplay"></div>
-    </section>
-
     <div class="trialProgress">
       <p id="trialCounter">Trial 1 of 10</p>
       <div class="progressTrack" aria-hidden="true">
@@ -310,13 +292,22 @@
     <div id="feedbackArea" class="feedbackArea hidden" role="status" aria-live="assertive"></div>
 
     <div id="trialContent">
-      <article class="itemCard">
+      <article id="singleItemCard" class="itemCard">
         <div class="itemImage"><img id="itemImage" src="" alt=""></div>
         <h2 id="itemName">Loading item...</h2>
         <p id="itemCategory" class="itemCategory"></p>
         <div id="priceDisplay" class="priceDisplay">
           <span>Price</span>
           <strong id="itemPrice">$0.00</strong>
+        </div>
+      </article>
+
+      <article id="groceryListCard" class="groceryListCard hidden">
+        <h2>Grocery List</h2>
+        <div id="groceryListItems" class="groceryListItems"></div>
+        <div id="totalCostDisplay" class="priceDisplay totalCostDisplay">
+          <span>Total Cost</span>
+          <strong id="totalCost">$0.00</strong>
         </div>
       </article>
 
@@ -327,7 +318,7 @@
 
       <section class="questionArea">
         <div class="questionHeadingRow">
-          <h2>Can you afford this item?</h2>
+          <h2 id="affordabilityQuestion">Can you afford this item?</h2>
           <button
             id="repeatSdButton"
             class="audioButton"
@@ -366,7 +357,7 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.10 — Shopping Lists Build</footer>
+  <footer class="appFooter">Budget Buddy v0.10.1 — Grocery List Affordability Build</footer>
 </main>
 
 <script src="script.js"></script>

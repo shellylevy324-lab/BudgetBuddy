@@ -129,10 +129,9 @@ The white background remains unchanged throughout the sequence.
 - Added whole-dollar or 50-cent budget increments.
 - Budget settings are saved with each student profile.
 
-
-## v0.10
-- Added random shopping lists from grocery data.
-- Added custom shopping lists per student.
-- Added visible list progress during sessions.
-- Added current-item and completed-item indicators.
-- Session trial count now follows shopping-list length.
+## v0.10.1
+- Restored the simpler v0.9 teacher workflow.
+- Added Level 1: one-item affordability.
+- Added Level 2: grocery-list affordability.
+- Teachers choose 2–5 random items for Level 2.
+- Students decide whether the total cost of the whole list fits their budget.

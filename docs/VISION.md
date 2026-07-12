@@ -136,14 +136,13 @@ Student profiles now control:
 
 This prepares the application for multiple-item purchasing and running remaining budgets.
 
-
 ## Current Development Step
-### v0.10 — Shopping Lists
-Students can now work through:
-- Random grocery lists
-- Teacher-created custom lists
-- Visible list progress
-- Completed-item checkmarks
+### v0.10.1 — Level 2 Grocery List Affordability
+- Level 1: Can one item fit within the budget?
+- Level 2: Can every item on a short grocery list fit within the budget?
 
-Next planned step:
-- Running remaining budget across multiple purchases
+Future levels:
+- Select which combination of items fits
+- Add items to a cart
+- Track a running remaining budget
+- Complete checkout with cash or card

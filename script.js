@@ -2,23 +2,23 @@ const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="bu
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,responses:[],items:[],shuffledItems:[],sessionShoppingList:[],currentShoppingIndex:0,currentItem:null,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],acceptingResponse:false};
+const appState={students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],acceptingResponse:false};
 
 const $=id=>document.getElementById(id);
 const homeScreen=$("homeScreen"),teacherScreen=$("teacherScreen"),welcomeScreen=$("welcomeScreen"),groceryScreen=$("groceryScreen"),completeScreen=$("completeScreen");
 const homeStudentSelect=$("homeStudentSelect"),startButton=$("startButton"),teacherButton=$("teacherButton"),teacherBackButton=$("teacherBackButton"),studentsTabButton=$("studentsTabButton"),reportsTabButton=$("reportsTabButton"),dataTabButton=$("dataTabButton"),studentsPanel=$("studentsPanel"),reportsPanel=$("reportsPanel"),dataPanel=$("dataPanel");
-const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),shoppingListModeInput=$("shoppingListMode"),shoppingListLengthInput=$("shoppingListLength"),shoppingListLengthGroup=$("shoppingListLengthGroup"),customShoppingListGroup=$("customShoppingListGroup"),customShoppingListInput=$("customShoppingList"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
+const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
 const reportStudentFilter=$("reportStudentFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
 const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
 const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
-const studentGreeting=$("studentGreeting"),teacherPromptStatus=$("teacherPromptStatus"),shoppingListDisplay=$("shoppingListDisplay"),itemsRemainingLabel=$("itemsRemainingLabel"),trialCounter=$("trialCounter"),progressBar=$("progressBar"),promptArea=$("promptArea"),promptMessage=$("promptMessage"),itemImage=$("itemImage"),itemName=$("itemName"),itemCategory=$("itemCategory"),itemPrice=$("itemPrice"),budgetDisplay=$("budgetDisplay"),repeatSdButton=$("repeatSdButton"),yesButton=$("yesButton"),noButton=$("noButton"),feedbackArea=$("feedbackArea"),trialContent=$("trialContent"),endSessionButton=$("endSessionButton");
+const studentGreeting=$("studentGreeting"),teacherPromptStatus=$("teacherPromptStatus"),trialCounter=$("trialCounter"),progressBar=$("progressBar"),promptArea=$("promptArea"),promptMessage=$("promptMessage"),singleItemCard=$("singleItemCard"),groceryListCard=$("groceryListCard"),groceryListItems=$("groceryListItems"),totalCostDisplay=$("totalCostDisplay"),totalCost=$("totalCost"),affordabilityQuestion=$("affordabilityQuestion"),itemImage=$("itemImage"),itemName=$("itemName"),itemCategory=$("itemCategory"),itemPrice=$("itemPrice"),budgetDisplay=$("budgetDisplay"),repeatSdButton=$("repeatSdButton"),yesButton=$("yesButton"),noButton=$("noButton"),feedbackArea=$("feedbackArea"),trialContent=$("trialContent"),endSessionButton=$("endSessionButton");
 const completionMessage=$("completionMessage"),newSessionButton=$("newSessionButton"),viewReportButton=$("viewReportButton"),completeHomeButton=$("completeHomeButton");
 const screens=[homeScreen,teacherScreen,welcomeScreen,groceryScreen,completeScreen];
 
 function showScreen(selected){screens.forEach(s=>s.classList.add("hidden"));selected.classList.remove("hidden")}
 function showTeacherPanel(name){studentsPanel.classList.toggle("hidden",name!=="students");reportsPanel.classList.toggle("hidden",name!=="reports");dataPanel.classList.toggle("hidden",name!=="data");studentsTabButton.classList.toggle("active",name==="students");reportsTabButton.classList.toggle("active",name==="reports");dataTabButton.classList.toggle("active",name==="data");if(name==="reports")renderReports()}
 
-function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:s.promptStyle==="baseline"?"baseline":"least-to-most",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,shoppingListMode:s.shoppingListMode==="custom"?"custom":"random",shoppingListLength:Math.max(1,Math.min(5,Number(s.shoppingListLength)||1)),customShoppingList:Array.isArray(s.customShoppingList)?s.customShoppingList:[],budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2}}
+function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:s.promptStyle==="baseline"?"baseline":"least-to-most",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:s.activityLevel==="list-affordability"?"list-affordability":"single-item",listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2}}
 function loadStudents(){const raw=localStorage.getItem(STUDENT_STORAGE_KEY);if(raw){try{appState.students=JSON.parse(raw).map(normalizeStudent)}catch(e){console.error(e);appState.students=starterStudents.map(normalizeStudent)}}else{appState.students=starterStudents.map(normalizeStudent);saveStudents()}const stored=localStorage.getItem(SELECTED_STUDENT_STORAGE_KEY);appState.selectedStudentId=appState.students.some(s=>s.id===stored)?stored:(appState.students[0]?.id||"")}
 function saveStudents(){localStorage.setItem(STUDENT_STORAGE_KEY,JSON.stringify(appState.students))}
 function saveSelectedStudentId(){localStorage.setItem(SELECTED_STUDENT_STORAGE_KEY,appState.selectedStudentId)}
@@ -27,13 +27,13 @@ function saveSessions(){localStorage.setItem(SESSION_STORAGE_KEY,JSON.stringify(
 function getSelectedStudent(){return appState.students.find(s=>s.id===appState.selectedStudentId)||null}
 function updateHomeStudentSelect(){homeStudentSelect.innerHTML="";appState.students.forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=s.name;o.selected=s.id===appState.selectedStudentId;homeStudentSelect.appendChild(o)});startButton.disabled=appState.students.length===0}
 function renderStudentList(){studentList.innerHTML="";if(!appState.students.length){studentList.textContent="No students have been added.";return}appState.students.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="studentListButton"+(s.id===appState.selectedStudentId?" selected":"");b.textContent="👤 "+s.name;b.onclick=()=>selectStudentForEditing(s.id);studentList.appendChild(b)})}
-function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;shoppingListModeInput.value=s.shoppingListMode||"random";shoppingListLengthInput.value=String(s.shoppingListLength||1);customShoppingListInput.value=(s.customShoppingList||[]).join("\n");updateShoppingListModeDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);profileFormTitle.textContent="Edit "+s.name;deleteStudentButton.disabled=false;settingsMessage.textContent="";updateHomeStudentSelect();renderStudentList()}
-function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;shoppingListModeInput.value="random";shoppingListLengthInput.value="1";customShoppingListInput.value="";updateShoppingListModeDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";profileFormTitle.textContent="Add Student";deleteStudentButton.disabled=true;settingsMessage.textContent="";studentNameInput.focus()}
+function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;activityLevelInput.value=s.activityLevel||"single-item";listItemCountInput.value=String(s.listItemCount||2);updateActivityLevelDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);profileFormTitle.textContent="Edit "+s.name;deleteStudentButton.disabled=false;settingsMessage.textContent="";updateHomeStudentSelect();renderStudentList()}
+function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;activityLevelInput.value="single-item";listItemCountInput.value="2";updateActivityLevelDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";profileFormTitle.textContent="Add Student";deleteStudentButton.disabled=true;settingsMessage.textContent="";studentNameInput.focus()}
 function createStudentId(name){const safe=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return(safe||"student")+"-"+Date.now()}
-function saveStudentProfile(){const name=studentNameInput.value.trim();if(!name){settingsMessage.textContent="Please enter a student name.";studentNameInput.focus();return}const id=studentIdInput.value;const p=normalizeStudent({id:id||createStudentId(name),name,totalTrials:Number(sessionLengthSelect.value),promptStyle:promptStyleSelect.value,waitTimeSeconds:Number(waitTimeInput.value)||10,promptStepTimeSeconds:Number(promptStepTimeInput.value)||5,audioSdEnabled:audioSdEnabledInput.checked,shoppingListMode:shoppingListModeInput.value,shoppingListLength:Number(shoppingListLengthInput.value)||1,customShoppingList:customShoppingListInput.value.split(/\r?\n/).map(function(name){return name.trim()}).filter(Boolean),budgetMode:budgetModeInput.value,minimumBudget:Number(minimumBudgetInput.value)||2,maximumBudget:Number(maximumBudgetInput.value)||10,useWholeDollarBudgets:useWholeDollarBudgetsInput.checked,reinforcementType:reinforcementTypeInput.value,praiseText:(praiseTextInput.value.trim()||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(feedbackDurationInput.value)||2});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();settingsMessage.textContent=p.name+"'s profile was saved."}
+function saveStudentProfile(){const name=studentNameInput.value.trim();if(!name){settingsMessage.textContent="Please enter a student name.";studentNameInput.focus();return}const id=studentIdInput.value;const p=normalizeStudent({id:id||createStudentId(name),name,totalTrials:Number(sessionLengthSelect.value),promptStyle:promptStyleSelect.value,waitTimeSeconds:Number(waitTimeInput.value)||10,promptStepTimeSeconds:Number(promptStepTimeInput.value)||5,audioSdEnabled:audioSdEnabledInput.checked,activityLevel:activityLevelInput.value,listItemCount:Number(listItemCountInput.value)||2,budgetMode:budgetModeInput.value,minimumBudget:Number(minimumBudgetInput.value)||2,maximumBudget:Number(maximumBudgetInput.value)||10,useWholeDollarBudgets:useWholeDollarBudgetsInput.checked,reinforcementType:reinforcementTypeInput.value,praiseText:(praiseTextInput.value.trim()||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(feedbackDurationInput.value)||2});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();settingsMessage.textContent=p.name+"'s profile was saved."}
 function deleteSelectedStudent(){const id=studentIdInput.value;if(!id)return;const s=appState.students.find(x=>x.id===id);if(!s||!confirm("Delete "+s.name+"'s profile?"))return;appState.students=appState.students.filter(x=>x.id!==id);appState.selectedStudentId=appState.students[0]?.id||"";saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();updateReportStudentFilter();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent()}
 
-function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;appState.currentStudent=s;welcomeStudentName.textContent="Welcome, "+s.name+"!";welcomeSessionDetails.textContent="You will complete "+(s.shoppingListMode==="custom"&&s.customShoppingList&&s.customShoppingList.length?s.customShoppingList.length:s.shoppingListLength||1)+" shopping-list item"+((s.shoppingListMode==="custom"&&s.customShoppingList&&s.customShoppingList.length?s.customShoppingList.length:s.shoppingListLength||1)===1?".":"s.");showScreen(welcomeScreen)}
+function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;appState.currentStudent=s;welcomeStudentName.textContent="Welcome, "+s.name+"!";welcomeSessionDetails.textContent="You will complete "+s.totalTrials+" shopping trial"+(s.totalTrials===1?".":"s.");showScreen(welcomeScreen)}
 const formatCurrency=v=>"$"+Number(v).toFixed(2);
 const formatSeconds=v=>v===null||v===undefined?"—":Number(v).toFixed(2)+" sec";
 const average=a=>a.length?a.reduce((t,v)=>t+v,0)/a.length:0;
@@ -42,120 +42,6 @@ function median(a){if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y),m=Math.
 async function loadGroceryItems(){const r=await fetch("data/grocery.json");if(!r.ok)throw new Error("Could not load grocery.json.");const items=await r.json();if(!Array.isArray(items)||!items.length)throw new Error("The grocery item list is empty.");appState.items=items}
 function shuffleArray(a){const c=[...a];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]]}return c}
 function getNextItem(){if(!appState.shuffledItems.length)appState.shuffledItems=shuffleArray(appState.items);return appState.shuffledItems.pop()}
-
-function updateShoppingListModeDisplay(){
-    const custom=shoppingListModeInput.value==="custom";
-
-    shoppingListLengthGroup.classList.toggle("hidden",custom);
-    customShoppingListGroup.classList.toggle("hidden",!custom);
-}
-
-function buildSessionShoppingList(){
-    const student=appState.currentStudent;
-    const available=[...appState.items];
-    let selected=[];
-
-    if(
-        student.shoppingListMode==="custom" &&
-        Array.isArray(student.customShoppingList) &&
-        student.customShoppingList.length
-    ){
-        const requested=student.customShoppingList
-            .map(function(name){return name.toLowerCase()});
-
-        selected=requested
-            .map(function(requestedName){
-                return available.find(function(item){
-                    return item.name.toLowerCase()===requestedName;
-                });
-            })
-            .filter(Boolean);
-    }
-
-    if(!selected.length){
-        const count=Math.max(
-            1,
-            Math.min(
-                Number(student.shoppingListLength)||1,
-                available.length
-            )
-        );
-
-        selected=shuffleArray(available).slice(0,count);
-    }
-
-    appState.sessionShoppingList=selected.map(function(item){
-        return {
-            name:item.name,
-            completed:false
-        };
-    });
-
-    appState.currentShoppingIndex=0;
-}
-
-function getCurrentShoppingItem(){
-    const listItem=
-        appState.sessionShoppingList[
-            appState.currentShoppingIndex
-        ];
-
-    if(!listItem){
-        return getNextItem();
-    }
-
-    return appState.items.find(function(item){
-        return item.name===listItem.name;
-    }) || getNextItem();
-}
-
-function renderShoppingList(){
-    shoppingListDisplay.innerHTML="";
-
-    appState.sessionShoppingList.forEach(function(listItem,index){
-        const item=document.createElement("div");
-        item.className="shoppingListItem";
-
-        if(listItem.completed){
-            item.classList.add("completed");
-        }else if(index===appState.currentShoppingIndex){
-            item.classList.add("current");
-        }
-
-        const check=document.createElement("span");
-        check.className="shoppingListCheck";
-        check.textContent=listItem.completed?"✓":"○";
-
-        const label=document.createElement("span");
-        label.textContent=listItem.name;
-
-        item.appendChild(check);
-        item.appendChild(label);
-        shoppingListDisplay.appendChild(item);
-    });
-
-    const remaining=appState.sessionShoppingList.filter(function(item){
-        return !item.completed;
-    }).length;
-
-    itemsRemainingLabel.textContent=
-        remaining+" item"+(remaining===1?"":"s")+" left";
-}
-
-function completeCurrentShoppingItem(){
-    const current=
-        appState.sessionShoppingList[
-            appState.currentShoppingIndex
-        ];
-
-    if(current){
-        current.completed=true;
-    }
-
-    appState.currentShoppingIndex+=1;
-    renderShoppingList();
-}
-
 function getRandomBudget(){
     const student=appState.currentStudent||getSelectedStudent();
 
@@ -228,7 +114,7 @@ function showGesturePrompt(){
     }
 }
 
-function getCorrectAnswer(){return Number(appState.currentBudget)>=Number(appState.currentItem.price)?"yes":"no"}
+function getCorrectAnswer(){const cost=isListAffordabilityLevel()?appState.currentListTotal:Number(appState.currentItem.price);return Number(appState.currentBudget)>=Number(cost)?"yes":"no"}
 function getCorrectButton(){return getCorrectAnswer()==="yes"?yesButton:noButton}
 function schedulePrompts(){clearPromptTimers();resetPromptDisplay();appState.currentPromptLevel="independent";appState.firstPromptAt=null;if(appState.currentStudent.promptStyle==="baseline"){teacherPromptStatus.textContent="Baseline — no prompts";return}const first=appState.currentStudent.waitTimeSeconds*1000,step=appState.currentStudent.promptStepTimeSeconds*1000;appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("visual"),first));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("audio"),first+step));appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("gesture"),first+step*2))}
 function deliverPrompt(level){
@@ -292,11 +178,19 @@ function speakText(text){
 }
 
 function speakInstructionalCue(){
-    speakText("Can I afford this item?");
+    if(isListAffordabilityLevel()){
+        speakText("Can I afford everything on my grocery list?");
+    }else{
+        speakText("Can I afford this item?");
+    }
 }
 
 function speakSecondaryPrompt(){
-    speakText("Look at your budget. Do you have enough to buy this item?");
+    if(isListAffordabilityLevel()){
+        speakText("Look at the total cost and your budget. Do you have enough to buy everything?");
+    }else{
+        speakText("Look at your budget. Do you have enough to buy this item?");
+    }
 }
 
 
@@ -368,13 +262,33 @@ function deliverCorrectReinforcement(){
     return true;
 }
 
-async function startSession(){if(!appState.currentStudent)appState.currentStudent=getSelectedStudent();if(!appState.currentStudent)return;disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.responses=[];appState.shuffledItems=[];buildSessionShoppingList();renderShoppingList();studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);loadNextTrial()}catch(e){console.error(e);alert("The grocery items could not be loaded.")}}
-function loadNextTrial(){clearPromptTimers();hideFeedback();resetPromptDisplay();if(appState.currentTrial>=appState.sessionShoppingList.length){finishSession();return}appState.currentTrial++;appState.currentItem=getCurrentShoppingItem();appState.currentBudget=getRandomBudget();appState.acceptingResponse=true;updateTrialCounter();displayCurrentTrial();enableAnswerButtons();appState.trialStartedAt=performance.now();schedulePrompts();if(appState.currentStudent.audioSdEnabled!==false){window.setTimeout(speakInstructionalCue,150)}}
-function updateTrialCounter(){const t=appState.sessionShoppingList.length;trialCounter.textContent="Trial "+appState.currentTrial+" of "+t;progressBar.style.width=(appState.currentTrial/t*100)+"%"}
-function displayCurrentTrial(){itemName.textContent=appState.currentItem.name;itemCategory.textContent=appState.currentItem.category;itemPrice.textContent=formatCurrency(appState.currentItem.price);budgetDisplay.textContent=formatCurrency(appState.currentBudget);itemImage.onerror=()=>{itemImage.removeAttribute("src");itemImage.alt="Image unavailable for "+appState.currentItem.name};itemImage.src="assets/images/grocery/"+appState.currentItem.image;itemImage.alt=appState.currentItem.name}
-function handleAnswer(answer){if(!appState.acceptingResponse)return;const now=performance.now(),lat=Number(((now-appState.trialStartedAt)/1000).toFixed(2)),post=appState.firstPromptAt===null?null:Number(((now-appState.firstPromptAt)/1000).toFixed(2));appState.acceptingResponse=false;clearPromptTimers();disableAnswerButtons();completeCurrentShoppingItem();const correct=getCorrectAnswer(),ok=answer===correct;recordTrial(answer,correct,ok,lat,post);showFeedback(ok?"Nice job! You compared the price and your budget.":"Thanks for trying. Let's practice another one.",ok);setTimeout(loadNextTrial,nextTrialDelayMilliseconds)}
-function recordTrial(answer,correct,ok,lat,post){appState.responses.push({trialNumber:appState.currentTrial,item:appState.currentItem.name,category:appState.currentItem.category,price:Number(appState.currentItem.price),budget:Number(appState.currentBudget),studentAnswer:answer,correctAnswer:correct,correct:ok,latencySeconds:lat,postPromptLatencySeconds:post,promptLevel:appState.currentPromptLevel,independent:appState.currentPromptLevel==="independent",rapidResponse:lat<rapidResponseThresholdSeconds,timestamp:new Date().toISOString()})}
-function finishSession(){clearPromptTimers();appState.acceptingResponse=false;disableAnswerButtons();const trials=[...appState.responses],lats=trials.map(r=>r.latencySeconds),correct=trials.filter(r=>r.correct).length,ind=trials.filter(r=>r.independent).length,highest=Math.max(0,...trials.map(r=>PROMPT_LEVELS[r.promptLevel]||0)),highestName=Object.keys(PROMPT_LEVELS).find(k=>PROMPT_LEVELS[k]===highest)||"independent";const rec={id:appState.currentSessionId,studentId:appState.currentStudent.id,studentName:appState.currentStudent.name,startedAt:appState.sessionStartedAt,completedAt:new Date().toISOString(),plannedTrials:appState.sessionShoppingList.length,completedTrials:trials.length,correctCount:correct,incorrectCount:trials.length-correct,accuracyPercent:trials.length?Number((correct/trials.length*100).toFixed(1)):0,independentCount:ind,independentPercent:trials.length?Number((ind/trials.length*100).toFixed(1)):0,averageLatencySeconds:Number(average(lats).toFixed(2)),medianLatencySeconds:Number(median(lats).toFixed(2)),highestPromptLevel:highestName,promptStyle:appState.currentStudent.promptStyle,waitTimeSeconds:appState.currentStudent.waitTimeSeconds,promptStepTimeSeconds:appState.currentStudent.promptStepTimeSeconds,trials};appState.sessions.unshift(rec);appState.selectedSessionId=rec.id;saveSessions();completionMessage.textContent="Nice work, "+appState.currentStudent.name+"! You completed "+trials.length+" shopping trial"+(trials.length===1?".":"s.");showScreen(completeScreen)}
+async function startSession(){if(!appState.currentStudent)appState.currentStudent=getSelectedStudent();if(!appState.currentStudent)return;disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);loadNextTrial()}catch(e){console.error(e);alert("The grocery items could not be loaded.")}}
+function loadNextTrial(){clearPromptTimers();hideFeedback();resetPromptDisplay();if(appState.currentTrial>=appState.currentStudent.totalTrials){finishSession();return}appState.currentTrial++;if(isListAffordabilityLevel()){buildCurrentListTrial();appState.currentItem=appState.currentListItems[0]}else{appState.currentItem=getNextItem();appState.currentListItems=[];appState.currentListTotal=0}appState.currentBudget=getRandomBudget();appState.acceptingResponse=true;updateTrialCounter();displayCurrentTrial();enableAnswerButtons();appState.trialStartedAt=performance.now();schedulePrompts();if(appState.currentStudent.audioSdEnabled!==false){window.setTimeout(speakInstructionalCue,150)}}
+function updateTrialCounter(){const t=appState.currentStudent.totalTrials;trialCounter.textContent="Trial "+appState.currentTrial+" of "+t;progressBar.style.width=(appState.currentTrial/t*100)+"%"}
+function displayCurrentTrial(){
+    budgetDisplay.textContent=formatCurrency(appState.currentBudget);
+
+    if(isListAffordabilityLevel()){
+        singleItemCard.classList.add("hidden");
+        groceryListCard.classList.remove("hidden");
+        affordabilityQuestion.textContent="Can you afford everything on your grocery list?";
+        renderCurrentListTrial();
+        return;
+    }
+
+    groceryListCard.classList.add("hidden");
+    singleItemCard.classList.remove("hidden");
+    affordabilityQuestion.textContent="Can you afford this item?";
+    itemName.textContent=appState.currentItem.name;
+    itemCategory.textContent=appState.currentItem.category;
+    itemPrice.textContent=formatCurrency(appState.currentItem.price);
+    itemImage.onerror=()=>{itemImage.removeAttribute("src");itemImage.alt="Image unavailable for "+appState.currentItem.name};
+    itemImage.src="assets/images/grocery/"+appState.currentItem.image;
+    itemImage.alt=appState.currentItem.name;
+}
+function handleAnswer(answer){if(!appState.acceptingResponse)return;const now=performance.now(),lat=Number(((now-appState.trialStartedAt)/1000).toFixed(2)),post=appState.firstPromptAt===null?null:Number(((now-appState.firstPromptAt)/1000).toFixed(2));appState.acceptingResponse=false;clearPromptTimers();disableAnswerButtons();const correct=getCorrectAnswer(),ok=answer===correct;recordTrial(answer,correct,ok,lat,post);showFeedback(ok?"Nice job! You compared the price and your budget.":"Thanks for trying. Let's practice another one.",ok);setTimeout(loadNextTrial,nextTrialDelayMilliseconds)}
+function recordTrial(answer,correct,ok,lat,post){appState.responses.push({trialNumber:appState.currentTrial,item:isListAffordabilityLevel()?appState.currentListItems.map(function(item){return item.name}).join(" + "):appState.currentItem.name,category:isListAffordabilityLevel()?"Grocery List":appState.currentItem.category,price:isListAffordabilityLevel()?Number(appState.currentListTotal):Number(appState.currentItem.price),listItems:isListAffordabilityLevel()?appState.currentListItems.map(function(item){return{name:item.name,price:Number(item.price)}}):[],budget:Number(appState.currentBudget),studentAnswer:answer,correctAnswer:correct,correct:ok,latencySeconds:lat,postPromptLatencySeconds:post,promptLevel:appState.currentPromptLevel,independent:appState.currentPromptLevel==="independent",rapidResponse:lat<rapidResponseThresholdSeconds,timestamp:new Date().toISOString()})}
+function finishSession(){clearPromptTimers();appState.acceptingResponse=false;disableAnswerButtons();const trials=[...appState.responses],lats=trials.map(r=>r.latencySeconds),correct=trials.filter(r=>r.correct).length,ind=trials.filter(r=>r.independent).length,highest=Math.max(0,...trials.map(r=>PROMPT_LEVELS[r.promptLevel]||0)),highestName=Object.keys(PROMPT_LEVELS).find(k=>PROMPT_LEVELS[k]===highest)||"independent";const rec={id:appState.currentSessionId,studentId:appState.currentStudent.id,studentName:appState.currentStudent.name,startedAt:appState.sessionStartedAt,completedAt:new Date().toISOString(),plannedTrials:appState.currentStudent.totalTrials,completedTrials:trials.length,correctCount:correct,incorrectCount:trials.length-correct,accuracyPercent:trials.length?Number((correct/trials.length*100).toFixed(1)):0,independentCount:ind,independentPercent:trials.length?Number((ind/trials.length*100).toFixed(1)):0,averageLatencySeconds:Number(average(lats).toFixed(2)),medianLatencySeconds:Number(median(lats).toFixed(2)),highestPromptLevel:highestName,promptStyle:appState.currentStudent.promptStyle,waitTimeSeconds:appState.currentStudent.waitTimeSeconds,promptStepTimeSeconds:appState.currentStudent.promptStepTimeSeconds,trials};appState.sessions.unshift(rec);appState.selectedSessionId=rec.id;saveSessions();completionMessage.textContent="Nice work, "+appState.currentStudent.name+"! You completed "+trials.length+" shopping trial"+(trials.length===1?".":"s.");showScreen(completeScreen)}
 function showFeedback(msg,ok){promptArea.className="promptArea hidden";promptMessage.textContent="";feedbackArea.textContent=msg;feedbackArea.classList.remove("hidden","feedbackCorrect","feedbackIncorrect");feedbackArea.classList.add(ok?"feedbackCorrect":"feedbackIncorrect");trialContent.style.opacity=".45"}
 function hideFeedback(){feedbackArea.textContent="";feedbackArea.classList.add("hidden");feedbackArea.classList.remove("feedbackCorrect","feedbackIncorrect","reinforcementText");trialContent.style.opacity="1"}
 function disableAnswerButtons(){yesButton.disabled=true;noButton.disabled=true}
@@ -394,6 +308,55 @@ function exportClassroomBackup(){const backup={app:"Budget Buddy",version:"0.6",
 async function importClassroomBackup(e){const file=e.target.files[0];if(!file)return;try{const backup=JSON.parse(await file.text());if(!backup||!Array.isArray(backup.students)||!Array.isArray(backup.sessions))throw new Error("Invalid backup");if(!confirm("Importing will replace the students and reports currently saved on this device. Continue?")){importClassroomInput.value="";return}appState.students=backup.students.map(normalizeStudent);appState.sessions=backup.sessions;appState.selectedStudentId=appState.students.some(s=>s.id===backup.selectedStudentId)?backup.selectedStudentId:(appState.students[0]?.id||"");saveStudents();saveSessions();saveSelectedStudentId();updateHomeStudentSelect();updateReportStudentFilter();renderStudentList();dataMessage.textContent="Classroom backup imported successfully."}catch(err){console.error(err);dataMessage.textContent="The selected file could not be imported."}importClassroomInput.value=""}
 
 
+
+function updateActivityLevelDisplay(){
+    const isList=activityLevelInput.value==="list-affordability";
+    listItemCountGroup.classList.toggle("hidden",!isList);
+}
+
+function isListAffordabilityLevel(){
+    return appState.currentStudent &&
+        appState.currentStudent.activityLevel==="list-affordability";
+}
+
+function buildCurrentListTrial(){
+    const count=Math.max(2,Math.min(5,Number(appState.currentStudent.listItemCount)||2));
+    appState.currentListItems=shuffleArray(appState.items).slice(0,count);
+    appState.currentListTotal=Number(
+        appState.currentListItems.reduce(function(total,item){
+            return total+Number(item.price);
+        },0).toFixed(2)
+    );
+}
+
+function renderCurrentListTrial(){
+    groceryListItems.innerHTML="";
+    appState.currentListItems.forEach(function(item){
+        const row=document.createElement("div");
+        row.className="groceryListRow";
+
+        const image=document.createElement("img");
+        image.className="groceryListThumb";
+        image.src="assets/images/grocery/"+item.image;
+        image.alt="";
+
+        const name=document.createElement("span");
+        name.className="groceryListName";
+        name.textContent=item.name;
+
+        const price=document.createElement("span");
+        price.className="groceryListPrice";
+        price.textContent=formatCurrency(item.price);
+
+        row.appendChild(image);
+        row.appendChild(name);
+        row.appendChild(price);
+        groceryListItems.appendChild(row);
+    });
+
+    totalCost.textContent=formatCurrency(appState.currentListTotal);
+}
+
 function updateBudgetModeDisplay(){
     const fixed=budgetModeInput.value==="fixed";
 
@@ -404,7 +367,7 @@ function updateBudgetModeDisplay(){
     }
 }
 
-shoppingListModeInput.addEventListener("change",updateShoppingListModeDisplay);
+activityLevelInput.addEventListener("change",updateActivityLevelDisplay);
 budgetModeInput.addEventListener("change",updateBudgetModeDisplay);
 minimumBudgetInput.addEventListener("change",function(){
     if(budgetModeInput.value==="fixed"){
@@ -437,4 +400,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.10 loaded successfully");
+loadStudents();loadSessions();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.10.1 loaded successfully");

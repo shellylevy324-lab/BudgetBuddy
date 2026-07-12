@@ -1,27 +1,19 @@
 # Budget Buddy Changelog
 
-## v0.10 — Shopping Lists Build
+## v0.10.1 — Grocery List Affordability Build
 
 ### Added
-- Random shopping-list generation
-- Student-specific shopping-list length
-- Custom shopping lists using grocery item names
-- On-screen list progress
-- Current-item highlight
-- Completed-item checkmarks
-- Items-remaining counter
+- Shopping Level selector
+- Level 1: single-item affordability
+- Level 2: whole-list affordability
+- Teacher-selected list size from 2–5 items
+- Random grocery-list generation per trial
+- Total-cost display
+- Level-specific audio and comparison prompts
 
 ### Changed
-- Session length follows the active shopping list
-- Shopping-list settings are included in classroom backups
-
-### Preserved
-- Baseline fidelity
-- Prompting hierarchy
-- Reinforcement profiles
-- Student budget ranges
-- Session reports
-- Import/export
+- Removed the custom-list setup from the earlier v0.10 concept
+- Preserved the simpler v0.9 teacher workflow
 
 ---
 
