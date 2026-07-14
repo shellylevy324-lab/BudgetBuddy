@@ -1,11 +1,18 @@
 const CLASSROOM_STORAGE_KEY="budgetBuddyClassroom_v1";
+const REINFORCEMENT_LIBRARY_STORAGE_KEY="budgetBuddyReinforcementLibrary_v1";
 const STAFF_STORAGE_KEY="budgetBuddyStaff_v1";
 const SELECTED_ADMIN_STORAGE_KEY="budgetBuddySelectedAdministrator_v1";
 const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="budgetBuddySelectedStudent",SESSION_STORAGE_KEY="budgetBuddySessions",nextTrialDelayMilliseconds=1800,rapidResponseThresholdSeconds=1;
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={classroom:{name:"My Classroom",leadTeacher:""},staff:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false};
+const appState={classroom:{name:"My Classroom",leadTeacher:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false};
+let pendingLibraryTokenData="";
+let pendingLibraryTokenFileName="";
+let pendingLibraryCompletionData="";
+let pendingLibraryCompletionFileName="";
+let pendingLibraryAudioData="";
+let pendingLibraryAudioFileName="";
 let pendingTokenAnimationData="",pendingTokenAnimationFileName="",pendingCompletionAnimationData="",pendingCompletionAnimationFileName="",pendingCompletionAudioData="",pendingCompletionAudioFileName="";
 
 
@@ -18,6 +25,7 @@ const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profil
 const reportStudentFilter=$("reportStudentFilter"),reportAdministratorFilter=$("reportAdministratorFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
 const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
 const classroomNameInput=$("classroomName"),classroomTeacherNameInput=$("classroomTeacherName"),saveClassroomButton=$("saveClassroomButton"),classroomMessage=$("classroomMessage"),staffList=$("staffList"),addStaffButton=$("addStaffButton"),staffEditor=$("staffEditor"),staffIdInput=$("staffId"),staffNameInput=$("staffName"),staffRoleInput=$("staffRole"),staffActiveInput=$("staffActive"),saveStaffButton=$("saveStaffButton"),cancelStaffButton=$("cancelStaffButton"),staffMessage=$("staffMessage");
+const reinforcementLibraryList=$("reinforcementLibraryList"),addLibraryPackageButton=$("addLibraryPackageButton"),libraryPackageEditor=$("libraryPackageEditor"),libraryPackageIdInput=$("libraryPackageId"),libraryPackageNameInput=$("libraryPackageName"),libraryPraiseTextInput=$("libraryPraiseText"),libraryTokenUploadInput=$("libraryTokenUpload"),libraryTokenStatus=$("libraryTokenStatus"),clearLibraryTokenButton=$("clearLibraryTokenButton"),libraryTokenPathInput=$("libraryTokenPath"),libraryCompletionUploadInput=$("libraryCompletionUpload"),libraryCompletionStatus=$("libraryCompletionStatus"),clearLibraryCompletionButton=$("clearLibraryCompletionButton"),libraryCompletionPathInput=$("libraryCompletionPath"),libraryAudioUploadInput=$("libraryAudioUpload"),libraryAudioStatus=$("libraryAudioStatus"),clearLibraryAudioButton=$("clearLibraryAudioButton"),libraryAudioPathInput=$("libraryAudioPath"),previewLibraryTokenButton=$("previewLibraryTokenButton"),previewLibraryCompletionButton=$("previewLibraryCompletionButton"),saveLibraryPackageButton=$("saveLibraryPackageButton"),deactivateLibraryPackageButton=$("deactivateLibraryPackageButton"),cancelLibraryPackageButton=$("cancelLibraryPackageButton"),libraryPackageMessage=$("libraryPackageMessage"),classroomReinforcementOptions=$("classroomReinforcementOptions");
 const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),sessionAdministratorSelect=$("sessionAdministratorSelect"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
 const studentGreeting=$("studentGreeting"),teacherPromptStatus=$("teacherPromptStatus"),tokenBoard=$("tokenBoard"),tokenCountLabel=$("tokenCountLabel"),tokenSlots=$("tokenSlots"),tokenCelebrationOverlay=$("tokenCelebrationOverlay"),tokenCelebrationImage=$("tokenCelebrationImage"),builtInTokenAnimation=$("builtInTokenAnimation"),tokenCelebrationText=$("tokenCelebrationText"),trialCounter=$("trialCounter"),progressBar=$("progressBar"),promptArea=$("promptArea"),promptMessage=$("promptMessage"),singleItemCard=$("singleItemCard"),groceryListCard=$("groceryListCard"),groceryListItems=$("groceryListItems"),totalCostDisplay=$("totalCostDisplay"),totalCost=$("totalCost"),cartBuilderCard=$("cartBuilderCard"),cartChoiceGrid=$("cartChoiceGrid"),cartSelectionCount=$("cartSelectionCount"),cartTotal=$("cartTotal"),remainingBudget=$("remainingBudget"),yesNoAnswerButtons=$("yesNoAnswerButtons"),checkCartButton=$("checkCartButton"),responseDelayMessage=$("responseDelayMessage"),affordabilityQuestion=$("affordabilityQuestion"),itemImage=$("itemImage"),itemName=$("itemName"),itemCategory=$("itemCategory"),itemPrice=$("itemPrice"),budgetDisplay=$("budgetDisplay"),repeatSdButton=$("repeatSdButton"),yesButton=$("yesButton"),noButton=$("noButton"),feedbackArea=$("feedbackArea"),trialContent=$("trialContent"),endSessionButton=$("endSessionButton");
 const completionMessage=$("completionMessage"),newSessionButton=$("newSessionButton"),viewReportButton=$("viewReportButton"),completeHomeButton=$("completeHomeButton");
@@ -84,6 +92,7 @@ function showTeacherPanel(name){
     if(name==="classroom"){
         renderClassroom();
         renderStaffList();
+        renderReinforcementLibrary();
     }
 
     if(name==="reports"){
@@ -91,6 +100,295 @@ function showTeacherPanel(name){
     }
 }
 
+
+
+function normalizeLibraryPackage(item){
+    return {
+        id:item.id||("reinforcement-"+Date.now()),
+        name:(item.name||"Classroom Package").slice(0,60),
+        praiseText:(item.praiseText||"Nice job!").slice(0,80),
+        tokenData:item.tokenData||"",
+        tokenFileName:item.tokenFileName||"",
+        tokenPath:item.tokenPath||"",
+        completionData:item.completionData||"",
+        completionFileName:item.completionFileName||"",
+        completionPath:item.completionPath||"",
+        audioData:item.audioData||"",
+        audioFileName:item.audioFileName||"",
+        audioPath:item.audioPath||"",
+        active:item.active!==false
+    };
+}
+
+function saveReinforcementLibrary(){
+    try{
+        localStorage.setItem(
+            REINFORCEMENT_LIBRARY_STORAGE_KEY,
+            JSON.stringify(appState.reinforcementLibrary)
+        );
+    }catch(error){
+        console.error(error);
+        alert(
+            "The reinforcement package could not be saved because browser storage is full. Use smaller files or project paths."
+        );
+        throw error;
+    }
+}
+
+function loadReinforcementLibrary(){
+    const raw=localStorage.getItem(
+        REINFORCEMENT_LIBRARY_STORAGE_KEY
+    );
+
+    if(!raw){
+        appState.reinforcementLibrary=[];
+        return;
+    }
+
+    try{
+        const parsed=JSON.parse(raw);
+        appState.reinforcementLibrary=Array.isArray(parsed)
+            ? parsed.map(normalizeLibraryPackage)
+            : [];
+    }catch(error){
+        console.error(error);
+        appState.reinforcementLibrary=[];
+    }
+}
+
+function getLibraryPackageByValue(value){
+    if(!String(value||"").startsWith("library:")){
+        return null;
+    }
+
+    const id=String(value).slice("library:".length);
+
+    return appState.reinforcementLibrary.find(function(item){
+        return item.id===id;
+    })||null;
+}
+
+function updateReinforcementPackageOptions(selectedValue=""){
+    if(!classroomReinforcementOptions){return}
+
+    classroomReinforcementOptions.innerHTML="";
+
+    appState.reinforcementLibrary
+        .filter(function(item){return item.active})
+        .forEach(function(item){
+            const option=document.createElement("option");
+            option.value="library:"+item.id;
+            option.textContent="❤️ "+item.name;
+            classroomReinforcementOptions.appendChild(option);
+        });
+
+    const desired=selectedValue||reinforcementPackageInput.value||"stars";
+    const exists=[...reinforcementPackageInput.options].some(function(option){
+        return option.value===desired;
+    });
+
+    reinforcementPackageInput.value=exists ? desired : "stars";
+    updateReinforcementPackageDisplay();
+}
+
+function renderReinforcementLibrary(){
+    reinforcementLibraryList.innerHTML="";
+
+    if(!appState.reinforcementLibrary.length){
+        const empty=document.createElement("p");
+        empty.className="fieldHelp";
+        empty.textContent="No classroom packages have been created yet.";
+        reinforcementLibraryList.appendChild(empty);
+        return;
+    }
+
+    appState.reinforcementLibrary.forEach(function(item){
+        const card=document.createElement("div");
+        card.className="libraryPackageCard"+(item.active?"":" inactive");
+
+        const preview=document.createElement("div");
+        preview.className="libraryPackagePreview";
+
+        const imageSource=item.tokenData||item.tokenPath;
+
+        if(imageSource){
+            const image=document.createElement("img");
+            image.src=imageSource;
+            image.alt="";
+            preview.appendChild(image);
+        }else{
+            preview.textContent="⭐";
+        }
+
+        const title=document.createElement("h4");
+        title.textContent=item.name;
+
+        const details=document.createElement("p");
+        details.textContent=
+            (item.active?"Active":"Inactive")+
+            " · "+(item.praiseText||"Nice job!");
+
+        const edit=document.createElement("button");
+        edit.type="button";
+        edit.className="smallButton";
+        edit.textContent="Edit";
+        edit.onclick=function(){
+            openLibraryPackageEditor(item.id);
+        };
+
+        card.appendChild(preview);
+        card.appendChild(title);
+        card.appendChild(details);
+        card.appendChild(edit);
+        reinforcementLibraryList.appendChild(card);
+    });
+}
+
+function setLibraryUploadStatuses(){
+    setUploadStatus(
+        libraryTokenStatus,
+        pendingLibraryTokenFileName,
+        pendingLibraryTokenData
+    );
+    setUploadStatus(
+        libraryCompletionStatus,
+        pendingLibraryCompletionFileName,
+        pendingLibraryCompletionData
+    );
+    setUploadStatus(
+        libraryAudioStatus,
+        pendingLibraryAudioFileName,
+        pendingLibraryAudioData
+    );
+}
+
+function openLibraryPackageEditor(id=""){
+    const item=appState.reinforcementLibrary.find(function(packageItem){
+        return packageItem.id===id;
+    });
+
+    libraryPackageEditor.classList.remove("hidden");
+    libraryPackageIdInput.value=item?.id||"";
+    libraryPackageNameInput.value=item?.name||"";
+    libraryPraiseTextInput.value=item?.praiseText||"Nice job!";
+    libraryTokenPathInput.value=item?.tokenPath||"";
+    libraryCompletionPathInput.value=item?.completionPath||"";
+    libraryAudioPathInput.value=item?.audioPath||"";
+
+    pendingLibraryTokenData=item?.tokenData||"";
+    pendingLibraryTokenFileName=item?.tokenFileName||"";
+    pendingLibraryCompletionData=item?.completionData||"";
+    pendingLibraryCompletionFileName=item?.completionFileName||"";
+    pendingLibraryAudioData=item?.audioData||"";
+    pendingLibraryAudioFileName=item?.audioFileName||"";
+
+    libraryTokenUploadInput.value="";
+    libraryCompletionUploadInput.value="";
+    libraryAudioUploadInput.value="";
+    setLibraryUploadStatuses();
+
+    deactivateLibraryPackageButton.disabled=!item;
+    deactivateLibraryPackageButton.textContent=item?.active===false
+        ? "Reactivate"
+        : "Deactivate";
+
+    libraryPackageMessage.textContent="";
+    libraryPackageNameInput.focus();
+}
+
+function closeLibraryPackageEditor(){
+    libraryPackageEditor.classList.add("hidden");
+    libraryPackageIdInput.value="";
+    libraryPackageMessage.textContent="";
+}
+
+function saveLibraryPackage(){
+    const name=libraryPackageNameInput.value.trim();
+
+    if(!name){
+        libraryPackageMessage.textContent="Please enter a package name.";
+        return;
+    }
+
+    const id=libraryPackageIdInput.value||
+        ("reinforcement-"+Date.now());
+
+    const existing=appState.reinforcementLibrary.find(function(item){
+        return item.id===id;
+    });
+
+    const record=normalizeLibraryPackage({
+        id:id,
+        name:name,
+        praiseText:libraryPraiseTextInput.value.trim()||"Nice job!",
+        tokenData:pendingLibraryTokenData,
+        tokenFileName:pendingLibraryTokenFileName,
+        tokenPath:libraryTokenPathInput.value.trim(),
+        completionData:pendingLibraryCompletionData,
+        completionFileName:pendingLibraryCompletionFileName,
+        completionPath:libraryCompletionPathInput.value.trim(),
+        audioData:pendingLibraryAudioData,
+        audioFileName:pendingLibraryAudioFileName,
+        audioPath:libraryAudioPathInput.value.trim(),
+        active:existing?.active!==false
+    });
+
+    const index=appState.reinforcementLibrary.findIndex(function(item){
+        return item.id===id;
+    });
+
+    if(index>=0){
+        appState.reinforcementLibrary[index]=record;
+    }else{
+        appState.reinforcementLibrary.push(record);
+    }
+
+    saveReinforcementLibrary();
+    renderReinforcementLibrary();
+    updateReinforcementPackageOptions(
+        "library:"+record.id
+    );
+    closeLibraryPackageEditor();
+}
+
+function toggleLibraryPackageActive(){
+    const id=libraryPackageIdInput.value;
+
+    if(!id){return}
+
+    const item=appState.reinforcementLibrary.find(function(packageItem){
+        return packageItem.id===id;
+    });
+
+    if(!item){return}
+
+    item.active=!item.active;
+    saveReinforcementLibrary();
+    renderReinforcementLibrary();
+    updateReinforcementPackageOptions();
+    closeLibraryPackageEditor();
+}
+
+function buildLibraryPreviewProfile(){
+    return {
+        reinforcementPackage:"library:"+(
+            libraryPackageIdInput.value||"preview"
+        ),
+        reinforcementType:"text-sound",
+        praiseText:libraryPraiseTextInput.value.trim()||"Nice job!",
+        libraryPreviewPackage:normalizeLibraryPackage({
+            id:libraryPackageIdInput.value||"preview",
+            name:libraryPackageNameInput.value.trim()||"Preview",
+            praiseText:libraryPraiseTextInput.value.trim()||"Nice job!",
+            tokenData:pendingLibraryTokenData,
+            tokenPath:libraryTokenPathInput.value.trim(),
+            completionData:pendingLibraryCompletionData,
+            completionPath:libraryCompletionPathInput.value.trim(),
+            audioData:pendingLibraryAudioData,
+            audioPath:libraryAudioPathInput.value.trim()
+        })
+    };
+}
 
 function normalizeStaff(staff){
     return {
@@ -328,7 +626,10 @@ function getSelectedAdministrator(){
     })||null;
 }
 
-function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),reinforcementPackage:["stars","rockets","dinosaurs","rainbow","trains","music","custom","none"].includes(s.reinforcementPackage)?s.reinforcementPackage:"stars",tokenAnimationData:s.tokenAnimationData||"",tokenAnimationFileName:s.tokenAnimationFileName||"",completionAnimationData:s.completionAnimationData||"",completionAnimationFileName:s.completionAnimationFileName||"",completionAudioData:s.completionAudioData||"",completionAudioFileName:s.completionAudioFileName||"",differentialReinforcement:["all-correct","independent-only","independent-bonus"].includes(s.differentialReinforcement)?s.differentialReinforcement:"all-correct",tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2,responseDelaySeconds:Number.isFinite(Number(s.responseDelaySeconds))?Math.max(0,Math.min(10,Number(s.responseDelaySeconds))):2,
+function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),reinforcementPackage:(
+    ["stars","rockets","dinosaurs","rainbow","trains","music","custom","none"].includes(s.reinforcementPackage) ||
+    String(s.reinforcementPackage||"").startsWith("library:")
+) ? s.reinforcementPackage : "stars",tokenAnimationData:s.tokenAnimationData||"",tokenAnimationFileName:s.tokenAnimationFileName||"",completionAnimationData:s.completionAnimationData||"",completionAnimationFileName:s.completionAnimationFileName||"",completionAudioData:s.completionAudioData||"",completionAudioFileName:s.completionAudioFileName||"",differentialReinforcement:["all-correct","independent-only","independent-bonus"].includes(s.differentialReinforcement)?s.differentialReinforcement:"all-correct",tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2,responseDelaySeconds:Number.isFinite(Number(s.responseDelaySeconds))?Math.max(0,Math.min(10,Number(s.responseDelaySeconds))):2,
 errorCorrection:{
  modelCorrectResponse:s.errorCorrection?.modelCorrectResponse!==false,
  requireCorrectionResponse:s.errorCorrection?.requireCorrectionResponse!==false,
@@ -397,7 +698,7 @@ function renderStudentList(){
     });
 }
 
-function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;startingPromptLevelInput.value=s.startingPromptLevel||"visual-audio";tokenGoalInput.value=String(s.tokenGoal||5);maximumTokenTrialsInput.value=String(s.maximumTokenTrials||10);reinforcementPackageInput.value=s.reinforcementPackage||"stars";differentialReinforcementInput.value=s.differentialReinforcement||"all-correct";tokenAnimationPathInput.value=s.tokenAnimationPath||"";completionAnimationPathInput.value=s.completionAnimationPath||"";completionAudioPathInput.value=s.completionAudioPath||"";loadPendingUploadsFromStudent(s);updatePromptStyleDisplay();updateReinforcementPackageDisplay();waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;activityLevelInput.value=s.activityLevel||"single-item";listItemCountInput.value=String(s.listItemCount||2);cartTargetCountInput.value=String(s.cartTargetCount||2);cartOptionCountInput.value=String(s.cartOptionCount||4);updateActivityLevelDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);responseDelaySecondsInput.value=String(Number.isFinite(Number(s.responseDelaySeconds))?s.responseDelaySeconds:2);
+function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;startingPromptLevelInput.value=s.startingPromptLevel||"visual-audio";tokenGoalInput.value=String(s.tokenGoal||5);maximumTokenTrialsInput.value=String(s.maximumTokenTrials||10);updateReinforcementPackageOptions(s.reinforcementPackage||"stars");reinforcementPackageInput.value=s.reinforcementPackage||"stars";differentialReinforcementInput.value=s.differentialReinforcement||"all-correct";tokenAnimationPathInput.value=s.tokenAnimationPath||"";completionAnimationPathInput.value=s.completionAnimationPath||"";completionAudioPathInput.value=s.completionAudioPath||"";loadPendingUploadsFromStudent(s);updatePromptStyleDisplay();updateReinforcementPackageDisplay();waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;activityLevelInput.value=s.activityLevel||"single-item";listItemCountInput.value=String(s.listItemCount||2);cartTargetCountInput.value=String(s.cartTargetCount||2);cartOptionCountInput.value=String(s.cartOptionCount||4);updateActivityLevelDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);responseDelaySecondsInput.value=String(Number.isFinite(Number(s.responseDelaySeconds))?s.responseDelaySeconds:2);
 errorModelCorrectResponseInput.checked=s.errorCorrection?.modelCorrectResponse!==false;
 errorRequireCorrectionResponseInput.checked=s.errorCorrection?.requireCorrectionResponse!==false;
 errorWithholdTokenInput.checked=s.errorCorrection?.withholdToken!==false;
@@ -410,7 +711,7 @@ dataTokensInput.checked=s.dataCollection?.tokens!==false;
 dataCorrectionsInput.checked=s.dataCollection?.corrections!==false;
 dataCartAttemptsInput.checked=s.dataCollection?.cartAttempts!==false;
 dataResponseDistributionInput.checked=s.dataCollection?.responseDistribution!==false;profileFormTitle.textContent="Edit "+s.name;deleteStudentButton.disabled=false;settingsMessage.textContent="";updateHomeStudentSelect();renderStudentList()}
-function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";startingPromptLevelInput.value="visual-audio";tokenGoalInput.value="5";maximumTokenTrialsInput.value="10";reinforcementPackageInput.value="stars";differentialReinforcementInput.value="all-correct";tokenAnimationPathInput.value="";completionAnimationPathInput.value="";completionAudioPathInput.value="";clearPendingUploads();updatePromptStyleDisplay();updateReinforcementPackageDisplay();waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;activityLevelInput.value="single-item";listItemCountInput.value="2";cartTargetCountInput.value="2";cartOptionCountInput.value="4";updateActivityLevelDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";responseDelaySecondsInput.value="2";
+function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";startingPromptLevelInput.value="visual-audio";tokenGoalInput.value="5";maximumTokenTrialsInput.value="10";updateReinforcementPackageOptions("stars");reinforcementPackageInput.value="stars";differentialReinforcementInput.value="all-correct";tokenAnimationPathInput.value="";completionAnimationPathInput.value="";completionAudioPathInput.value="";clearPendingUploads();updatePromptStyleDisplay();updateReinforcementPackageDisplay();waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;activityLevelInput.value="single-item";listItemCountInput.value="2";cartTargetCountInput.value="2";cartOptionCountInput.value="4";updateActivityLevelDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";responseDelaySecondsInput.value="2";
 errorModelCorrectResponseInput.checked=true;
 errorRequireCorrectionResponseInput.checked=true;
 errorWithholdTokenInput.checked=true;
@@ -719,6 +1020,24 @@ const REINFORCEMENT_PACKAGES={
 
 function getReinforcementPackage(profile=appState.currentStudent){
     const key=profile?.reinforcementPackage||"stars";
+
+    if(String(key).startsWith("library:")){
+        const libraryItem=
+            profile?.libraryPreviewPackage ||
+            getLibraryPackageByValue(key);
+
+        if(libraryItem){
+            return {
+                token:"⭐",
+                completion:["✨","🎉","✨"],
+                tokenText:libraryItem.name+" token earned!",
+                praise:libraryItem.praiseText||"Nice job!",
+                tones:[659.25,783.99],
+                libraryItem:libraryItem
+            };
+        }
+    }
+
     return REINFORCEMENT_PACKAGES[key]||REINFORCEMENT_PACKAGES.stars;
 }
 
@@ -782,11 +1101,15 @@ function showTokenCelebration(options={}){
     const profile=appState.currentStudent||getSelectedStudent();
     const packageKey=profile?.reinforcementPackage||"stars";
     const pack=getReinforcementPackage(profile);
-    const path=packageKey==="custom"?(profile?.tokenAnimationData||profile?.tokenAnimationPath||""):"";
+    const path=String(packageKey).startsWith("library:")
+        ? (pack.libraryItem?.tokenData||pack.libraryItem?.tokenPath||"")
+        : packageKey==="custom"
+            ? (profile?.tokenAnimationData||profile?.tokenAnimationPath||"")
+            : "";
     const card=tokenCelebrationOverlay.querySelector(".tokenCelebrationCard");
 
     tokenCelebrationOverlay.className=
-        "tokenCelebrationOverlay tokenTheme-"+packageKey;
+        "tokenCelebrationOverlay tokenTheme-"+(String(packageKey).startsWith("library:")?"library":packageKey);
 
     tokenCelebrationText.textContent=
         options.preview
@@ -824,8 +1147,16 @@ function playCompletionMedia(options={}){
     const profile=appState.currentStudent||getSelectedStudent();
     const packageKey=profile?.reinforcementPackage||"stars";
     const pack=getReinforcementPackage(profile);
-    const imagePath=packageKey==="custom"?(profile?.completionAnimationData||profile?.completionAnimationPath||""):"";
-    const audioPath=packageKey==="custom"?(profile?.completionAudioData||profile?.completionAudioPath||""):"";
+    const imagePath=String(packageKey).startsWith("library:")
+        ? (pack.libraryItem?.completionData||pack.libraryItem?.completionPath||"")
+        : packageKey==="custom"
+            ? (profile?.completionAnimationData||profile?.completionAnimationPath||"")
+            : "";
+    const audioPath=String(packageKey).startsWith("library:")
+        ? (pack.libraryItem?.audioData||pack.libraryItem?.audioPath||"")
+        : packageKey==="custom"
+            ? (profile?.completionAudioData||profile?.completionAudioPath||"")
+            : "";
 
     completionIconLeft.textContent=pack.completion[0];
     completionIconMain.textContent=pack.completion[1];
@@ -1748,8 +2079,104 @@ function downloadTextFile(name,content,type){const b=new Blob([content],{type}),
 function exportSessionsToCsv(){const sessions=getFilteredSessions();if(!sessions.length){alert("There are no sessions to export.");return}const rows=[["Session ID","Student","Session Completed","Trial","Item","Category","Price","Budget","Student Answer","Correct Answer","Correct","Total Latency Seconds","Prompt Level","Independent","Post-Prompt Latency Seconds"]];sessions.forEach(s=>(s.trials||[]).forEach(t=>rows.push([s.id,s.studentName,s.completedAt,t.trialNumber,t.item,t.category,Number(t.price).toFixed(2),Number(t.budget).toFixed(2),t.studentAnswer,t.correctAnswer,t.correct?"Yes":"No",Number(t.latencySeconds).toFixed(2),t.promptLevel||"independent",t.independent?"Yes":"No",t.postPromptLatencySeconds==null?"":Number(t.postPromptLatencySeconds).toFixed(2)])));downloadTextFile("budget-buddy-session-data.csv",rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8;")}
 function clearSavedReports(){if(!confirm("Delete all saved session reports from this browser?"))return;appState.sessions=[];appState.selectedSessionId="";saveSessions();renderReports()}
 
-function exportClassroomBackup(){const backup={app:"Budget Buddy",version:"0.6",exportedAt:new Date().toISOString(),selectedStudentId:appState.selectedStudentId,students:appState.students,sessions:appState.sessions};downloadTextFile("budget-buddy-classroom-backup.json",JSON.stringify(backup,null,2),"application/json;charset=utf-8;");dataMessage.textContent="Classroom backup exported."}
-async function importClassroomBackup(e){const file=e.target.files[0];if(!file)return;try{const backup=JSON.parse(await file.text());if(!backup||!Array.isArray(backup.students)||!Array.isArray(backup.sessions))throw new Error("Invalid backup");if(!confirm("Importing will replace the students and reports currently saved on this device. Continue?")){importClassroomInput.value="";return}appState.students=backup.students.map(normalizeStudent);appState.sessions=backup.sessions;appState.selectedStudentId=appState.students.some(s=>s.id===backup.selectedStudentId)?backup.selectedStudentId:(appState.students[0]?.id||"");saveStudents();saveSessions();saveSelectedStudentId();updateHomeStudentSelect();updateReportStudentFilter();renderStudentList();dataMessage.textContent="Classroom backup imported successfully."}catch(err){console.error(err);dataMessage.textContent="The selected file could not be imported."}importClassroomInput.value=""}
+function exportClassroomBackup(){
+    const backup={
+        app:"Budget Buddy",
+        version:"0.16",
+        exportedAt:new Date().toISOString(),
+        classroom:appState.classroom,
+        staff:appState.staff,
+        reinforcementLibrary:appState.reinforcementLibrary,
+        selectedAdministratorId:appState.selectedAdministratorId,
+        selectedStudentId:appState.selectedStudentId,
+        students:appState.students,
+        sessions:appState.sessions
+    };
+
+    downloadTextFile(
+        "budget-buddy-classroom-backup.json",
+        JSON.stringify(backup,null,2),
+        "application/json;charset=utf-8;"
+    );
+
+    dataMessage.textContent="Classroom backup exported.";
+}
+
+async function importClassroomBackup(event){
+    const file=event.target.files[0];
+    if(!file){return}
+
+    try{
+        const backup=JSON.parse(await file.text());
+
+        if(
+            !backup ||
+            !Array.isArray(backup.students) ||
+            !Array.isArray(backup.sessions)
+        ){
+            throw new Error("Invalid backup");
+        }
+
+        if(!confirm(
+            "Importing will replace the classroom data currently saved on this device. Continue?"
+        )){
+            importClassroomInput.value="";
+            return;
+        }
+
+        if(backup.classroom){
+            appState.classroom={
+                name:(backup.classroom.name||"My Classroom").slice(0,80),
+                leadTeacher:(backup.classroom.leadTeacher||"").slice(0,80)
+            };
+        }
+
+        appState.staff=Array.isArray(backup.staff)
+            ? backup.staff.map(normalizeStaff)
+            : appState.staff;
+
+        appState.reinforcementLibrary=
+            Array.isArray(backup.reinforcementLibrary)
+                ? backup.reinforcementLibrary.map(normalizeLibraryPackage)
+                : [];
+
+        appState.students=backup.students.map(normalizeStudent);
+        appState.sessions=backup.sessions;
+
+        appState.selectedStudentId=appState.students.some(function(student){
+            return student.id===backup.selectedStudentId;
+        }) ? backup.selectedStudentId : (appState.students[0]?.id||"");
+
+        appState.selectedAdministratorId=appState.staff.some(function(staff){
+            return staff.id===backup.selectedAdministratorId && staff.active;
+        }) ? backup.selectedAdministratorId : (
+            appState.staff.find(function(staff){return staff.active})?.id||""
+        );
+
+        saveClassroomProfile();
+        saveStaffDirectory();
+        saveReinforcementLibrary();
+        saveStudents();
+        saveSessions();
+        saveSelectedStudentId();
+        saveSelectedAdministrator();
+
+        updateHomeStudentSelect();
+        updateReportStudentFilter();
+        updateAdministratorSelects();
+        updateReinforcementPackageOptions();
+        renderStudentList();
+        renderStaffList();
+        renderReinforcementLibrary();
+
+        dataMessage.textContent="Classroom backup imported successfully.";
+    }catch(error){
+        console.error(error);
+        dataMessage.textContent="The selected file could not be imported.";
+    }
+
+    importClassroomInput.value="";
+}
 
 
 
@@ -1904,6 +2331,98 @@ previewCompletionReinforcementButton.addEventListener(
 );
 
 
+
+addLibraryPackageButton.onclick=function(){
+    openLibraryPackageEditor();
+};
+
+saveLibraryPackageButton.onclick=saveLibraryPackage;
+cancelLibraryPackageButton.onclick=closeLibraryPackageEditor;
+deactivateLibraryPackageButton.onclick=toggleLibraryPackageActive;
+
+libraryTokenUploadInput.onchange=async function(){
+    try{
+        const result=await readUploadedFile(
+            libraryTokenUploadInput.files?.[0],
+            MAX_IMAGE_UPLOAD_BYTES,
+            "image/"
+        );
+        pendingLibraryTokenData=result.data;
+        pendingLibraryTokenFileName=result.name;
+        setLibraryUploadStatuses();
+    }catch(error){
+        libraryTokenUploadInput.value="";
+        setUploadStatus(libraryTokenStatus,"","",error.message);
+    }
+};
+
+libraryCompletionUploadInput.onchange=async function(){
+    try{
+        const result=await readUploadedFile(
+            libraryCompletionUploadInput.files?.[0],
+            MAX_IMAGE_UPLOAD_BYTES,
+            "image/"
+        );
+        pendingLibraryCompletionData=result.data;
+        pendingLibraryCompletionFileName=result.name;
+        setLibraryUploadStatuses();
+    }catch(error){
+        libraryCompletionUploadInput.value="";
+        setUploadStatus(libraryCompletionStatus,"","",error.message);
+    }
+};
+
+libraryAudioUploadInput.onchange=async function(){
+    try{
+        const result=await readUploadedFile(
+            libraryAudioUploadInput.files?.[0],
+            MAX_AUDIO_UPLOAD_BYTES,
+            "audio/"
+        );
+        pendingLibraryAudioData=result.data;
+        pendingLibraryAudioFileName=result.name;
+        setLibraryUploadStatuses();
+    }catch(error){
+        libraryAudioUploadInput.value="";
+        setUploadStatus(libraryAudioStatus,"","",error.message);
+    }
+};
+
+clearLibraryTokenButton.onclick=function(){
+    pendingLibraryTokenData="";
+    pendingLibraryTokenFileName="";
+    libraryTokenUploadInput.value="";
+    setLibraryUploadStatuses();
+};
+
+clearLibraryCompletionButton.onclick=function(){
+    pendingLibraryCompletionData="";
+    pendingLibraryCompletionFileName="";
+    libraryCompletionUploadInput.value="";
+    setLibraryUploadStatuses();
+};
+
+clearLibraryAudioButton.onclick=function(){
+    pendingLibraryAudioData="";
+    pendingLibraryAudioFileName="";
+    libraryAudioUploadInput.value="";
+    setLibraryUploadStatuses();
+};
+
+previewLibraryTokenButton.onclick=function(){
+    const previous=appState.currentStudent;
+    appState.currentStudent=buildLibraryPreviewProfile();
+    showTokenCelebration({preview:true});
+    appState.currentStudent=previous;
+};
+
+previewLibraryCompletionButton.onclick=function(){
+    const previous=appState.currentStudent;
+    appState.currentStudent=buildLibraryPreviewProfile();
+    playCompletionMedia({preview:true});
+    appState.currentStudent=previous;
+};
+
 classroomTabButton.onclick=function(){
     showTeacherPanel("classroom");
 };
@@ -1959,12 +2478,14 @@ viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScre
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
 loadClassroomProfile();
+loadReinforcementLibrary();
 loadStudents();
 loadSessions();
 updatePromptStyleDisplay();
 updateHomeStudentSelect();
 updateReportStudentFilter();
 updateAdministratorSelects();
+updateReinforcementPackageOptions();
 disableAnswerButtons();
 showScreen(homeScreen);
-console.log("Budget Buddy v0.15.2 loaded successfully");
+console.log("Budget Buddy v0.16 loaded successfully");

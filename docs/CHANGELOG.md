@@ -1,5 +1,33 @@
 # Budget Buddy Changelog
 
+## v0.16 — Classroom Reinforcement Library
+
+### Added
+- Shared classroom reinforcement packages
+- Package name and default praise
+- Token image/GIF upload or project path
+- Completion image/GIF upload or project path
+- Completion audio upload or project path
+- Token and completion previews
+- Package editing
+- Active/inactive package status
+- Classroom-library choices in Student Programs
+
+### Changed
+- Students can reference one shared package
+- Reinforcement media no longer needs to be duplicated for every student
+- Classroom backups now include classroom, staff, reinforcement library, students, and sessions
+
+### Preserved
+- Student-specific Custom Media option
+- Built-in reinforcement themes
+- Differential reinforcement
+- Baseline suppression of trial reinforcement
+- Existing student programs and reports
+
+---
+
+
 ## v0.15.2 — Robust Student Programs Navigation
 
 ### Fixed

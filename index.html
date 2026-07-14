@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.15.2">
+  <link rel="stylesheet" href="style.css?v=0.16">
 </head>
 <body>
 <main class="container">
@@ -95,6 +95,85 @@
             </div>
 
             <div id="staffMessage" class="settingsMessage" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="settingsCard reinforcementLibraryCard">
+          <div class="sectionTitleRow">
+            <div>
+              <p class="eyebrow">Shared Classroom Resource</p>
+              <h3>Reinforcement Library</h3>
+              <p class="fieldHelp">Create a package once, then assign it to any student program.</p>
+            </div>
+            <button id="addLibraryPackageButton" class="smallButton" type="button">+ Add Package</button>
+          </div>
+
+          <div id="reinforcementLibraryList" class="reinforcementLibraryList"></div>
+
+          <div id="libraryPackageEditor" class="libraryPackageEditor hidden">
+            <input id="libraryPackageId" type="hidden">
+
+            <div class="formGroup">
+              <label for="libraryPackageName">Package Name</label>
+              <input id="libraryPackageName" type="text" maxlength="60" placeholder="Example: Favorite Trains">
+            </div>
+
+            <div class="formGroup">
+              <label for="libraryPraiseText">Default Praise</label>
+              <input id="libraryPraiseText" type="text" maxlength="80" value="Nice job!" placeholder="Example: Great shopping!">
+            </div>
+
+            <div class="customUploadCard">
+              <div class="formGroup">
+                <label for="libraryTokenUpload">Token Animation or Image</label>
+                <input id="libraryTokenUpload" type="file" accept="image/gif,image/png,image/jpeg,image/webp">
+                <p id="libraryTokenStatus" class="uploadStatus">No uploaded file selected.</p>
+                <button id="clearLibraryTokenButton" class="smallButton" type="button">Clear Token Media</button>
+              </div>
+              <div class="formGroup">
+                <label for="libraryTokenPath">Or use a project path</label>
+                <input id="libraryTokenPath" type="text" placeholder="assets/reinforcement/token.gif">
+              </div>
+            </div>
+
+            <div class="customUploadCard">
+              <div class="formGroup">
+                <label for="libraryCompletionUpload">Completion Animation or Image</label>
+                <input id="libraryCompletionUpload" type="file" accept="image/gif,image/png,image/jpeg,image/webp">
+                <p id="libraryCompletionStatus" class="uploadStatus">No uploaded file selected.</p>
+                <button id="clearLibraryCompletionButton" class="smallButton" type="button">Clear Completion Media</button>
+              </div>
+              <div class="formGroup">
+                <label for="libraryCompletionPath">Or use a project path</label>
+                <input id="libraryCompletionPath" type="text" placeholder="assets/reinforcement/completed.gif">
+              </div>
+            </div>
+
+            <div class="customUploadCard">
+              <div class="formGroup">
+                <label for="libraryAudioUpload">Completion Song or Sound</label>
+                <input id="libraryAudioUpload" type="file" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a">
+                <p id="libraryAudioStatus" class="uploadStatus">No uploaded file selected.</p>
+                <button id="clearLibraryAudioButton" class="smallButton" type="button">Clear Audio</button>
+              </div>
+              <div class="formGroup">
+                <label for="libraryAudioPath">Or use a project path</label>
+                <input id="libraryAudioPath" type="text" placeholder="assets/reinforcement/completed.mp3">
+              </div>
+            </div>
+
+            <div class="profileButtons">
+              <button id="previewLibraryTokenButton" class="secondaryButton" type="button">Preview Token</button>
+              <button id="previewLibraryCompletionButton" class="secondaryButton" type="button">Preview Completion</button>
+            </div>
+
+            <div class="profileButtons">
+              <button id="saveLibraryPackageButton" class="primaryButton" type="button">Save Package</button>
+              <button id="deactivateLibraryPackageButton" class="dangerButton" type="button">Deactivate</button>
+              <button id="cancelLibraryPackageButton" class="secondaryButton" type="button">Cancel</button>
+            </div>
+
+            <div id="libraryPackageMessage" class="settingsMessage" role="status" aria-live="polite"></div>
           </div>
         </section>
       </div>
@@ -195,14 +274,19 @@
                 <div class="formGroup">
                   <label for="reinforcementPackage">Reinforcement Package</label>
                   <select id="reinforcementPackage">
-                    <option value="stars">⭐ Super Stars</option>
-                    <option value="rockets">🚀 Rocket Adventure</option>
-                    <option value="dinosaurs">🦕 Dino Celebration</option>
-                    <option value="rainbow">🌈 Rainbow Party</option>
-                    <option value="trains">🚂 Train Time</option>
-                    <option value="music">🎵 Music Celebration</option>
-                    <option value="custom">Custom Media</option>
-                    <option value="none">No Trial Reinforcement</option>
+                    <optgroup label="Built-In">
+                      <option value="stars">⭐ Super Stars</option>
+                      <option value="rockets">🚀 Rocket Adventure</option>
+                      <option value="dinosaurs">🦕 Dino Celebration</option>
+                      <option value="rainbow">🌈 Rainbow Party</option>
+                      <option value="trains">🚂 Train Time</option>
+                      <option value="music">🎵 Music Celebration</option>
+                    </optgroup>
+                    <optgroup id="classroomReinforcementOptions" label="Classroom Library"></optgroup>
+                    <optgroup label="Other">
+                      <option value="custom">Student-Specific Custom Media</option>
+                      <option value="none">No Trial Reinforcement</option>
+                    </optgroup>
                   </select>
                 </div>
 
@@ -507,9 +591,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.15.2 — Robust Student Programs Navigation</footer>
+  <footer class="appFooter">Budget Buddy v0.16 — Classroom Reinforcement Library</footer>
 </main>
 
-<script src="script.js?v=0.15.2"></script>
+<script src="script.js?v=0.16"></script>
 </body>
 </html>

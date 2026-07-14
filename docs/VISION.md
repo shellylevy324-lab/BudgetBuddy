@@ -173,3 +173,9 @@ The teacher-facing workflow now mirrors common ABA lesson-plan sections. Future 
 Budget Buddy is organized around one classroom. The classroom owns student programs, staff records, reinforcement resources, session data, reports, backups, and future Buddy modules.
 
 Each session records the administering staff member. Administrator trends are descriptive and must be interpreted alongside setting, student state, task difficulty, and implementation context.
+
+
+## Shared Classroom Reinforcement Library
+Reinforcement packages belong to the classroom and may be assigned to multiple students. Each student program stores a reference to the selected package rather than another copy of the media.
+
+Packages may be deactivated without removing historical student or session references. Classroom backup and restore includes the complete reinforcement library.

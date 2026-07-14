@@ -278,3 +278,11 @@ The white background remains unchanged throughout the sequence.
 - Rebuilt Student Programs navigation so the teacher screen opens before any student data is rendered.
 - Added a direct HTML fallback for the Student Programs button.
 - Student profile rendering now happens after navigation and cannot prevent the screen from opening.
+
+
+## v0.16
+- Added a shared Classroom Reinforcement Library.
+- Teachers can create, preview, edit, deactivate, and reuse reinforcement packages.
+- A library package may include token media, completion media, completion audio, default praise, or project paths.
+- Student programs reference shared classroom packages instead of duplicating media.
+- Classroom backup and restore now include the classroom profile, staff directory, reinforcement library, students, and sessions.
