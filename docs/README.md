@@ -172,3 +172,20 @@ The white background remains unchanged throughout the sequence.
 - After grocery choices are generated, the app calculates the cost of the required number of cheapest items.
 - If the student-profile budget is too low, the trial budget is automatically raised to that minimum solvable amount.
 - This prevents students from becoming trapped in an impossible trial.
+
+
+## v0.13
+- Added Prompt Fading + Token Goal teaching procedure.
+- Teachers select a programmed starting prompt: visual+audio, visual only, audio only, initial SD, or independent.
+- Response buttons stay locked until the programmed prompt completes.
+- Correct first responses earn tokens.
+- Incorrect first responses receive a model correction and do not earn a token.
+- Sessions end at the token goal or maximum-trial safeguard.
+- Added optional local GIF/image reinforcement for each token and optional completion animation/audio.
+
+
+## v0.13.1
+- Restored core session rendering and reporting functions accidentally omitted from v0.13.
+- Restored the two starter test profiles when missing.
+- Fixed Begin Session for newly created students.
+- Added correct token-goal and maximum-trial session stopping rules.

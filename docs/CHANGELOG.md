@@ -1,5 +1,17 @@
 # Budget Buddy Changelog
 
+## v0.13.1 — Startup and Session Hotfix
+
+### Fixed
+- Begin Shopping could fail after a student was created
+- Core trial display functions were missing from v0.13
+- Starter test profiles are restored when absent
+- Token sessions now stop at the token goal or maximum-trial limit
+- Completion media and session reports are restored
+
+---
+
+
 ## v0.13 — Prompt Fading + Token Acquisition
 
 ### Added

@@ -19,7 +19,34 @@ function showScreen(selected){screens.forEach(s=>s.classList.add("hidden"));sele
 function showTeacherPanel(name){studentsPanel.classList.toggle("hidden",name!=="students");reportsPanel.classList.toggle("hidden",name!=="reports");dataPanel.classList.toggle("hidden",name!=="data");studentsTabButton.classList.toggle("active",name==="students");reportsTabButton.classList.toggle("active",name==="reports");dataTabButton.classList.toggle("active",name==="data");if(name==="reports")renderReports()}
 
 function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2}}
-function loadStudents(){const raw=localStorage.getItem(STUDENT_STORAGE_KEY);if(raw){try{appState.students=JSON.parse(raw).map(normalizeStudent)}catch(e){console.error(e);appState.students=starterStudents.map(normalizeStudent)}}else{appState.students=starterStudents.map(normalizeStudent);saveStudents()}const stored=localStorage.getItem(SELECTED_STUDENT_STORAGE_KEY);appState.selectedStudentId=appState.students.some(s=>s.id===stored)?stored:(appState.students[0]?.id||"")}
+function loadStudents(){
+    const raw=localStorage.getItem(STUDENT_STORAGE_KEY);
+
+    if(raw){
+        try{
+            const parsed=JSON.parse(raw);
+            appState.students=Array.isArray(parsed)
+                ? parsed.map(normalizeStudent)
+                : [];
+        }catch(error){
+            console.error(error);
+            appState.students=[];
+        }
+    }
+
+    starterStudents.forEach(function(starter){
+        if(!appState.students.some(function(student){return student.id===starter.id})){
+            appState.students.push(normalizeStudent(starter));
+        }
+    });
+
+    saveStudents();
+
+    const stored=localStorage.getItem(SELECTED_STUDENT_STORAGE_KEY);
+    appState.selectedStudentId=appState.students.some(function(student){
+        return student.id===stored;
+    }) ? stored : (appState.students[0]?.id||"");
+}
 function saveStudents(){localStorage.setItem(STUDENT_STORAGE_KEY,JSON.stringify(appState.students))}
 function saveSelectedStudentId(){localStorage.setItem(SELECTED_STUDENT_STORAGE_KEY,appState.selectedStudentId)}
 function loadSessions(){const raw=localStorage.getItem(SESSION_STORAGE_KEY);if(!raw){appState.sessions=[];return}try{appState.sessions=JSON.parse(raw)}catch(e){console.error(e);appState.sessions=[]}}
@@ -591,13 +618,19 @@ function deliverCorrectReinforcement(){
     return true;
 }
 
-async function startSession(){if(!appState.currentStudent)appState.currentStudent=getSelectedStudent();if(!appState.currentStudent)return;disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){console.error(e);alert("The grocery items could not be loaded.")}}
+async function startSession(){appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){console.error(e);alert("The grocery items could not be loaded.")}}
 function loadNextTrial(){
     clearPromptTimers();
     hideFeedback();
     resetPromptDisplay();
 
-    if(appState.currentTrial>=appState.currentStudent.totalTrials){
+    const tokenGoalReached=isTokenTeachingSession() &&
+        appState.tokensEarned>=(Number(appState.currentStudent.tokenGoal)||5);
+    const maximumTrialsReached=isTokenTeachingSession()
+        ? appState.currentTrial>=(Number(appState.currentStudent.maximumTokenTrials)||10)
+        : appState.currentTrial>=appState.currentStudent.totalTrials;
+
+    if(tokenGoalReached || maximumTrialsReached){
         finishSession();
         return;
     }
@@ -633,6 +666,8 @@ function loadNextTrial(){
         }
     }
     appState.acceptingResponse=true;
+    appState.awaitingModelCorrection=false;
+    appState.firstResponseRecorded=false;
 
     updateTrialCounter();
     displayCurrentTrial();
@@ -655,6 +690,157 @@ function updateTrialCounter(){
     renderTokenBoard();
 }
 
+
+function displayCurrentTrial(){
+    budgetDisplay.textContent=formatCurrency(appState.currentBudget);
+
+    if(isCartBuilderLevel()){
+        singleItemCard.classList.add("hidden");
+        groceryListCard.classList.add("hidden");
+        cartBuilderCard.classList.remove("hidden");
+        yesNoAnswerButtons.classList.add("hidden");
+        checkCartButton.classList.remove("hidden");
+        affordabilityQuestion.textContent="Choose items that fit in your budget.";
+        renderCartBuilder();
+        return;
+    }
+
+    if(isListAffordabilityLevel()){
+        cartBuilderCard.classList.add("hidden");
+        yesNoAnswerButtons.classList.remove("hidden");
+        checkCartButton.classList.add("hidden");
+        singleItemCard.classList.add("hidden");
+        groceryListCard.classList.remove("hidden");
+        affordabilityQuestion.textContent="Can you afford everything on your grocery list?";
+        renderCurrentListTrial();
+        return;
+    }
+
+    cartBuilderCard.classList.add("hidden");
+    yesNoAnswerButtons.classList.remove("hidden");
+    checkCartButton.classList.add("hidden");
+    groceryListCard.classList.add("hidden");
+    singleItemCard.classList.remove("hidden");
+    affordabilityQuestion.textContent="Can you afford this item?";
+    itemName.textContent=appState.currentItem.name;
+    itemCategory.textContent=appState.currentItem.category;
+    itemPrice.textContent=formatCurrency(appState.currentItem.price);
+    itemImage.onerror=function(){
+        itemImage.removeAttribute("src");
+        itemImage.alt="Image unavailable for "+appState.currentItem.name;
+    };
+    itemImage.src="assets/images/grocery/"+appState.currentItem.image;
+    itemImage.alt=appState.currentItem.name;
+}
+
+function recordTrial(answer,correct,ok,latency,postPromptLatency){
+    appState.responses.push({
+        trialNumber:appState.currentTrial,
+        item:isListAffordabilityLevel()
+            ? appState.currentListItems.map(function(item){return item.name}).join(" + ")
+            : appState.currentItem.name,
+        category:isListAffordabilityLevel()?"Grocery List":appState.currentItem.category,
+        price:isListAffordabilityLevel()?Number(appState.currentListTotal):Number(appState.currentItem.price),
+        listItems:isListAffordabilityLevel()
+            ? appState.currentListItems.map(function(item){return {name:item.name,price:Number(item.price)}})
+            : [],
+        budget:Number(appState.currentBudget),
+        studentAnswer:answer,
+        correctAnswer:correct,
+        correct:ok,
+        tokenEarned:isTokenTeachingSession()&&ok,
+        latencySeconds:latency,
+        postPromptLatencySeconds:postPromptLatency,
+        promptLevel:appState.currentPromptLevel,
+        independent:appState.currentPromptLevel==="independent",
+        rapidResponse:latency<rapidResponseThresholdSeconds,
+        timestamp:new Date().toISOString()
+    });
+}
+
+function finishSession(){
+    clearPromptTimers();
+    appState.acceptingResponse=false;
+    disableAnswerButtons();
+
+    const trials=[...appState.responses];
+    const latencies=trials.map(function(record){return record.latencySeconds});
+    const correctCount=trials.filter(function(record){return record.correct}).length;
+    const independentCount=trials.filter(function(record){return record.independent}).length;
+    const highest=Math.max(0,...trials.map(function(record){return PROMPT_LEVELS[record.promptLevel]||0}));
+    const highestName=Object.keys(PROMPT_LEVELS).find(function(level){return PROMPT_LEVELS[level]===highest})||"independent";
+    const planned=isTokenTeachingSession()
+        ? Number(appState.currentStudent.maximumTokenTrials)||10
+        : appState.currentStudent.totalTrials;
+
+    const sessionRecord={
+        id:appState.currentSessionId,
+        studentId:appState.currentStudent.id,
+        studentName:appState.currentStudent.name,
+        startedAt:appState.sessionStartedAt,
+        completedAt:new Date().toISOString(),
+        plannedTrials:planned,
+        completedTrials:trials.length,
+        correctCount:correctCount,
+        incorrectCount:trials.length-correctCount,
+        accuracyPercent:trials.length?Number((correctCount/trials.length*100).toFixed(1)):0,
+        independentCount:independentCount,
+        independentPercent:trials.length?Number((independentCount/trials.length*100).toFixed(1)):0,
+        averageLatencySeconds:Number(average(latencies).toFixed(2)),
+        medianLatencySeconds:Number(median(latencies).toFixed(2)),
+        highestPromptLevel:highestName,
+        promptStyle:appState.currentStudent.promptStyle,
+        tokenGoal:isTokenTeachingSession()?Number(appState.currentStudent.tokenGoal)||5:null,
+        tokensEarned:isTokenTeachingSession()?appState.tokensEarned:null,
+        tokenGoalMet:isTokenTeachingSession()?appState.tokensEarned>=(Number(appState.currentStudent.tokenGoal)||5):null,
+        waitTimeSeconds:appState.currentStudent.waitTimeSeconds,
+        promptStepTimeSeconds:appState.currentStudent.promptStepTimeSeconds,
+        trials:trials
+    };
+
+    appState.sessions.unshift(sessionRecord);
+    appState.selectedSessionId=sessionRecord.id;
+    saveSessions();
+
+    completionMessage.textContent=isTokenTeachingSession()
+        ? "Shopping finished! You earned "+appState.tokensEarned+" token"+(appState.tokensEarned===1?".":"s.")
+        : "Nice work, "+appState.currentStudent.name+"! You completed "+trials.length+" shopping trial"+(trials.length===1?".":"s.");
+
+    showScreen(completeScreen);
+    playCompletionMedia();
+}
+
+function showFeedback(message,isCorrect){
+    promptArea.className="promptArea hidden";
+    promptMessage.textContent="";
+    feedbackArea.textContent=message;
+    feedbackArea.classList.remove("hidden","feedbackCorrect","feedbackIncorrect");
+    feedbackArea.classList.add(isCorrect?"feedbackCorrect":"feedbackIncorrect");
+    trialContent.style.opacity="0.45";
+}
+
+function hideFeedback(){
+    feedbackArea.textContent="";
+    feedbackArea.classList.add("hidden");
+    feedbackArea.classList.remove("feedbackCorrect","feedbackIncorrect","reinforcementText","modelCorrectionNotice");
+    trialContent.style.opacity="1";
+}
+
+function disableAnswerButtons(){
+    yesButton.disabled=true;
+    noButton.disabled=true;
+    if(checkCartButton){checkCartButton.disabled=true}
+}
+
+function enableAnswerButtons(){
+    yesButton.disabled=false;
+    noButton.disabled=false;
+    if(checkCartButton){
+        checkCartButton.disabled=isCartBuilderLevel()
+            ? appState.selectedCartIndexes.length!==(Number(appState.currentStudent.cartTargetCount)||2)
+            : false;
+    }
+}
 
 function handleCartSubmission(){
     if(!appState.acceptingResponse){
@@ -948,4 +1134,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.13 loaded successfully");
+loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.13.1 loaded successfully");
