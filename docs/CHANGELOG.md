@@ -1,5 +1,15 @@
 # Budget Buddy Changelog
 
+## v0.14.5 — Visible Custom Uploads
+
+### Fixed
+- Custom upload fields were nested inside token-only settings and could remain hidden
+- Selecting Custom Media now immediately displays all three upload controls
+- Custom media can be configured for Least-to-Most or Prompt Fading + Tokens
+
+---
+
+
 ## v0.14.4 — Custom Reinforcement Uploads
 
 ### Added

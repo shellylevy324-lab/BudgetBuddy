@@ -251,3 +251,8 @@ The white background remains unchanged throughout the sequence.
 - Added direct uploads for token images/GIFs, completion images/GIFs, and completion audio.
 - Uploaded media is stored with the student program in the current browser.
 - Relative project paths remain available for cross-device deployment.
+
+
+## v0.14.5
+- Fixed Custom Media upload controls being hidden inside the token-only settings container.
+- Selecting Custom Media now reveals uploads for token animation, completion animation, and completion audio regardless of the selected teaching procedure.

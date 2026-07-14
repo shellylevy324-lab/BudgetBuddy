@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.14.4">
+  <link rel="stylesheet" href="style.css?v=0.14.5">
 </head>
 <body>
 <main class="container">
@@ -163,15 +163,18 @@
                 <div class="formGroup"><label for="praiseText">Personalized Praise</label><input id="praiseText" type="text" maxlength="80" value="Nice job!" placeholder="Example: Great comparing!"></div>
                 <div class="formGroup"><label for="feedbackDuration">Celebration Duration</label><div class="numberInputRow"><input id="feedbackDuration" type="number" min="1" max="10" step="1" value="2"><span>seconds</span></div></div>
                 <div id="tokenReinforcementSettings" class="conditionalProgramSettings hidden">
+                  <p class="subsectionLabel">Token-board settings</p>
                   <div class="budgetSettingsGrid"><div class="formGroup"><label for="tokenGoal">Tokens Needed</label><input id="tokenGoal" type="number" min="1" max="20" step="1" value="5"></div><div class="formGroup"><label for="maximumTokenTrials">Maximum Trials</label><input id="maximumTokenTrials" type="number" min="1" max="50" step="1" value="10"></div></div>
-                  <div id="customReinforcementSettings" class="customReinforcementSettings hidden">
+                  
+                </div>
+                <div id="customReinforcementSettings" class="customReinforcementSettings hidden">
+                  <p class="subsectionLabel">Custom media uploads</p>
                     <p class="fieldHelp">Upload media directly for this browser, or use a relative project path. Uploaded files are stored with the student program on this device.</p>
                     <div class="customUploadCard"><div class="formGroup"><label for="tokenAnimationUpload">Upload Token Animation</label><input id="tokenAnimationUpload" type="file" accept="image/gif,image/png,image/jpeg,image/webp"><p id="tokenAnimationUploadStatus" class="uploadStatus">No uploaded file selected.</p><button id="clearTokenAnimationUpload" class="smallButton" type="button">Clear Uploaded Token Media</button></div><div class="formGroup"><label for="tokenAnimationPath">Or use a project path</label><input id="tokenAnimationPath" type="text" placeholder="assets/reinforcement/token.gif"></div></div>
                     <div class="customUploadCard"><div class="formGroup"><label for="completionAnimationUpload">Upload Completed Board Animation</label><input id="completionAnimationUpload" type="file" accept="image/gif,image/png,image/jpeg,image/webp"><p id="completionAnimationUploadStatus" class="uploadStatus">No uploaded file selected.</p><button id="clearCompletionAnimationUpload" class="smallButton" type="button">Clear Uploaded Completion Media</button></div><div class="formGroup"><label for="completionAnimationPath">Or use a project path</label><input id="completionAnimationPath" type="text" placeholder="assets/reinforcement/completed.gif"></div></div>
                     <div class="customUploadCard"><div class="formGroup"><label for="completionAudioUpload">Upload Completed Board Song/Sound</label><input id="completionAudioUpload" type="file" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/x-m4a"><p id="completionAudioUploadStatus" class="uploadStatus">No uploaded file selected.</p><button id="clearCompletionAudioUpload" class="smallButton" type="button">Clear Uploaded Audio</button></div><div class="formGroup"><label for="completionAudioPath">Or use a project path</label><input id="completionAudioPath" type="text" placeholder="assets/reinforcement/completed.mp3"></div></div>
                     <p class="fieldHelp">Keep uploads brief and small. Large GIFs or songs can exceed browser storage. For cross-device use, project-path media remains the most reliable option.</p>
                   </div>
-                </div>
                 <p class="fieldHelp">Baseline always suppresses trial-by-trial reinforcement.</p>
               </div>
             </details>
@@ -426,9 +429,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.14.4 — Custom Reinforcement Uploads</footer>
+  <footer class="appFooter">Budget Buddy v0.14.5 — Visible Custom Uploads</footer>
 </main>
 
-<script src="script.js?v=0.14.4"></script>
+<script src="script.js?v=0.14.5"></script>
 </body>
 </html>
