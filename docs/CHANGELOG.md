@@ -1,5 +1,22 @@
 # Budget Buddy Changelog
 
+## v0.13.2 — Token Session Start Fix
+
+### Fixed
+- Prompt-fading token sessions could not begin because the comparison prompt function was missing
+- Token sessions no longer report this startup failure as a grocery-data error
+- Comparison prompt values now support all three shopping levels
+- Improved browser compatibility for prompt-level labels
+
+### Preserved
+- Baseline and least-to-most procedures
+- Token goals and model correction
+- Student profiles and saved data
+- Reinforcement media settings
+
+---
+
+
 ## v0.13.1 — Startup and Session Hotfix
 
 ### Fixed

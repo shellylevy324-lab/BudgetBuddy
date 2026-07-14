@@ -189,3 +189,11 @@ The white background remains unchanged throughout the sequence.
 - Restored the two starter test profiles when missing.
 - Fixed Begin Session for newly created students.
 - Added correct token-goal and maximum-trial session stopping rules.
+
+
+## v0.13.2
+- Fixed token sessions failing immediately after Begin Shopping.
+- Restored the comparison-band builder required by prompt-fading sessions.
+- Comparison prompts now support single-item, grocery-list, and cart activities.
+- Replaced a compatibility-sensitive string method.
+- Improved the session-start error message so unrelated errors are not reported as grocery-data failures.

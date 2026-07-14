@@ -400,7 +400,41 @@ function showGesturePrompt(){
     }
 }
 
-function getCorrectAnswer(){const cost=isListAffordabilityLevel()?appState.currentListTotal:Number(appState.currentItem.price);return Number(appState.currentBudget)>=Number(cost)?"yes":"no"}
+
+function buildComparisonPrompt(){
+    let label="Price";
+    let value=Number(appState.currentItem?.price)||0;
+
+    if(isCartBuilderLevel()){
+        label="Cart Total";
+        value=getCartTotal();
+    }else if(isListAffordabilityLevel()){
+        label="Total Cost";
+        value=Number(appState.currentListTotal)||0;
+    }
+
+    return '<div class="comparisonValue">'+
+        '<span>'+label+'</span>'+
+        '<strong>'+formatCurrency(value)+'</strong>'+
+        '</div>'+
+        '<div class="comparisonArrow">↔</div>'+
+        '<div class="comparisonValue">'+
+        '<span>Your Budget</span>'+
+        '<strong>'+formatCurrency(appState.currentBudget)+'</strong>'+
+        '</div>';
+}
+
+function getCorrectAnswer(){
+    const cost=isCartBuilderLevel()
+        ? getCartTotal()
+        : isListAffordabilityLevel()
+            ? Number(appState.currentListTotal)
+            : Number(appState.currentItem?.price);
+
+    return Number(appState.currentBudget)>=Number(cost)
+        ? "yes"
+        : "no";
+}
 function getCorrectButton(){return getCorrectAnswer()==="yes"?yesButton:noButton}
 function schedulePrompts(){
     clearPromptTimers();
@@ -431,7 +465,7 @@ function runTokenStartingPrompt(){
     const level=appState.currentStudent.startingPromptLevel||"visual-audio";
     setResponsesLocked(true);
     appState.currentPromptLevel=level;
-    teacherPromptStatus.textContent="Programmed prompt: "+level.replaceAll("-"," + ");
+    teacherPromptStatus.textContent="Programmed prompt: "+level.split("-").join(" + ");
 
     const unlock=function(){
         if(appState.acceptingResponse){setResponsesLocked(false)}
@@ -618,7 +652,10 @@ function deliverCorrectReinforcement(){
     return true;
 }
 
-async function startSession(){appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){console.error(e);alert("The grocery items could not be loaded.")}}
+async function startSession(){appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){
+        console.error("Session could not start:",e);
+        alert("The session could not start. Please refresh and try again.");
+    }}
 function loadNextTrial(){
     clearPromptTimers();
     hideFeedback();
@@ -1134,4 +1171,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.13.1 loaded successfully");
+loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.13.2 loaded successfully");
