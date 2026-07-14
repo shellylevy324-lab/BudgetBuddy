@@ -1,5 +1,23 @@
 # Budget Buddy Changelog
 
+## v0.15.1 — Student Programs Navigation Fix
+
+### Fixed
+- Student Programs button did not navigate away from the home page
+- Classroom tab and panel were not explicitly connected in JavaScript
+- Administrator selectors now initialize when the application loads
+- Teacher-screen navigation is more resilient
+
+### Preserved
+- Classroom profile and staff directory
+- Session administrator selection
+- Student Programs
+- Reports and administrator filtering
+- Existing student and session data
+
+---
+
+
 ## v0.15 — Classroom Framework
 
 ### Added

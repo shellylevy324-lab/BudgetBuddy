@@ -265,3 +265,10 @@ The white background remains unchanged throughout the sequence.
 - The adult administering a session is selected before Begin Session.
 - Administrator ID, name, and role are saved with each session.
 - Reports can be filtered by administrator.
+
+
+## v0.15.1
+- Fixed the Student Programs button not opening the classroom interface.
+- Added explicit references for the new Classroom tab and panel.
+- Reordered teacher-screen navigation so the screen opens before the selected panel is rendered.
+- Ensured administrator selectors are initialized when the app loads.

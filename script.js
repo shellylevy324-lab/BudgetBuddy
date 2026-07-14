@@ -11,7 +11,9 @@ let pendingTokenAnimationData="",pendingTokenAnimationFileName="",pendingComplet
 
 const $=id=>document.getElementById(id);
 const homeScreen=$("homeScreen"),teacherScreen=$("teacherScreen"),welcomeScreen=$("welcomeScreen"),groceryScreen=$("groceryScreen"),completeScreen=$("completeScreen");
-const homeStudentSelect=$("homeStudentSelect"),startButton=$("startButton"),teacherButton=$("teacherButton"),teacherBackButton=$("teacherBackButton"),studentsTabButton=$("studentsTabButton"),reportsTabButton=$("reportsTabButton"),dataTabButton=$("dataTabButton"),studentsPanel=$("studentsPanel"),reportsPanel=$("reportsPanel"),dataPanel=$("dataPanel");
+const homeStudentSelect=$("homeStudentSelect"),startButton=$("startButton"),teacherButton=$("teacherButton"),teacherBackButton=$("teacherBackButton");
+const classroomTabButton=$("classroomTabButton"),studentsTabButton=$("studentsTabButton"),reportsTabButton=$("reportsTabButton"),dataTabButton=$("dataTabButton");
+const classroomPanel=$("classroomPanel"),studentsPanel=$("studentsPanel"),reportsPanel=$("reportsPanel"),dataPanel=$("dataPanel");
 const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),tokenPromptSettings=$("tokenPromptSettings"),tokenReinforcementSettings=$("tokenReinforcementSettings"),startingPromptLevelInput=$("startingPromptLevel"),tokenGoalInput=$("tokenGoal"),maximumTokenTrialsInput=$("maximumTokenTrials"),tokenAnimationPathInput=$("tokenAnimationPath"),tokenAnimationUploadInput=$("tokenAnimationUpload"),tokenAnimationUploadStatus=$("tokenAnimationUploadStatus"),clearTokenAnimationUploadButton=$("clearTokenAnimationUpload"),completionAnimationPathInput=$("completionAnimationPath"),completionAnimationUploadInput=$("completionAnimationUpload"),completionAnimationUploadStatus=$("completionAnimationUploadStatus"),clearCompletionAnimationUploadButton=$("clearCompletionAnimationUpload"),completionAudioPathInput=$("completionAudioPath"),completionAudioUploadInput=$("completionAudioUpload"),completionAudioUploadStatus=$("completionAudioUploadStatus"),clearCompletionAudioUploadButton=$("clearCompletionAudioUpload"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),cartTargetCountInput=$("cartTargetCount"),cartTargetCountGroup=$("cartTargetCountGroup"),cartOptionCountInput=$("cartOptionCount"),cartOptionCountGroup=$("cartOptionCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementPackageInput=$("reinforcementPackage"),differentialReinforcementInput=$("differentialReinforcement"),customReinforcementSettings=$("customReinforcementSettings"),previewTokenReinforcementButton=$("previewTokenReinforcement"),previewCompletionReinforcementButton=$("previewCompletionReinforcement"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),responseDelaySecondsInput=$("responseDelaySeconds"),errorModelCorrectResponseInput=$("errorModelCorrectResponse"),errorRequireCorrectionResponseInput=$("errorRequireCorrectionResponse"),errorWithholdTokenInput=$("errorWithholdToken"),errorContinueSessionInput=$("errorContinueSession"),dataAccuracyInput=$("dataAccuracy"),dataLatencyInput=$("dataLatency"),dataPromptLevelInput=$("dataPromptLevel"),dataIndependentInput=$("dataIndependent"),dataTokensInput=$("dataTokens"),dataCorrectionsInput=$("dataCorrections"),dataCartAttemptsInput=$("dataCartAttempts"),dataResponseDistributionInput=$("dataResponseDistribution"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
 const reportStudentFilter=$("reportStudentFilter"),reportAdministratorFilter=$("reportAdministratorFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
 const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
@@ -1886,7 +1888,19 @@ reportAdministratorFilter.onchange=renderReports;
 
 homeStudentSelect.onchange=()=>{appState.selectedStudentId=homeStudentSelect.value;saveSelectedStudentId()};
 startButton.onclick=openStudentWelcome;
-teacherButton.onclick=()=>{renderStudentList();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent();showTeacherPanel("students");showScreen(teacherScreen)};
+teacherButton.onclick=function(){
+    renderStudentList();
+    updateAdministratorSelects();
+
+    if(appState.selectedStudentId){
+        selectStudentForEditing(appState.selectedStudentId);
+    }else{
+        beginNewStudent();
+    }
+
+    showScreen(teacherScreen);
+    showTeacherPanel("students");
+};
 teacherBackButton.onclick=()=>{updateHomeStudentSelect();showScreen(homeScreen)};
 studentsTabButton.onclick=()=>showTeacherPanel("students");
 reportsTabButton.onclick=()=>showTeacherPanel("reports");
@@ -1910,4 +1924,13 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadClassroomProfile();loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.15 loaded successfully");
+loadClassroomProfile();
+loadStudents();
+loadSessions();
+updatePromptStyleDisplay();
+updateHomeStudentSelect();
+updateReportStudentFilter();
+updateAdministratorSelects();
+disableAnswerButtons();
+showScreen(homeScreen);
+console.log("Budget Buddy v0.15.1 loaded successfully");
