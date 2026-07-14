@@ -1,5 +1,16 @@
 # Budget Buddy Changelog
 
+## v0.15.2 — Robust Student Programs Navigation
+
+### Fixed
+- Student Programs could remain on the home screen when profile rendering raised an error
+- The teacher screen now opens first and loads student content afterward
+- Added a direct button fallback independent of the normal event-binding sequence
+- Navigation errors are logged without blocking access to the teacher screen
+
+---
+
+
 ## v0.15.1 — Student Programs Navigation Fix
 
 ### Fixed

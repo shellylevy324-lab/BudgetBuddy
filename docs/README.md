@@ -272,3 +272,9 @@ The white background remains unchanged throughout the sequence.
 - Added explicit references for the new Classroom tab and panel.
 - Reordered teacher-screen navigation so the screen opens before the selected panel is rendered.
 - Ensured administrator selectors are initialized when the app loads.
+
+
+## v0.15.2
+- Rebuilt Student Programs navigation so the teacher screen opens before any student data is rendered.
+- Added a direct HTML fallback for the Student Programs button.
+- Student profile rendering now happens after navigation and cannot prevent the screen from opening.

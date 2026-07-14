@@ -23,6 +23,52 @@ const studentGreeting=$("studentGreeting"),teacherPromptStatus=$("teacherPromptS
 const completionMessage=$("completionMessage"),newSessionButton=$("newSessionButton"),viewReportButton=$("viewReportButton"),completeHomeButton=$("completeHomeButton");
 const screens=[homeScreen,teacherScreen,welcomeScreen,groceryScreen,completeScreen];
 
+
+function openStudentPrograms(){
+    try{
+        showScreen(teacherScreen);
+
+        classroomPanel.classList.add("hidden");
+        reportsPanel.classList.add("hidden");
+        dataPanel.classList.add("hidden");
+        studentsPanel.classList.remove("hidden");
+
+        classroomTabButton.classList.remove("active");
+        reportsTabButton.classList.remove("active");
+        dataTabButton.classList.remove("active");
+        studentsTabButton.classList.add("active");
+
+        window.setTimeout(function(){
+            try{
+                renderStudentList();
+
+                if(appState.selectedStudentId){
+                    selectStudentForEditing(appState.selectedStudentId);
+                }else{
+                    beginNewStudent();
+                }
+
+                updateAdministratorSelects();
+            }catch(error){
+                console.error("Student Programs content could not finish loading:",error);
+            }
+        },0);
+    }catch(error){
+        console.error("Student Programs could not open:",error);
+
+        document.querySelectorAll(".screen").forEach(function(screen){
+            screen.classList.add("hidden");
+        });
+
+        const teacher=document.getElementById("teacherScreen");
+        if(teacher){
+            teacher.classList.remove("hidden");
+        }
+    }
+}
+
+window.openStudentPrograms=openStudentPrograms;
+
 function showScreen(selected){screens.forEach(s=>s.classList.add("hidden"));selected.classList.remove("hidden")}
 function showTeacherPanel(name){
     classroomPanel.classList.toggle("hidden",name!=="classroom");
@@ -1888,19 +1934,7 @@ reportAdministratorFilter.onchange=renderReports;
 
 homeStudentSelect.onchange=()=>{appState.selectedStudentId=homeStudentSelect.value;saveSelectedStudentId()};
 startButton.onclick=openStudentWelcome;
-teacherButton.onclick=function(){
-    renderStudentList();
-    updateAdministratorSelects();
-
-    if(appState.selectedStudentId){
-        selectStudentForEditing(appState.selectedStudentId);
-    }else{
-        beginNewStudent();
-    }
-
-    showScreen(teacherScreen);
-    showTeacherPanel("students");
-};
+teacherButton.onclick=openStudentPrograms;
 teacherBackButton.onclick=()=>{updateHomeStudentSelect();showScreen(homeScreen)};
 studentsTabButton.onclick=()=>showTeacherPanel("students");
 reportsTabButton.onclick=()=>showTeacherPanel("reports");
@@ -1933,4 +1967,4 @@ updateReportStudentFilter();
 updateAdministratorSelects();
 disableAnswerButtons();
 showScreen(homeScreen);
-console.log("Budget Buddy v0.15.1 loaded successfully");
+console.log("Budget Buddy v0.15.2 loaded successfully");
