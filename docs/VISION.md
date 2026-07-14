@@ -163,3 +163,7 @@ Next planned milestone:
 Students may begin at a teacher-selected prompt level and fade toward independence. Tokens are contingent on correct first responses at the programmed level. Errors receive model correction without token delivery.
 
 Future reinforcement options may include a school-approved media library, preview controls, volume settings, and reduced-motion alternatives.
+
+
+## v0.14 Teacher Experience Foundation
+The teacher-facing workflow now mirrors common ABA lesson-plan sections. Future Buddy modules should reuse the same Student Program categories, while only Skill Settings changes by curriculum.

@@ -214,3 +214,11 @@ The white background remains unchanged throughout the sequence.
 - The universal delay is now the single response-activation gate.
 - Token audio levels remain locked for at least three seconds so the cue can finish.
 - Latency begins only after the controls are truly enabled.
+
+
+## v0.14
+- Renamed the teacher area to Student Programs.
+- Reorganized each student program into ABA-aligned collapsible sections.
+- Added Program Information, Teaching Procedure, Skill Settings, SD/Prompting/Timing, Reinforcement, Error Correction, and Data Collection categories.
+- Added richer student program cards showing level and teaching procedure.
+- Preserved all v0.13.4 instructional logic and saved profile fields.

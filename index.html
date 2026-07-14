@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.13.4">
+  <link rel="stylesheet" href="style.css?v=0.14">
 </head>
 <body>
 <main class="container">
@@ -16,18 +16,18 @@
       <label for="homeStudentSelect">Student</label>
       <select id="homeStudentSelect"></select>
       <button id="startButton" class="primaryButton" type="button">🛒 Start Shopping</button>
-      <button id="teacherButton" class="secondaryButton" type="button">👩‍🏫 Teacher Platform</button>
+      <button id="teacherButton" class="secondaryButton" type="button">📘 Student Programs</button>
     </div>
   </section>
 
   <section id="teacherScreen" class="screen hidden">
     <header class="screenHeader">
       <button id="teacherBackButton" class="navigationButton" type="button">⬅ Back</button>
-      <h2>Teacher Platform</h2>
+      <h2>Student Programs</h2>
     </header>
 
-    <nav class="teacherTabs" aria-label="Teacher platform sections">
-      <button id="studentsTabButton" class="tabButton active" type="button">Students</button>
+    <nav class="teacherTabs" aria-label="Student program sections">
+      <button id="studentsTabButton" class="tabButton active" type="button">Student Programs</button>
       <button id="reportsTabButton" class="tabButton" type="button">Session Reports</button>
       <button id="dataTabButton" class="tabButton" type="button">Import / Export</button>
     </nav>
@@ -42,243 +42,121 @@
           <div id="studentList" class="studentList"></div>
         </section>
 
-        <section class="settingsCard">
-          <h3 id="profileFormTitle">Edit Student</h3>
+        <section class="settingsCard programEditor">
+          <div class="programEditorHeader">
+            <div>
+              <p class="eyebrow">ABA Teaching Protocol</p>
+              <h3 id="profileFormTitle">Edit Student Program</h3>
+              <p class="programEditorIntro">Organize the student's instructional program by purpose. Existing teaching logic and saved data remain unchanged.</p>
+            </div>
+          </div>
           <input id="studentId" type="hidden">
 
-          <div class="formGroup">
-            <label for="studentName">Student Name</label>
-            <input id="studentName" type="text" placeholder="Enter student name" autocomplete="off">
-          </div>
-
-          <div class="formGroup">
-            <label for="sessionLength">Number of Trials</label>
-            <select id="sessionLength">
-              <option value="5">5 Trials</option>
-              <option value="10">10 Trials</option>
-              <option value="20">20 Trials</option>
-              <option value="30">30 Trials</option>
-            </select>
-          </div>
-
-          <div class="formGroup">
-            <label for="promptStyle">Prompting Plan</label>
-            <select id="promptStyle">
-              <option value="least-to-most">Least-to-Most: Visual → Audio → Gesture</option>
-              <option value="baseline">Baseline — No Prompts</option>
-              <option value="prompt-fading-token">Prompt Fading + Token Goal</option>
-            </select>
-          </div>
-
-
-          <div id="tokenTeachingSettings" class="tokenTeachingSettings hidden">
-            <div class="formGroup">
-              <label for="startingPromptLevel">Starting Prompt for Token Trials</label>
-              <select id="startingPromptLevel">
-                <option value="visual-audio">Visual Comparison + Audio</option>
-                <option value="visual">Visual Comparison Only</option>
-                <option value="audio">Audio Cue Only</option>
-                <option value="sd">Initial SD Only</option>
-                <option value="independent">Independent</option>
-              </select>
-              <p class="fieldHelp">Buttons remain locked until the programmed prompt finishes.</p>
-            </div>
-
-            <div class="budgetSettingsGrid">
-              <div class="formGroup">
-                <label for="tokenGoal">Tokens Needed</label>
-                <input id="tokenGoal" type="number" min="1" max="20" step="1" value="5">
+          <div class="programAccordion">
+            <details class="programSection" open>
+              <summary><span class="sectionIcon">👤</span><span><strong>Program Information</strong><small>Identify the student and define the session size.</small></span></summary>
+              <div class="programSectionBody">
+                <div class="formGroup">
+                  <label for="studentName">Student Name</label>
+                  <input id="studentName" type="text" placeholder="Enter student name" autocomplete="off">
+                </div>
+                <div class="formGroup">
+                  <label for="sessionLength">Number of Trials</label>
+                  <select id="sessionLength">
+                    <option value="5">5 Trials</option><option value="10">10 Trials</option><option value="20">20 Trials</option><option value="30">30 Trials</option>
+                  </select>
+                </div>
               </div>
-              <div class="formGroup">
-                <label for="maximumTokenTrials">Maximum Trials</label>
-                <input id="maximumTokenTrials" type="number" min="1" max="50" step="1" value="10">
+            </details>
+
+            <details class="programSection">
+              <summary><span class="sectionIcon">🧠</span><span><strong>Teaching Procedure</strong><small>Select how instruction is delivered during practice.</small></span></summary>
+              <div class="programSectionBody">
+                <div class="formGroup">
+                  <label for="promptStyle">Teaching Procedure</label>
+                  <select id="promptStyle">
+                    <option value="least-to-most">Least-to-Most: Visual → Audio → Model</option>
+                    <option value="baseline">Baseline — No Prompts or Reinforcement</option>
+                    <option value="prompt-fading-token">Prompt Fading + Token Goal</option>
+                  </select>
+                </div>
+                <div class="protocolNote"><strong>Baseline:</strong> fixed trials, no prompting, no error correction, and no trial-by-trial reinforcement.</div>
               </div>
-            </div>
+            </details>
 
-            <div class="formGroup">
-              <label for="tokenAnimationPath">Token Animation (optional)</label>
-              <input id="tokenAnimationPath" type="text" placeholder="assets/reinforcement/token.gif">
-              <p class="fieldHelp">Leave blank to use the built-in token celebration.</p>
-            </div>
-
-            <div class="formGroup">
-              <label for="completionAnimationPath">Completed Board Animation (optional)</label>
-              <input id="completionAnimationPath" type="text" placeholder="assets/reinforcement/completed.gif">
-            </div>
-
-            <div class="formGroup">
-              <label for="completionAudioPath">Completed Board Song/Sound (optional)</label>
-              <input id="completionAudioPath" type="text" placeholder="assets/reinforcement/completed.mp3">
-              <p class="fieldHelp">Use school-approved local media. Audio begins only after the student has interacted with the page.</p>
-            </div>
-          </div>
-
-          <div class="formGroup">
-            <label for="waitTime">Independent Wait Time</label>
-            <div class="numberInputRow">
-              <input id="waitTime" type="number" min="1" max="60" step="1" value="10">
-              <span>seconds</span>
-            </div>
-            <p class="fieldHelp">The first prompt appears after this delay.</p>
-          </div>
-
-          <div class="formGroup">
-            <label for="promptStepTime">Time Between Prompt Levels</label>
-            <div class="numberInputRow">
-              <input id="promptStepTime" type="number" min="2" max="60" step="1" value="5">
-              <span>seconds</span>
-            </div>
-          </div>
-
-          <div class="formGroup checkboxGroup">
-            <input id="audioSdEnabled" type="checkbox" checked>
-            <label for="audioSdEnabled">
-              Read “Can I afford this item?” aloud at the start of each trial
-            </label>
-          </div>
-
-
-
-
-          <div class="formGroup">
-            <label for="activityLevel">Shopping Level</label>
-            <select id="activityLevel">
-              <option value="single-item">Level 1 — One Item</option>
-              <option value="list-affordability">Level 2 — Grocery List Affordability</option>
-              <option value="cart-builder">Level 3 — Choose Items Within Budget</option>
-            </select>
-            <p class="fieldHelp">
-              Level 1 asks whether one item fits the budget. Level 2 asks whether every item on a short grocery list fits the budget.
-            </p>
-          </div>
-
-
-          <div class="formGroup hidden" id="cartTargetCountGroup">
-            <label for="cartTargetCount">Items Student Must Choose</label>
-            <select id="cartTargetCount">
-              <option value="2">2 Items</option>
-              <option value="3">3 Items</option>
-              <option value="4">4 Items</option>
-            </select>
-          </div>
-
-          <div class="formGroup hidden" id="cartOptionCountGroup">
-            <label for="cartOptionCount">Choices Shown</label>
-            <select id="cartOptionCount">
-              <option value="4">4 Choices</option>
-              <option value="5">5 Choices</option>
-            </select>
-            <p class="fieldHelp">
-              The student selects the required number of items while staying within budget.
-            </p>
-          </div>
-
-          <div class="formGroup hidden" id="listItemCountGroup">
-            <label for="listItemCount">Items on Grocery List</label>
-            <select id="listItemCount">
-              <option value="2">2 Items</option>
-              <option value="3">3 Items</option>
-              <option value="4">4 Items</option>
-              <option value="5">5 Items</option>
-            </select>
-          </div>
-
-          <div class="formGroup">
-            <label for="budgetMode">Budget Setting</label>
-            <select id="budgetMode">
-              <option value="range">Random Budget Range</option>
-              <option value="fixed">Fixed Budget</option>
-            </select>
-          </div>
-
-          <div class="budgetSettingsGrid">
-            <div class="formGroup">
-              <label for="minimumBudget">Minimum / Fixed Budget</label>
-              <div class="moneyInputRow">
-                <span>$</span>
-                <input id="minimumBudget" type="number" min="1" max="100" step="0.50" value="2.00">
+            <details class="programSection">
+              <summary><span class="sectionIcon">🛒</span><span><strong>Skill Settings</strong><small>Choose the current budgeting level and task difficulty.</small></span></summary>
+              <div class="programSectionBody">
+                <div class="formGroup">
+                  <label for="activityLevel">Current Skill Level</label>
+                  <select id="activityLevel">
+                    <option value="single-item">Level 1 — One Item</option>
+                    <option value="list-affordability">Level 2 — Grocery List Affordability</option>
+                    <option value="cart-builder">Level 3 — Choose Items Within Budget</option>
+                  </select>
+                </div>
+                <div class="formGroup hidden" id="listItemCountGroup"><label for="listItemCount">Items on Grocery List</label><select id="listItemCount"><option value="2">2 Items</option><option value="3">3 Items</option><option value="4">4 Items</option><option value="5">5 Items</option></select></div>
+                <div class="formGroup hidden" id="cartTargetCountGroup"><label for="cartTargetCount">Items Student Must Choose</label><select id="cartTargetCount"><option value="2">2 Items</option><option value="3">3 Items</option><option value="4">4 Items</option></select></div>
+                <div class="formGroup hidden" id="cartOptionCountGroup"><label for="cartOptionCount">Choices Shown</label><select id="cartOptionCount"><option value="4">4 Choices</option><option value="5">5 Choices</option></select></div>
+                <div class="formGroup"><label for="budgetMode">Budget Setting</label><select id="budgetMode"><option value="range">Random Budget Range</option><option value="fixed">Fixed Budget</option></select></div>
+                <div class="budgetSettingsGrid">
+                  <div class="formGroup"><label for="minimumBudget">Minimum / Fixed Budget</label><div class="moneyInputRow"><span>$</span><input id="minimumBudget" type="number" min="1" max="100" step="0.50" value="2.00"></div></div>
+                  <div class="formGroup" id="maximumBudgetGroup"><label for="maximumBudget">Maximum Budget</label><div class="moneyInputRow"><span>$</span><input id="maximumBudget" type="number" min="1" max="100" step="0.50" value="10.00"></div></div>
+                </div>
+                <div class="formGroup checkboxGroup"><input id="useWholeDollarBudgets" type="checkbox" checked><label for="useWholeDollarBudgets">Use whole-dollar budgets only</label></div>
               </div>
-            </div>
+            </details>
 
-            <div class="formGroup" id="maximumBudgetGroup">
-              <label for="maximumBudget">Maximum Budget</label>
-              <div class="moneyInputRow">
-                <span>$</span>
-                <input id="maximumBudget" type="number" min="1" max="100" step="0.50" value="10.00">
+            <details class="programSection">
+              <summary><span class="sectionIcon">⏱️</span><span><strong>SD, Prompting & Timing</strong><small>Define the cue, observation period, and prompt delays.</small></span></summary>
+              <div class="programSectionBody">
+                <div class="sdPreview"><span>Current SD</span><strong id="sdPreviewText">“Can I afford this item?”</strong></div>
+                <div id="tokenPromptSettings" class="conditionalProgramSettings hidden">
+                  <div class="formGroup"><label for="startingPromptLevel">Starting Prompt for Token Trials</label><select id="startingPromptLevel"><option value="visual-audio">Visual Comparison + Audio</option><option value="visual">Visual Comparison Only</option><option value="audio">Audio Cue Only</option><option value="sd">Initial SD Only</option><option value="independent">Independent</option></select></div>
+                </div>
+                <div class="formGroup"><label for="responseDelaySeconds">Response Delay Before Answering</label><div class="numberInputRow"><input id="responseDelaySeconds" type="number" min="0" max="10" step="1" value="2"><span>seconds</span></div><p class="fieldHelp">Student response controls remain inactive during this observation period.</p></div>
+                <div class="formGroup"><label for="waitTime">Independent Wait Before First Prompt</label><div class="numberInputRow"><input id="waitTime" type="number" min="1" max="60" step="1" value="10"><span>seconds</span></div></div>
+                <div class="formGroup"><label for="promptStepTime">Delay Between Prompt Levels</label><div class="numberInputRow"><input id="promptStepTime" type="number" min="2" max="60" step="1" value="5"><span>seconds</span></div></div>
+                <div class="formGroup checkboxGroup"><input id="audioSdEnabled" type="checkbox" checked><label for="audioSdEnabled">Read the SD aloud at the start of each trial</label></div>
               </div>
-            </div>
+            </details>
+
+            <details class="programSection">
+              <summary><span class="sectionIcon">🎉</span><span><strong>Reinforcement</strong><small>Individualize praise, tokens, and preferred media.</small></span></summary>
+              <div class="programSectionBody">
+                <div class="formGroup"><label for="reinforcementType">Correct-Response Reinforcement</label><select id="reinforcementType"><option value="text">Written Praise</option><option value="text-sound">Written Praise + Chime</option><option value="none">None</option></select></div>
+                <div class="formGroup"><label for="praiseText">Personalized Praise</label><input id="praiseText" type="text" maxlength="80" value="Nice job!" placeholder="Example: Great comparing!"></div>
+                <div class="formGroup"><label for="feedbackDuration">Celebration Duration</label><div class="numberInputRow"><input id="feedbackDuration" type="number" min="1" max="10" step="1" value="2"><span>seconds</span></div></div>
+                <div id="tokenReinforcementSettings" class="conditionalProgramSettings hidden">
+                  <div class="budgetSettingsGrid"><div class="formGroup"><label for="tokenGoal">Tokens Needed</label><input id="tokenGoal" type="number" min="1" max="20" step="1" value="5"></div><div class="formGroup"><label for="maximumTokenTrials">Maximum Trials</label><input id="maximumTokenTrials" type="number" min="1" max="50" step="1" value="10"></div></div>
+                  <div class="formGroup"><label for="tokenAnimationPath">Token Animation (optional)</label><input id="tokenAnimationPath" type="text" placeholder="assets/reinforcement/token.gif"></div>
+                  <div class="formGroup"><label for="completionAnimationPath">Completed Board Animation (optional)</label><input id="completionAnimationPath" type="text" placeholder="assets/reinforcement/completed.gif"></div>
+                  <div class="formGroup"><label for="completionAudioPath">Completed Board Song/Sound (optional)</label><input id="completionAudioPath" type="text" placeholder="assets/reinforcement/completed.mp3"></div>
+                </div>
+                <p class="fieldHelp">Baseline always suppresses trial-by-trial reinforcement.</p>
+              </div>
+            </details>
+
+            <details class="programSection">
+              <summary><span class="sectionIcon">↩️</span><span><strong>Error Correction</strong><small>Review what happens after an incorrect teaching response.</small></span></summary>
+              <div class="programSectionBody protocolChecklist">
+                <div>✓ Model the correct response</div><div>✓ Student completes the modeled response</div><div>✓ No token is awarded for the corrected trial</div><div>✓ Continue the teaching session</div>
+                <p class="fieldHelp">Error correction is disabled automatically during Baseline.</p>
+              </div>
+            </details>
+
+            <details class="programSection">
+              <summary><span class="sectionIcon">📊</span><span><strong>Data Collection</strong><small>See the measures Budget Buddy records automatically.</small></span></summary>
+              <div class="programSectionBody dataMeasureGrid">
+                <div>✓ First-response accuracy</div><div>✓ Response latency</div><div>✓ Prompt level</div><div>✓ Independent responses</div><div>✓ Tokens earned</div><div>✓ Corrected responses</div><div>✓ Cart attempts</div><div>✓ Yes / No response distribution</div>
+              </div>
+            </details>
           </div>
 
-          <div class="formGroup checkboxGroup">
-            <input id="useWholeDollarBudgets" type="checkbox" checked>
-            <label for="useWholeDollarBudgets">
-              Use whole-dollar budgets only
-            </label>
+          <div class="stickyProgramActions">
+            <div class="profileButtons"><button id="saveStudent" class="primaryButton" type="button">Save Student Program</button><button id="deleteStudentButton" class="dangerButton" type="button">Delete Student</button></div>
+            <div id="settingsMessage" class="settingsMessage" role="status" aria-live="polite"></div>
           </div>
-
-
-          <div class="formGroup">
-            <label for="responseDelaySeconds">Response Delay Before Buttons Activate</label>
-            <div class="numberInputRow">
-              <input
-                id="responseDelaySeconds"
-                type="number"
-                min="0"
-                max="10"
-                step="1"
-                value="2"
-              >
-              <span>seconds</span>
-            </div>
-            <p class="fieldHelp">
-              The student can view the trial during this observation period, but cannot answer yet.
-            </p>
-          </div>
-
-          <div class="formGroup">
-            <label for="reinforcementType">Correct-Response Reinforcement</label>
-            <select id="reinforcementType">
-              <option value="text">Written Praise</option>
-              <option value="text-sound">Written Praise + Chime</option>
-              <option value="none">None</option>
-            </select>
-            <p class="fieldHelp">
-              Baseline sessions always suppress trial-by-trial reinforcement.
-            </p>
-          </div>
-
-          <div class="formGroup">
-            <label for="praiseText">Personalized Praise</label>
-            <input
-              id="praiseText"
-              type="text"
-              maxlength="80"
-              value="Nice job!"
-              placeholder="Example: Great comparing!"
-            >
-          </div>
-
-          <div class="formGroup">
-            <label for="feedbackDuration">Reinforcement Duration</label>
-            <div class="numberInputRow">
-              <input
-                id="feedbackDuration"
-                type="number"
-                min="1"
-                max="10"
-                step="1"
-                value="2"
-              >
-              <span>seconds</span>
-            </div>
-          </div>
-
-          <div class="profileButtons">
-            <button id="saveStudent" class="primaryButton" type="button">Save Student</button>
-            <button id="deleteStudentButton" class="dangerButton" type="button">Delete Student</button>
-          </div>
-
-          <div id="settingsMessage" class="settingsMessage" role="status" aria-live="polite"></div>
         </section>
       </div>
     </div>
@@ -484,9 +362,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.13.4 — Response Lock Hotfix</footer>
+  <footer class="appFooter">Budget Buddy v0.14 — ABA Student Program Builder</footer>
 </main>
 
-<script src="script.js?v=0.13.4"></script>
+<script src="script.js?v=0.14"></script>
 </body>
 </html>

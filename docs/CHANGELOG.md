@@ -1,5 +1,36 @@
 # Budget Buddy Changelog
 
+## v0.14 — ABA Student Program Builder
+
+### Changed
+- Renamed Teacher Platform to Student Programs
+- Reorganized student editing into collapsible ABA teaching-protocol categories
+- Updated labels to use instructional language such as Teaching Procedure, SD, Response Delay, and Celebration Duration
+- Added richer student program cards showing skill level and teaching procedure
+- Added dynamic SD preview based on the current skill level
+
+### Preserved
+- Baseline, least-to-most, and prompt-fading token logic
+- Levels 1–3
+- Universal response delay
+- Reinforcement media paths and token goals
+- Reports, data export, and classroom backup
+
+---
+
+
+## v0.13.4 — Response Lock Hotfix
+
+### Fixed
+- Yes/No controls could activate immediately despite the student response-delay setting
+- Prompt scheduling and universal delay previously used competing unlock paths
+- Token prompt profile keys were mismatched in the delay calculation
+- Token audio prompts now finish before controls activate
+- Latency begins at the actual response opportunity
+
+---
+
+
 ## v0.13.3 — Universal Response Delay
 
 ### Added
