@@ -156,3 +156,10 @@ Next planned milestone:
 - Checkout and purchasing routines
 - Cash versus card
 - Receipt and task completion
+
+
+## Current Development Step
+### v0.13 — Prompt Fading + Token Acquisition
+Students may begin at a teacher-selected prompt level and fade toward independence. Tokens are contingent on correct first responses at the programmed level. Errors receive model correction without token delivery.
+
+Future reinforcement options may include a school-approved media library, preview controls, volume settings, and reduced-motion alternatives.

@@ -1,5 +1,29 @@
 # Budget Buddy Changelog
 
+## v0.13 — Prompt Fading + Token Acquisition
+
+### Added
+- Prompt Fading + Token Goal teaching profile
+- Five teacher-selected starting prompt levels
+- Response-button lock until programmed prompt completion
+- Correct-first-response token contingency
+- Model correction after errors without token delivery
+- Token goal and maximum-trial safeguard
+- Student-facing token board
+- Built-in brief token celebration
+- Optional local token GIF/image
+- Optional completed-board animation and audio
+- Token and correction data in session records
+
+### Preserved
+- Baseline with no prompting or reinforcement
+- Least-to-most fixed-trial teaching
+- Shopping Levels 1–3
+- Budget ranges, reports, and import/export
+
+---
+
+
 ## v0.12.3 — Solvable Cart Trials
 
 ### Fixed

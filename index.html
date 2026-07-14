@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.12.3">
+  <link rel="stylesheet" href="style.css?v=0.13">
 </head>
 <body>
 <main class="container">
@@ -66,7 +66,51 @@
             <select id="promptStyle">
               <option value="least-to-most">Least-to-Most: Visual → Audio → Gesture</option>
               <option value="baseline">Baseline — No Prompts</option>
+              <option value="prompt-fading-token">Prompt Fading + Token Goal</option>
             </select>
+          </div>
+
+
+          <div id="tokenTeachingSettings" class="tokenTeachingSettings hidden">
+            <div class="formGroup">
+              <label for="startingPromptLevel">Starting Prompt for Token Trials</label>
+              <select id="startingPromptLevel">
+                <option value="visual-audio">Visual Comparison + Audio</option>
+                <option value="visual">Visual Comparison Only</option>
+                <option value="audio">Audio Cue Only</option>
+                <option value="sd">Initial SD Only</option>
+                <option value="independent">Independent</option>
+              </select>
+              <p class="fieldHelp">Buttons remain locked until the programmed prompt finishes.</p>
+            </div>
+
+            <div class="budgetSettingsGrid">
+              <div class="formGroup">
+                <label for="tokenGoal">Tokens Needed</label>
+                <input id="tokenGoal" type="number" min="1" max="20" step="1" value="5">
+              </div>
+              <div class="formGroup">
+                <label for="maximumTokenTrials">Maximum Trials</label>
+                <input id="maximumTokenTrials" type="number" min="1" max="50" step="1" value="10">
+              </div>
+            </div>
+
+            <div class="formGroup">
+              <label for="tokenAnimationPath">Token Animation (optional)</label>
+              <input id="tokenAnimationPath" type="text" placeholder="assets/reinforcement/token.gif">
+              <p class="fieldHelp">Leave blank to use the built-in token celebration.</p>
+            </div>
+
+            <div class="formGroup">
+              <label for="completionAnimationPath">Completed Board Animation (optional)</label>
+              <input id="completionAnimationPath" type="text" placeholder="assets/reinforcement/completed.gif">
+            </div>
+
+            <div class="formGroup">
+              <label for="completionAudioPath">Completed Board Song/Sound (optional)</label>
+              <input id="completionAudioPath" type="text" placeholder="assets/reinforcement/completed.mp3">
+              <p class="fieldHelp">Use school-approved local media. Audio begins only after the student has interacted with the page.</p>
+            </div>
           </div>
 
           <div class="formGroup">
@@ -300,6 +344,14 @@
       <button id="endSessionButton" class="navigationButton" type="button">End Session</button>
     </header>
 
+    <section id="tokenBoard" class="tokenBoard hidden" aria-label="Token board">
+      <div class="tokenBoardHeader">
+        <strong>Shopping Tokens</strong>
+        <span id="tokenCountLabel">0 of 5 earned</span>
+      </div>
+      <div id="tokenSlots" class="tokenSlots"></div>
+    </section>
+
     <div class="trialProgress">
       <p id="trialCounter">Trial 1 of 10</p>
       <div class="progressTrack" aria-hidden="true">
@@ -391,6 +443,14 @@
     </div>
   </section>
 
+  <div id="tokenCelebrationOverlay" class="tokenCelebrationOverlay hidden" role="status" aria-live="polite">
+    <div class="tokenCelebrationCard">
+      <img id="tokenCelebrationImage" class="tokenCelebrationImage hidden" src="" alt="">
+      <div id="builtInTokenAnimation" class="builtInTokenAnimation">★</div>
+      <p id="tokenCelebrationText">Token earned!</p>
+    </div>
+  </div>
+
   <section id="completeScreen" class="screen hidden">
     <div class="completeCard">
       <h1>Session Complete</h1>
@@ -404,9 +464,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.12.3 — Solvable Cart Trials</footer>
+  <footer class="appFooter">Budget Buddy v0.13 — Prompt Fading + Token Acquisition</footer>
 </main>
 
-<script src="script.js?v=0.12.3"></script>
+<script src="script.js?v=0.13"></script>
 </body>
 </html>

@@ -44,3 +44,13 @@ Future options:
 
 ## Completion Signal
 The completion animation is a universal signal that the activity is finished. It is not contingent on accuracy and may be used in both Baseline and Teaching.
+
+
+## Prompt Fading + Token Goal
+- The teacher selects the starting prompt.
+- Response buttons remain unavailable until the programmed prompt ends.
+- Correct first responses earn one token.
+- Incorrect first responses trigger a model correction and earn no token.
+- The corrected response is taught but does not replace first-response data.
+- Sessions stop at the token goal or maximum-trial limit.
+- Baseline never uses tokens.
