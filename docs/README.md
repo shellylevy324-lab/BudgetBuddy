@@ -206,3 +206,11 @@ The white background remains unchanged throughout the sequence.
 - A subtle “Please look carefully...” message appears while controls are locked.
 - Latency now begins when response controls activate.
 - Prompt-fading audio levels keep controls locked long enough for the audio cue to finish.
+
+
+## v0.13.4
+- Fixed response controls activating before the universal delay or programmed token prompt finished.
+- Removed competing unlock paths from Baseline, Least-to-Most, and Prompt-Fading procedures.
+- The universal delay is now the single response-activation gate.
+- Token audio levels remain locked for at least three seconds so the cue can finish.
+- Latency begins only after the controls are truly enabled.

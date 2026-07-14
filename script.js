@@ -444,7 +444,6 @@ function schedulePrompts(){
 
     if(appState.currentStudent.promptStyle==="baseline"){
         teacherPromptStatus.textContent="Baseline — no prompts";
-        setResponsesLocked(false);
         return;
     }
 
@@ -453,7 +452,6 @@ function schedulePrompts(){
         return;
     }
 
-    setResponsesLocked(false);
     const first=appState.currentStudent.waitTimeSeconds*1000;
     const step=appState.currentStudent.promptStepTimeSeconds*1000;
     appState.promptTimeouts.push(setTimeout(()=>deliverPrompt("visual"),first));
@@ -463,36 +461,24 @@ function schedulePrompts(){
 
 function runTokenStartingPrompt(){
     const level=appState.currentStudent.startingPromptLevel||"visual-audio";
-    setResponsesLocked(true);
     appState.currentPromptLevel=level;
     teacherPromptStatus.textContent="Programmed prompt: "+level.split("-").join(" + ");
-
-    const unlock=function(){
-        if(appState.acceptingResponse){setResponsesLocked(false)}
-    };
 
     if(level==="visual-audio"){
         promptArea.className="promptArea promptVisual comparisonBand";
         promptMessage.innerHTML=buildComparisonPrompt();
         groceryScreen.classList.add("promptCompare");
         speakSecondaryPrompt();
-        waitForSpeechToFinish(unlock);
     }else if(level==="visual"){
         promptArea.className="promptArea promptVisual comparisonBand";
         promptMessage.innerHTML=buildComparisonPrompt();
         groceryScreen.classList.add("promptCompare");
-        window.setTimeout(unlock,Number(appState.currentStudent.waitTimeSeconds||3)*1000);
     }else if(level==="audio"){
         speakSecondaryPrompt();
-        waitForSpeechToFinish(unlock);
     }else if(level==="sd"){
         speakInstructionalCue();
-        waitForSpeechToFinish(unlock);
-    }else{
-        window.setTimeout(unlock,Number(appState.currentStudent.waitTimeSeconds||3)*1000);
     }
 }
-
 
 function deliverPrompt(level){
     if(!appState.acceptingResponse){
@@ -664,6 +650,7 @@ function lockResponseControls(){
     clearResponseUnlockTimer();
 
     appState.acceptingResponse=false;
+    setResponsesLocked(true);
     disableAnswerButtons();
 
     groceryScreen.classList.add("responseLocked");
@@ -685,23 +672,22 @@ function unlockResponseControls(){
         responseDelayMessage.classList.add("hidden");
     }
 
+    setResponsesLocked(false);
     enableAnswerButtons();
-    appState.trialStartedAt=performance.now();
+    appState.buttonActivatedAt=performance.now();
+    appState.trialStartedAt=appState.buttonActivatedAt;
 }
 
 
 function getPromptAudioDelayMilliseconds(){
-    if(
-        !appState.currentStudent ||
-        appState.currentStudent.promptStyle!=="token-fading"
-    ){
+    if(!isTokenTeachingSession()){
         return 0;
     }
 
-    const level=appState.currentStudent.tokenStartingPrompt||"visual-audio";
+    const level=appState.currentStudent.startingPromptLevel||"visual-audio";
 
-    if(level==="visual-audio" || level==="audio-only" || level==="initial-sd"){
-        return 2200;
+    if(level==="visual-audio" || level==="audio" || level==="sd"){
+        return 3000;
     }
 
     return 0;
@@ -785,18 +771,20 @@ function loadNextTrial(){
             appState.currentBudget=minimumSolvableBudget;
         }
     }
-    appState.acceptingResponse=true;
+    appState.acceptingResponse=false;
     appState.awaitingModelCorrection=false;
     appState.firstResponseRecorded=false;
 
     updateTrialCounter();
     displayCurrentTrial();
-    enableAnswerButtons();
-
-    appState.trialStartedAt=performance.now();
+    lockResponseControls();
     schedulePrompts();
+    beginUniversalResponseDelay();
 
-    if(appState.currentStudent.audioSdEnabled!==false){
+    if(
+        appState.currentStudent.audioSdEnabled!==false &&
+        !isTokenTeachingSession()
+    ){
         window.setTimeout(speakInstructionalCue,150);
     }
 }
@@ -1256,4 +1244,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.13.3 loaded successfully");
+loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.13.4 loaded successfully");
