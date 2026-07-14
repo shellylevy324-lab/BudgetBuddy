@@ -1,5 +1,21 @@
 # Budget Buddy Changelog
 
+## v0.14.1 — Student Program Navigation Fix
+
+### Fixed
+- Student records were not displayed because core student-program functions were omitted
+- Home navigation buttons could not launch Student Programs or shopping sessions
+- Restored student editing, saving, deletion, grocery loading, and session welcome behavior
+
+### Preserved
+- Existing browser-saved students and sessions
+- Starter test students
+- Categorized ABA Student Program layout
+- All v0.13.4 instructional procedures
+
+---
+
+
 ## v0.14 — ABA Student Program Builder
 
 ### Changed

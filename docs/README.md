@@ -222,3 +222,9 @@ The white background remains unchanged throughout the sequence.
 - Added Program Information, Teaching Procedure, Skill Settings, SD/Prompting/Timing, Reinforcement, Error Correction, and Data Collection categories.
 - Added richer student program cards showing level and teaching procedure.
 - Preserved all v0.13.4 instructional logic and saved profile fields.
+
+
+## v0.14.1
+- Restored student loading and Student Programs navigation.
+- Restored student editing, saving, deleting, and session launch functions accidentally omitted from v0.14.
+- Preserved the new categorized ABA Student Program layout.
