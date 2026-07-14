@@ -971,3 +971,67 @@
 }
 
 .customUploadCard{margin:12px 0;padding:13px;border:2px solid #d9e2ec;border-radius:14px;background:#fff}.customUploadCard input[type=file]{width:100%;padding:10px;border:2px dashed #9fb3c8;border-radius:12px;background:#f7fafc}.uploadStatus{margin:8px 0;color:#52667a;font-size:.92rem;font-weight:700;overflow-wrap:anywhere}.uploadStatus.hasUpload{color:#176b4d}.uploadStatus.uploadError{color:#9b2c2c}
+
+
+/* =====================================
+   Budget Buddy v0.15 — Classroom
+===================================== */
+
+.classroomGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 18px;
+}
+
+.staffList {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.staffCard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 2px solid #d9e2ec;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.staffCard.inactive {
+    opacity: 0.58;
+}
+
+.staffCardMain strong,
+.staffCardMain span {
+    display: block;
+}
+
+.staffCardMain span {
+    margin-top: 3px;
+    color: #52667a;
+    font-size: 0.92rem;
+    text-transform: capitalize;
+}
+
+.staffEditor {
+    margin-top: 16px;
+    padding: 14px;
+    border: 2px solid #bcccdc;
+    border-radius: 14px;
+    background: #f7fafc;
+}
+
+.sessionAdministratorGroup {
+    width: min(100%, 420px);
+    margin: 0 auto 18px;
+    text-align: left;
+}
+
+@media (max-width: 900px) {
+    .classroomGrid {
+        grid-template-columns: 1fr;
+    }
+}

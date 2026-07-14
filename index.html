@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.14.5">
+  <link rel="stylesheet" href="style.css?v=0.15">
 </head>
 <body>
 <main class="container">
@@ -23,14 +23,82 @@
   <section id="teacherScreen" class="screen hidden">
     <header class="screenHeader">
       <button id="teacherBackButton" class="navigationButton" type="button">⬅ Back</button>
-      <h2>Student Programs</h2>
+      <h2>Classroom</h2>
     </header>
 
     <nav class="teacherTabs" aria-label="Student program sections">
+      <button id="classroomTabButton" class="tabButton" type="button">Classroom</button>
       <button id="studentsTabButton" class="tabButton active" type="button">Student Programs</button>
       <button id="reportsTabButton" class="tabButton" type="button">Session Reports</button>
       <button id="dataTabButton" class="tabButton" type="button">Import / Export</button>
     </nav>
+
+
+    <div id="classroomPanel" class="teacherPanel hidden">
+      <div class="classroomGrid">
+        <section class="settingsCard">
+          <p class="eyebrow">Classroom Profile</p>
+          <h3>Classroom Information</h3>
+
+          <div class="formGroup">
+            <label for="classroomName">Classroom Name</label>
+            <input id="classroomName" type="text" maxlength="80" placeholder="Example: Room 12 Life Skills">
+          </div>
+
+          <div class="formGroup">
+            <label for="classroomTeacherName">Lead Teacher</label>
+            <input id="classroomTeacherName" type="text" maxlength="80" placeholder="Example: Shelly">
+          </div>
+
+          <button id="saveClassroomButton" class="primaryButton" type="button">Save Classroom</button>
+          <div id="classroomMessage" class="settingsMessage" role="status" aria-live="polite"></div>
+        </section>
+
+        <section class="settingsCard">
+          <div class="sectionTitleRow">
+            <div>
+              <p class="eyebrow">Classroom Staff</p>
+              <h3>Session Administrators</h3>
+            </div>
+            <button id="addStaffButton" class="smallButton" type="button">+ Add Staff</button>
+          </div>
+
+          <div id="staffList" class="staffList"></div>
+
+          <div id="staffEditor" class="staffEditor hidden">
+            <input id="staffId" type="hidden">
+
+            <div class="formGroup">
+              <label for="staffName">Staff Name or Initials</label>
+              <input id="staffName" type="text" maxlength="80" placeholder="Example: Para A">
+            </div>
+
+            <div class="formGroup">
+              <label for="staffRole">Role</label>
+              <select id="staffRole">
+                <option value="teacher">Teacher</option>
+                <option value="paraprofessional">Paraprofessional</option>
+                <option value="related-service">Related-Service Provider</option>
+                <option value="substitute">Substitute</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <label class="protocolOption">
+              <input id="staffActive" type="checkbox" checked>
+              <span>Active staff member</span>
+            </label>
+
+            <div class="profileButtons">
+              <button id="saveStaffButton" class="primaryButton" type="button">Save Staff</button>
+              <button id="cancelStaffButton" class="secondaryButton" type="button">Cancel</button>
+            </div>
+
+            <div id="staffMessage" class="settingsMessage" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+      </div>
+    </div>
 
     <div id="studentsPanel" class="teacherPanel">
       <div class="managerLayout">
@@ -234,6 +302,10 @@
           <label for="reportStudentFilter">Student</label>
           <select id="reportStudentFilter"></select>
         </div>
+        <div class="formGroup compactGroup">
+          <label for="reportAdministratorFilter">Administrator</label>
+          <select id="reportAdministratorFilter"></select>
+        </div>
         <div class="toolbarButtons">
           <button id="exportCsvButton" class="secondaryButton compactButton" type="button">Export CSV</button>
           <button id="clearReportsButton" class="dangerButton compactButton" type="button">Clear Saved Reports</button>
@@ -293,6 +365,12 @@
       <h1 id="welcomeStudentName">Welcome!</h1>
       <p id="welcomeSessionDetails">You will complete 10 shopping trials.</p>
       <p class="welcomeDirections">Look at the price and your budget. Decide whether you can afford the item.</p>
+
+      <div class="formGroup sessionAdministratorGroup">
+        <label for="sessionAdministratorSelect">Who is running this session?</label>
+        <select id="sessionAdministratorSelect"></select>
+      </div>
+
       <button id="beginSessionButton" class="primaryButton" type="button">▶ Begin Session</button>
       <button id="welcomeBackButton" class="secondaryButton" type="button">Back</button>
     </div>
@@ -429,9 +507,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.14.5 — Visible Custom Uploads</footer>
+  <footer class="appFooter">Budget Buddy v0.15 — Classroom Framework</footer>
 </main>
 
-<script src="script.js?v=0.14.5"></script>
+<script src="script.js?v=0.15"></script>
 </body>
 </html>

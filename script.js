@@ -1,8 +1,11 @@
+const CLASSROOM_STORAGE_KEY="budgetBuddyClassroom_v1";
+const STAFF_STORAGE_KEY="budgetBuddyStaff_v1";
+const SELECTED_ADMIN_STORAGE_KEY="budgetBuddySelectedAdministrator_v1";
 const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="budgetBuddySelectedStudent",SESSION_STORAGE_KEY="budgetBuddySessions",nextTrialDelayMilliseconds=1800,rapidResponseThresholdSeconds=1;
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false};
+const appState={classroom:{name:"My Classroom",leadTeacher:""},staff:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false};
 let pendingTokenAnimationData="",pendingTokenAnimationFileName="",pendingCompletionAnimationData="",pendingCompletionAnimationFileName="",pendingCompletionAudioData="",pendingCompletionAudioFileName="";
 
 
@@ -10,23 +13,273 @@ const $=id=>document.getElementById(id);
 const homeScreen=$("homeScreen"),teacherScreen=$("teacherScreen"),welcomeScreen=$("welcomeScreen"),groceryScreen=$("groceryScreen"),completeScreen=$("completeScreen");
 const homeStudentSelect=$("homeStudentSelect"),startButton=$("startButton"),teacherButton=$("teacherButton"),teacherBackButton=$("teacherBackButton"),studentsTabButton=$("studentsTabButton"),reportsTabButton=$("reportsTabButton"),dataTabButton=$("dataTabButton"),studentsPanel=$("studentsPanel"),reportsPanel=$("reportsPanel"),dataPanel=$("dataPanel");
 const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),tokenPromptSettings=$("tokenPromptSettings"),tokenReinforcementSettings=$("tokenReinforcementSettings"),startingPromptLevelInput=$("startingPromptLevel"),tokenGoalInput=$("tokenGoal"),maximumTokenTrialsInput=$("maximumTokenTrials"),tokenAnimationPathInput=$("tokenAnimationPath"),tokenAnimationUploadInput=$("tokenAnimationUpload"),tokenAnimationUploadStatus=$("tokenAnimationUploadStatus"),clearTokenAnimationUploadButton=$("clearTokenAnimationUpload"),completionAnimationPathInput=$("completionAnimationPath"),completionAnimationUploadInput=$("completionAnimationUpload"),completionAnimationUploadStatus=$("completionAnimationUploadStatus"),clearCompletionAnimationUploadButton=$("clearCompletionAnimationUpload"),completionAudioPathInput=$("completionAudioPath"),completionAudioUploadInput=$("completionAudioUpload"),completionAudioUploadStatus=$("completionAudioUploadStatus"),clearCompletionAudioUploadButton=$("clearCompletionAudioUpload"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),cartTargetCountInput=$("cartTargetCount"),cartTargetCountGroup=$("cartTargetCountGroup"),cartOptionCountInput=$("cartOptionCount"),cartOptionCountGroup=$("cartOptionCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementPackageInput=$("reinforcementPackage"),differentialReinforcementInput=$("differentialReinforcement"),customReinforcementSettings=$("customReinforcementSettings"),previewTokenReinforcementButton=$("previewTokenReinforcement"),previewCompletionReinforcementButton=$("previewCompletionReinforcement"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),responseDelaySecondsInput=$("responseDelaySeconds"),errorModelCorrectResponseInput=$("errorModelCorrectResponse"),errorRequireCorrectionResponseInput=$("errorRequireCorrectionResponse"),errorWithholdTokenInput=$("errorWithholdToken"),errorContinueSessionInput=$("errorContinueSession"),dataAccuracyInput=$("dataAccuracy"),dataLatencyInput=$("dataLatency"),dataPromptLevelInput=$("dataPromptLevel"),dataIndependentInput=$("dataIndependent"),dataTokensInput=$("dataTokens"),dataCorrectionsInput=$("dataCorrections"),dataCartAttemptsInput=$("dataCartAttempts"),dataResponseDistributionInput=$("dataResponseDistribution"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
-const reportStudentFilter=$("reportStudentFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
+const reportStudentFilter=$("reportStudentFilter"),reportAdministratorFilter=$("reportAdministratorFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
 const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
-const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
+const classroomNameInput=$("classroomName"),classroomTeacherNameInput=$("classroomTeacherName"),saveClassroomButton=$("saveClassroomButton"),classroomMessage=$("classroomMessage"),staffList=$("staffList"),addStaffButton=$("addStaffButton"),staffEditor=$("staffEditor"),staffIdInput=$("staffId"),staffNameInput=$("staffName"),staffRoleInput=$("staffRole"),staffActiveInput=$("staffActive"),saveStaffButton=$("saveStaffButton"),cancelStaffButton=$("cancelStaffButton"),staffMessage=$("staffMessage");
+const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),sessionAdministratorSelect=$("sessionAdministratorSelect"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
 const studentGreeting=$("studentGreeting"),teacherPromptStatus=$("teacherPromptStatus"),tokenBoard=$("tokenBoard"),tokenCountLabel=$("tokenCountLabel"),tokenSlots=$("tokenSlots"),tokenCelebrationOverlay=$("tokenCelebrationOverlay"),tokenCelebrationImage=$("tokenCelebrationImage"),builtInTokenAnimation=$("builtInTokenAnimation"),tokenCelebrationText=$("tokenCelebrationText"),trialCounter=$("trialCounter"),progressBar=$("progressBar"),promptArea=$("promptArea"),promptMessage=$("promptMessage"),singleItemCard=$("singleItemCard"),groceryListCard=$("groceryListCard"),groceryListItems=$("groceryListItems"),totalCostDisplay=$("totalCostDisplay"),totalCost=$("totalCost"),cartBuilderCard=$("cartBuilderCard"),cartChoiceGrid=$("cartChoiceGrid"),cartSelectionCount=$("cartSelectionCount"),cartTotal=$("cartTotal"),remainingBudget=$("remainingBudget"),yesNoAnswerButtons=$("yesNoAnswerButtons"),checkCartButton=$("checkCartButton"),responseDelayMessage=$("responseDelayMessage"),affordabilityQuestion=$("affordabilityQuestion"),itemImage=$("itemImage"),itemName=$("itemName"),itemCategory=$("itemCategory"),itemPrice=$("itemPrice"),budgetDisplay=$("budgetDisplay"),repeatSdButton=$("repeatSdButton"),yesButton=$("yesButton"),noButton=$("noButton"),feedbackArea=$("feedbackArea"),trialContent=$("trialContent"),endSessionButton=$("endSessionButton");
 const completionMessage=$("completionMessage"),newSessionButton=$("newSessionButton"),viewReportButton=$("viewReportButton"),completeHomeButton=$("completeHomeButton");
 const screens=[homeScreen,teacherScreen,welcomeScreen,groceryScreen,completeScreen];
 
 function showScreen(selected){screens.forEach(s=>s.classList.add("hidden"));selected.classList.remove("hidden")}
-function showTeacherPanel(name){studentsPanel.classList.toggle("hidden",name!=="students");reportsPanel.classList.toggle("hidden",name!=="reports");dataPanel.classList.toggle("hidden",name!=="data");studentsTabButton.classList.toggle("active",name==="students");reportsTabButton.classList.toggle("active",name==="reports");dataTabButton.classList.toggle("active",name==="data");if(name==="reports")renderReports()}
+function showTeacherPanel(name){
+    classroomPanel.classList.toggle("hidden",name!=="classroom");
+    studentsPanel.classList.toggle("hidden",name!=="students");
+    reportsPanel.classList.toggle("hidden",name!=="reports");
+    dataPanel.classList.toggle("hidden",name!=="data");
+
+    classroomTabButton.classList.toggle("active",name==="classroom");
+    studentsTabButton.classList.toggle("active",name==="students");
+    reportsTabButton.classList.toggle("active",name==="reports");
+    dataTabButton.classList.toggle("active",name==="data");
+
+    if(name==="classroom"){
+        renderClassroom();
+        renderStaffList();
+    }
+
+    if(name==="reports"){
+        renderReports();
+    }
+}
 
 
-const MAX_IMAGE_UPLOAD_BYTES=2.5*1024*1024,MAX_AUDIO_UPLOAD_BYTES=4*1024*1024;
-function formatUploadSize(bytes){if(bytes<1024)return bytes+" B";if(bytes<1024*1024)return(bytes/1024).toFixed(1)+" KB";return(bytes/(1024*1024)).toFixed(1)+" MB"}
-function readUploadedFile(file,maxBytes,prefix){return new Promise((resolve,reject)=>{if(!file)return reject(new Error("No file was selected."));if(!file.type||!file.type.startsWith(prefix))return reject(new Error(prefix==="image/"?"Please choose an image or GIF file.":"Please choose an audio file."));if(file.size>maxBytes)return reject(new Error("Please choose a file smaller than "+formatUploadSize(maxBytes)+"."));const reader=new FileReader();reader.onload=()=>resolve({data:String(reader.result||""),name:file.name});reader.onerror=()=>reject(new Error("The selected file could not be read."));reader.readAsDataURL(file)})}
-function setUploadStatus(el,name,data,error=""){if(!el)return;el.classList.remove("hasUpload","uploadError");if(error){el.textContent=error;el.classList.add("uploadError")}else if(data){el.textContent="Uploaded: "+(name||"custom media");el.classList.add("hasUpload")}else el.textContent="No uploaded file selected."}
-function loadPendingUploadsFromStudent(s){pendingTokenAnimationData=s.tokenAnimationData||"";pendingTokenAnimationFileName=s.tokenAnimationFileName||"";pendingCompletionAnimationData=s.completionAnimationData||"";pendingCompletionAnimationFileName=s.completionAnimationFileName||"";pendingCompletionAudioData=s.completionAudioData||"";pendingCompletionAudioFileName=s.completionAudioFileName||"";setUploadStatus(tokenAnimationUploadStatus,pendingTokenAnimationFileName,pendingTokenAnimationData);setUploadStatus(completionAnimationUploadStatus,pendingCompletionAnimationFileName,pendingCompletionAnimationData);setUploadStatus(completionAudioUploadStatus,pendingCompletionAudioFileName,pendingCompletionAudioData);tokenAnimationUploadInput.value="";completionAnimationUploadInput.value="";completionAudioUploadInput.value=""}
-function clearPendingUploads(){pendingTokenAnimationData="";pendingTokenAnimationFileName="";pendingCompletionAnimationData="";pendingCompletionAnimationFileName="";pendingCompletionAudioData="";pendingCompletionAudioFileName="";setUploadStatus(tokenAnimationUploadStatus,"","");setUploadStatus(completionAnimationUploadStatus,"","");setUploadStatus(completionAudioUploadStatus,"","");tokenAnimationUploadInput.value="";completionAnimationUploadInput.value="";completionAudioUploadInput.value=""}
+function normalizeStaff(staff){
+    return {
+        id:staff.id||("staff-"+Date.now()),
+        name:(staff.name||"Staff").slice(0,80),
+        role:["teacher","paraprofessional","related-service","substitute","other"].includes(staff.role)
+            ? staff.role
+            : "other",
+        active:staff.active!==false
+    };
+}
+
+function saveClassroomProfile(){
+    localStorage.setItem(
+        CLASSROOM_STORAGE_KEY,
+        JSON.stringify(appState.classroom)
+    );
+}
+
+function saveStaffDirectory(){
+    localStorage.setItem(
+        STAFF_STORAGE_KEY,
+        JSON.stringify(appState.staff)
+    );
+}
+
+function saveSelectedAdministrator(){
+    localStorage.setItem(
+        SELECTED_ADMIN_STORAGE_KEY,
+        appState.selectedAdministratorId||""
+    );
+}
+
+function loadClassroomProfile(){
+    try{
+        const raw=localStorage.getItem(CLASSROOM_STORAGE_KEY);
+        if(raw){
+            const parsed=JSON.parse(raw);
+            appState.classroom={
+                name:(parsed.name||"My Classroom").slice(0,80),
+                leadTeacher:(parsed.leadTeacher||"").slice(0,80)
+            };
+        }
+    }catch(error){
+        console.error(error);
+    }
+
+    try{
+        const raw=localStorage.getItem(STAFF_STORAGE_KEY);
+        if(raw){
+            const parsed=JSON.parse(raw);
+            appState.staff=Array.isArray(parsed)
+                ? parsed.map(normalizeStaff)
+                : [];
+        }
+    }catch(error){
+        console.error(error);
+        appState.staff=[];
+    }
+
+    if(!appState.staff.length){
+        appState.staff=[
+            normalizeStaff({
+                id:"lead-teacher",
+                name:appState.classroom.leadTeacher||"Teacher",
+                role:"teacher",
+                active:true
+            })
+        ];
+    }
+
+    const selected=localStorage.getItem(SELECTED_ADMIN_STORAGE_KEY);
+    appState.selectedAdministratorId=appState.staff.some(function(staff){
+        return staff.id===selected && staff.active;
+    })
+        ? selected
+        : (appState.staff.find(function(staff){return staff.active})?.id||"");
+
+    saveClassroomProfile();
+    saveStaffDirectory();
+}
+
+function renderClassroom(){
+    classroomNameInput.value=appState.classroom.name||"";
+    classroomTeacherNameInput.value=appState.classroom.leadTeacher||"";
+}
+
+function renderStaffList(){
+    staffList.innerHTML="";
+
+    appState.staff.forEach(function(staff){
+        const card=document.createElement("div");
+        card.className="staffCard"+(staff.active?"":" inactive");
+
+        const main=document.createElement("div");
+        main.className="staffCardMain";
+
+        const name=document.createElement("strong");
+        name.textContent=staff.name;
+
+        const role=document.createElement("span");
+        role.textContent=
+            staff.role.split("-").join(" ")+
+            (staff.active?"":" · inactive");
+
+        main.appendChild(name);
+        main.appendChild(role);
+
+        const edit=document.createElement("button");
+        edit.type="button";
+        edit.className="smallButton";
+        edit.textContent="Edit";
+        edit.onclick=function(){
+            openStaffEditor(staff.id);
+        };
+
+        card.appendChild(main);
+        card.appendChild(edit);
+        staffList.appendChild(card);
+    });
+}
+
+function openStaffEditor(id=""){
+    const staff=appState.staff.find(function(item){
+        return item.id===id;
+    });
+
+    staffEditor.classList.remove("hidden");
+    staffIdInput.value=staff?.id||"";
+    staffNameInput.value=staff?.name||"";
+    staffRoleInput.value=staff?.role||"paraprofessional";
+    staffActiveInput.checked=staff?.active!==false;
+    staffMessage.textContent="";
+    staffNameInput.focus();
+}
+
+function closeStaffEditor(){
+    staffEditor.classList.add("hidden");
+    staffIdInput.value="";
+    staffNameInput.value="";
+    staffMessage.textContent="";
+}
+
+function saveStaffMember(){
+    const name=staffNameInput.value.trim();
+
+    if(!name){
+        staffMessage.textContent="Please enter a staff name or initials.";
+        return;
+    }
+
+    const id=staffIdInput.value||("staff-"+Date.now());
+    const record=normalizeStaff({
+        id:id,
+        name:name,
+        role:staffRoleInput.value,
+        active:staffActiveInput.checked
+    });
+
+    const index=appState.staff.findIndex(function(item){
+        return item.id===id;
+    });
+
+    if(index>=0){
+        appState.staff[index]=record;
+    }else{
+        appState.staff.push(record);
+    }
+
+    if(!appState.staff.some(function(item){
+        return item.id===appState.selectedAdministratorId && item.active;
+    })){
+        appState.selectedAdministratorId=
+            appState.staff.find(function(item){return item.active})?.id||"";
+    }
+
+    saveStaffDirectory();
+    saveSelectedAdministrator();
+    updateAdministratorSelects();
+    renderStaffList();
+    closeStaffEditor();
+}
+
+function updateAdministratorSelects(){
+    const active=appState.staff.filter(function(staff){
+        return staff.active;
+    });
+
+    function fill(select,includeAll){
+        if(!select){return}
+
+        const previous=select.value;
+        select.innerHTML="";
+
+        if(includeAll){
+            const all=document.createElement("option");
+            all.value="all";
+            all.textContent="All Administrators";
+            select.appendChild(all);
+        }
+
+        active.forEach(function(staff){
+            const option=document.createElement("option");
+            option.value=staff.id;
+            option.textContent=
+                staff.name+" · "+staff.role.split("-").join(" ");
+            select.appendChild(option);
+        });
+
+        if(includeAll){
+            select.value=[...select.options].some(function(option){
+                return option.value===previous;
+            }) ? previous : "all";
+        }else{
+            const preferred=active.some(function(staff){
+                return staff.id===appState.selectedAdministratorId;
+            }) ? appState.selectedAdministratorId : (active[0]?.id||"");
+
+            select.value=[...select.options].some(function(option){
+                return option.value===previous;
+            }) ? previous : preferred;
+        }
+    }
+
+    fill(sessionAdministratorSelect,false);
+    fill(reportAdministratorFilter,true);
+}
+
+function getSelectedAdministrator(){
+    const id=sessionAdministratorSelect?.value||
+        appState.selectedAdministratorId;
+
+    return appState.staff.find(function(staff){
+        return staff.id===id;
+    })||null;
+}
+
 function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),reinforcementPackage:["stars","rockets","dinosaurs","rainbow","trains","music","custom","none"].includes(s.reinforcementPackage)?s.reinforcementPackage:"stars",tokenAnimationData:s.tokenAnimationData||"",tokenAnimationFileName:s.tokenAnimationFileName||"",completionAnimationData:s.completionAnimationData||"",completionAnimationFileName:s.completionAnimationFileName||"",completionAudioData:s.completionAudioData||"",completionAudioFileName:s.completionAudioFileName||"",differentialReinforcement:["all-correct","independent-only","independent-bonus"].includes(s.differentialReinforcement)?s.differentialReinforcement:"all-correct",tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2,responseDelaySeconds:Number.isFinite(Number(s.responseDelaySeconds))?Math.max(0,Math.min(10,Number(s.responseDelaySeconds))):2,
 errorCorrection:{
  modelCorrectResponse:s.errorCorrection?.modelCorrectResponse!==false,
@@ -139,10 +392,10 @@ dataCollection:{
  corrections:dataCorrectionsInput.checked,
  cartAttempts:dataCartAttemptsInput.checked,
  responseDistribution:dataResponseDistributionInput.checked
-}});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();settingsMessage.textContent=p.name+"'s profile was saved."}
+}});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();updateAdministratorSelects();settingsMessage.textContent=p.name+"'s profile was saved."}
 function deleteSelectedStudent(){const id=studentIdInput.value;if(!id)return;const s=appState.students.find(x=>x.id===id);if(!s||!confirm("Delete "+s.name+"'s profile?"))return;appState.students=appState.students.filter(x=>x.id!==id);appState.selectedStudentId=appState.students[0]?.id||"";saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();updateReportStudentFilter();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent()}
 
-function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;appState.currentStudent=s;welcomeStudentName.textContent="Welcome, "+s.name+"!";if(s.activityLevel==="cart-builder"){
+function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;updateAdministratorSelects();appState.currentStudent=s;welcomeStudentName.textContent="Welcome, "+s.name+"!";if(s.activityLevel==="cart-builder"){
         welcomeSessionDetails.textContent=
             "You will choose items that fit within your budget.";
     }else{
@@ -917,7 +1170,17 @@ function beginUniversalResponseDelay(){
     );
 }
 
-async function startSession(){appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){
+async function startSession(){
+    const administrator=getSelectedAdministrator();
+
+    if(!administrator){
+        alert("Please select who is running this session.");
+        return;
+    }
+
+    appState.selectedAdministratorId=administrator.id;
+    saveSelectedAdministrator();
+appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){
         console.error("Session could not start:",e);
         alert("The session could not start. Please refresh and try again.");
     }}
@@ -1081,6 +1344,9 @@ function finishSession(){
         id:appState.currentSessionId,
         studentId:appState.currentStudent.id,
         studentName:appState.currentStudent.name,
+        administratorId:appState.selectedAdministratorId,
+        administratorName:(appState.staff.find(function(staff){return staff.id===appState.selectedAdministratorId})?.name||"Unknown"),
+        administratorRole:(appState.staff.find(function(staff){return staff.id===appState.selectedAdministratorId})?.role||"other"),
         startedAt:appState.sessionStartedAt,
         completedAt:new Date().toISOString(),
         plannedTrials:planned,
@@ -1390,14 +1656,22 @@ function handleAnswer(answer){
 
 
 function updateReportStudentFilter(){const cur=reportStudentFilter.value||"all";reportStudentFilter.innerHTML='<option value="all">All Students</option>';appState.students.forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=s.name;reportStudentFilter.appendChild(o)});reportStudentFilter.value=[...reportStudentFilter.options].some(o=>o.value===cur)?cur:"all"}
-function getFilteredSessions(){const id=reportStudentFilter.value;return!id||id==="all"?[...appState.sessions]:appState.sessions.filter(s=>s.studentId===id)}
+function getFilteredSessions(){
+    const studentId=reportStudentFilter.value;
+    const administratorId=reportAdministratorFilter?.value||"all";
 
-function sessionMeasureEnabled(session,key){
-    return session?.dataCollection?.[key]!==false;
-}
+    return appState.sessions.filter(function(session){
+        const studentMatch=
+            !studentId ||
+            studentId==="all" ||
+            session.studentId===studentId;
 
-function displayMetric(session,key,value,fallback="—"){
-    return sessionMeasureEnabled(session,key) ? value : fallback;
+        const administratorMatch=
+            administratorId==="all" ||
+            session.administratorId===administratorId;
+
+        return studentMatch && administratorMatch;
+    });
 }
 
 function renderReports(){updateReportStudentFilter();const sessions=getFilteredSessions();renderSummaryCards(sessions);renderSessionTable(sessions);const sel=appState.sessions.find(s=>s.id===appState.selectedSessionId)||sessions[0]||null;if(sel){appState.selectedSessionId=sel.id;renderTrialDetails(sel)}else{selectedSessionLabel.textContent="No saved sessions are available.";trialDetailBody.innerHTML=""}}
@@ -1581,6 +1855,35 @@ previewCompletionReinforcementButton.addEventListener(
     previewCompletionReinforcement
 );
 
+
+classroomTabButton.onclick=function(){
+    showTeacherPanel("classroom");
+};
+
+saveClassroomButton.onclick=function(){
+    appState.classroom={
+        name:(classroomNameInput.value.trim()||"My Classroom").slice(0,80),
+        leadTeacher:classroomTeacherNameInput.value.trim().slice(0,80)
+    };
+
+    saveClassroomProfile();
+    classroomMessage.textContent="Classroom profile saved.";
+};
+
+addStaffButton.onclick=function(){
+    openStaffEditor();
+};
+
+saveStaffButton.onclick=saveStaffMember;
+cancelStaffButton.onclick=closeStaffEditor;
+
+sessionAdministratorSelect.onchange=function(){
+    appState.selectedAdministratorId=sessionAdministratorSelect.value;
+    saveSelectedAdministrator();
+};
+
+reportAdministratorFilter.onchange=renderReports;
+
 homeStudentSelect.onchange=()=>{appState.selectedStudentId=homeStudentSelect.value;saveSelectedStudentId()};
 startButton.onclick=openStudentWelcome;
 teacherButton.onclick=()=>{renderStudentList();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent();showTeacherPanel("students");showScreen(teacherScreen)};
@@ -1607,4 +1910,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.14.5 loaded successfully");
+loadClassroomProfile();loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.15 loaded successfully");

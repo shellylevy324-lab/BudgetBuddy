@@ -256,3 +256,12 @@ The white background remains unchanged throughout the sequence.
 ## v0.14.5
 - Fixed Custom Media upload controls being hidden inside the token-only settings container.
 - Selecting Custom Media now reveals uploads for token animation, completion animation, and completion audio regardless of the selected teaching procedure.
+
+
+## v0.15
+- Added a classroom profile and lead-teacher field.
+- Added a shared classroom staff directory.
+- Staff can be active or inactive without losing historical records.
+- The adult administering a session is selected before Begin Session.
+- Administrator ID, name, and role are saved with each session.
+- Reports can be filtered by administrator.

@@ -1,5 +1,22 @@
 # Budget Buddy Changelog
 
+## v0.15 — Classroom Framework
+
+### Added
+- Classroom profile
+- Lead teacher
+- Shared staff directory
+- Staff roles and active/inactive status
+- Required session-administrator selection
+- Administrator details in session records
+- Administrator report filter
+
+### Design Direction
+The classroom owns student programs, reinforcement resources, staff information, sessions, reports, and backups. Staff are attached to sessions as administrators rather than owning separate copies of data.
+
+---
+
+
 ## v0.14.5 — Visible Custom Uploads
 
 ### Fixed

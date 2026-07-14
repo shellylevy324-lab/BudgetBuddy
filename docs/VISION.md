@@ -167,3 +167,9 @@ Future reinforcement options may include a school-approved media library, previe
 
 ## v0.14 Teacher Experience Foundation
 The teacher-facing workflow now mirrors common ABA lesson-plan sections. Future Buddy modules should reuse the same Student Program categories, while only Skill Settings changes by curriculum.
+
+
+## Classroom Ownership
+Budget Buddy is organized around one classroom. The classroom owns student programs, staff records, reinforcement resources, session data, reports, backups, and future Buddy modules.
+
+Each session records the administering staff member. Administrator trends are descriptive and must be interpreted alongside setting, student state, task difficulty, and implementation context.
