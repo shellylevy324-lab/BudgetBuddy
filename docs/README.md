@@ -246,3 +246,8 @@ The white background remains unchanged throughout the sequence.
 - Added a larger independent-response celebration option.
 - Preserved custom GIF, animation, and sound paths.
 - Baseline continues to suppress all trial-by-trial reinforcement.
+
+## v0.14.4
+- Added direct uploads for token images/GIFs, completion images/GIFs, and completion audio.
+- Uploaded media is stored with the student program in the current browser.
+- Relative project paths remain available for cross-device deployment.

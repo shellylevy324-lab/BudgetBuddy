@@ -1,5 +1,19 @@
 # Budget Buddy Changelog
 
+## v0.14.4 — Custom Reinforcement Uploads
+
+### Added
+- Direct token image/GIF upload
+- Direct completion image/GIF upload
+- Direct completion audio upload
+- File validation, size limits, upload status, and clear controls
+
+### Storage Note
+Uploaded files remain in the current browser. Use project paths for reliable cross-device use.
+
+---
+
+
 ## v0.14.3 — Reinforcement Packages
 
 ### Added
