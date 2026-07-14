@@ -2,12 +2,12 @@ const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="bu
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false};
+const appState={students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false};
 
 const $=id=>document.getElementById(id);
 const homeScreen=$("homeScreen"),teacherScreen=$("teacherScreen"),welcomeScreen=$("welcomeScreen"),groceryScreen=$("groceryScreen"),completeScreen=$("completeScreen");
 const homeStudentSelect=$("homeStudentSelect"),startButton=$("startButton"),teacherButton=$("teacherButton"),teacherBackButton=$("teacherBackButton"),studentsTabButton=$("studentsTabButton"),reportsTabButton=$("reportsTabButton"),dataTabButton=$("dataTabButton"),studentsPanel=$("studentsPanel"),reportsPanel=$("reportsPanel"),dataPanel=$("dataPanel");
-const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),tokenPromptSettings=$("tokenPromptSettings"),tokenReinforcementSettings=$("tokenReinforcementSettings"),startingPromptLevelInput=$("startingPromptLevel"),tokenGoalInput=$("tokenGoal"),maximumTokenTrialsInput=$("maximumTokenTrials"),tokenAnimationPathInput=$("tokenAnimationPath"),completionAnimationPathInput=$("completionAnimationPath"),completionAudioPathInput=$("completionAudioPath"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),cartTargetCountInput=$("cartTargetCount"),cartTargetCountGroup=$("cartTargetCountGroup"),cartOptionCountInput=$("cartOptionCount"),cartOptionCountGroup=$("cartOptionCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),responseDelaySecondsInput=$("responseDelaySeconds"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
+const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),tokenPromptSettings=$("tokenPromptSettings"),tokenReinforcementSettings=$("tokenReinforcementSettings"),startingPromptLevelInput=$("startingPromptLevel"),tokenGoalInput=$("tokenGoal"),maximumTokenTrialsInput=$("maximumTokenTrials"),tokenAnimationPathInput=$("tokenAnimationPath"),completionAnimationPathInput=$("completionAnimationPath"),completionAudioPathInput=$("completionAudioPath"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),cartTargetCountInput=$("cartTargetCount"),cartTargetCountGroup=$("cartTargetCountGroup"),cartOptionCountInput=$("cartOptionCount"),cartOptionCountGroup=$("cartOptionCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),responseDelaySecondsInput=$("responseDelaySeconds"),errorModelCorrectResponseInput=$("errorModelCorrectResponse"),errorRequireCorrectionResponseInput=$("errorRequireCorrectionResponse"),errorWithholdTokenInput=$("errorWithholdToken"),errorContinueSessionInput=$("errorContinueSession"),dataAccuracyInput=$("dataAccuracy"),dataLatencyInput=$("dataLatency"),dataPromptLevelInput=$("dataPromptLevel"),dataIndependentInput=$("dataIndependent"),dataTokensInput=$("dataTokens"),dataCorrectionsInput=$("dataCorrections"),dataCartAttemptsInput=$("dataCartAttempts"),dataResponseDistributionInput=$("dataResponseDistribution"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
 const reportStudentFilter=$("reportStudentFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
 const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
 const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
@@ -18,7 +18,23 @@ const screens=[homeScreen,teacherScreen,welcomeScreen,groceryScreen,completeScre
 function showScreen(selected){screens.forEach(s=>s.classList.add("hidden"));selected.classList.remove("hidden")}
 function showTeacherPanel(name){studentsPanel.classList.toggle("hidden",name!=="students");reportsPanel.classList.toggle("hidden",name!=="reports");dataPanel.classList.toggle("hidden",name!=="data");studentsTabButton.classList.toggle("active",name==="students");reportsTabButton.classList.toggle("active",name==="reports");dataTabButton.classList.toggle("active",name==="data");if(name==="reports")renderReports()}
 
-function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2,responseDelaySeconds:Number.isFinite(Number(s.responseDelaySeconds))?Math.max(0,Math.min(10,Number(s.responseDelaySeconds))):2}}
+function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2,responseDelaySeconds:Number.isFinite(Number(s.responseDelaySeconds))?Math.max(0,Math.min(10,Number(s.responseDelaySeconds))):2,
+errorCorrection:{
+ modelCorrectResponse:s.errorCorrection?.modelCorrectResponse!==false,
+ requireCorrectionResponse:s.errorCorrection?.requireCorrectionResponse!==false,
+ withholdToken:s.errorCorrection?.withholdToken!==false,
+ continueSession:s.errorCorrection?.continueSession!==false
+},
+dataCollection:{
+ accuracy:s.dataCollection?.accuracy!==false,
+ latency:s.dataCollection?.latency!==false,
+ promptLevel:s.dataCollection?.promptLevel!==false,
+ independent:s.dataCollection?.independent!==false,
+ tokens:s.dataCollection?.tokens!==false,
+ corrections:s.dataCollection?.corrections!==false,
+ cartAttempts:s.dataCollection?.cartAttempts!==false,
+ responseDistribution:s.dataCollection?.responseDistribution!==false
+}}}
 function loadStudents(){
     const raw=localStorage.getItem(STUDENT_STORAGE_KEY);
 
@@ -71,10 +87,50 @@ function renderStudentList(){
     });
 }
 
-function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;startingPromptLevelInput.value=s.startingPromptLevel||"visual-audio";tokenGoalInput.value=String(s.tokenGoal||5);maximumTokenTrialsInput.value=String(s.maximumTokenTrials||10);tokenAnimationPathInput.value=s.tokenAnimationPath||"";completionAnimationPathInput.value=s.completionAnimationPath||"";completionAudioPathInput.value=s.completionAudioPath||"";updatePromptStyleDisplay();waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;activityLevelInput.value=s.activityLevel||"single-item";listItemCountInput.value=String(s.listItemCount||2);cartTargetCountInput.value=String(s.cartTargetCount||2);cartOptionCountInput.value=String(s.cartOptionCount||4);updateActivityLevelDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);responseDelaySecondsInput.value=String(Number.isFinite(Number(s.responseDelaySeconds))?s.responseDelaySeconds:2);profileFormTitle.textContent="Edit "+s.name;deleteStudentButton.disabled=false;settingsMessage.textContent="";updateHomeStudentSelect();renderStudentList()}
-function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";startingPromptLevelInput.value="visual-audio";tokenGoalInput.value="5";maximumTokenTrialsInput.value="10";tokenAnimationPathInput.value="";completionAnimationPathInput.value="";completionAudioPathInput.value="";updatePromptStyleDisplay();waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;activityLevelInput.value="single-item";listItemCountInput.value="2";cartTargetCountInput.value="2";cartOptionCountInput.value="4";updateActivityLevelDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";responseDelaySecondsInput.value="2";profileFormTitle.textContent="Add Student";deleteStudentButton.disabled=true;settingsMessage.textContent="";studentNameInput.focus()}
+function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;startingPromptLevelInput.value=s.startingPromptLevel||"visual-audio";tokenGoalInput.value=String(s.tokenGoal||5);maximumTokenTrialsInput.value=String(s.maximumTokenTrials||10);tokenAnimationPathInput.value=s.tokenAnimationPath||"";completionAnimationPathInput.value=s.completionAnimationPath||"";completionAudioPathInput.value=s.completionAudioPath||"";updatePromptStyleDisplay();waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;activityLevelInput.value=s.activityLevel||"single-item";listItemCountInput.value=String(s.listItemCount||2);cartTargetCountInput.value=String(s.cartTargetCount||2);cartOptionCountInput.value=String(s.cartOptionCount||4);updateActivityLevelDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);responseDelaySecondsInput.value=String(Number.isFinite(Number(s.responseDelaySeconds))?s.responseDelaySeconds:2);
+errorModelCorrectResponseInput.checked=s.errorCorrection?.modelCorrectResponse!==false;
+errorRequireCorrectionResponseInput.checked=s.errorCorrection?.requireCorrectionResponse!==false;
+errorWithholdTokenInput.checked=s.errorCorrection?.withholdToken!==false;
+errorContinueSessionInput.checked=s.errorCorrection?.continueSession!==false;
+dataAccuracyInput.checked=s.dataCollection?.accuracy!==false;
+dataLatencyInput.checked=s.dataCollection?.latency!==false;
+dataPromptLevelInput.checked=s.dataCollection?.promptLevel!==false;
+dataIndependentInput.checked=s.dataCollection?.independent!==false;
+dataTokensInput.checked=s.dataCollection?.tokens!==false;
+dataCorrectionsInput.checked=s.dataCollection?.corrections!==false;
+dataCartAttemptsInput.checked=s.dataCollection?.cartAttempts!==false;
+dataResponseDistributionInput.checked=s.dataCollection?.responseDistribution!==false;profileFormTitle.textContent="Edit "+s.name;deleteStudentButton.disabled=false;settingsMessage.textContent="";updateHomeStudentSelect();renderStudentList()}
+function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";startingPromptLevelInput.value="visual-audio";tokenGoalInput.value="5";maximumTokenTrialsInput.value="10";tokenAnimationPathInput.value="";completionAnimationPathInput.value="";completionAudioPathInput.value="";updatePromptStyleDisplay();waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;activityLevelInput.value="single-item";listItemCountInput.value="2";cartTargetCountInput.value="2";cartOptionCountInput.value="4";updateActivityLevelDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";responseDelaySecondsInput.value="2";
+errorModelCorrectResponseInput.checked=true;
+errorRequireCorrectionResponseInput.checked=true;
+errorWithholdTokenInput.checked=true;
+errorContinueSessionInput.checked=true;
+dataAccuracyInput.checked=true;
+dataLatencyInput.checked=true;
+dataPromptLevelInput.checked=true;
+dataIndependentInput.checked=true;
+dataTokensInput.checked=true;
+dataCorrectionsInput.checked=true;
+dataCartAttemptsInput.checked=true;
+dataResponseDistributionInput.checked=true;profileFormTitle.textContent="Add Student";deleteStudentButton.disabled=true;settingsMessage.textContent="";studentNameInput.focus()}
 function createStudentId(name){const safe=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return(safe||"student")+"-"+Date.now()}
-function saveStudentProfile(){const name=studentNameInput.value.trim();if(!name){settingsMessage.textContent="Please enter a student name.";studentNameInput.focus();return}const id=studentIdInput.value;const p=normalizeStudent({id:id||createStudentId(name),name,totalTrials:Number(sessionLengthSelect.value),promptStyle:promptStyleSelect.value,startingPromptLevel:startingPromptLevelInput.value,tokenGoal:Number(tokenGoalInput.value)||5,maximumTokenTrials:Number(maximumTokenTrialsInput.value)||10,tokenAnimationPath:tokenAnimationPathInput.value.trim(),completionAnimationPath:completionAnimationPathInput.value.trim(),completionAudioPath:completionAudioPathInput.value.trim(),waitTimeSeconds:Number(waitTimeInput.value)||10,promptStepTimeSeconds:Number(promptStepTimeInput.value)||5,audioSdEnabled:audioSdEnabledInput.checked,activityLevel:activityLevelInput.value,listItemCount:Number(listItemCountInput.value)||2,cartTargetCount:Number(cartTargetCountInput.value)||2,cartOptionCount:Number(cartOptionCountInput.value)||4,budgetMode:budgetModeInput.value,minimumBudget:Number(minimumBudgetInput.value)||2,maximumBudget:Number(maximumBudgetInput.value)||10,useWholeDollarBudgets:useWholeDollarBudgetsInput.checked,reinforcementType:reinforcementTypeInput.value,praiseText:(praiseTextInput.value.trim()||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(feedbackDurationInput.value)||2,responseDelaySeconds:Math.max(0,Math.min(10,Number(responseDelaySecondsInput.value)||0))});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();settingsMessage.textContent=p.name+"'s profile was saved."}
+function saveStudentProfile(){const name=studentNameInput.value.trim();if(!name){settingsMessage.textContent="Please enter a student name.";studentNameInput.focus();return}const id=studentIdInput.value;const p=normalizeStudent({id:id||createStudentId(name),name,totalTrials:Number(sessionLengthSelect.value),promptStyle:promptStyleSelect.value,startingPromptLevel:startingPromptLevelInput.value,tokenGoal:Number(tokenGoalInput.value)||5,maximumTokenTrials:Number(maximumTokenTrialsInput.value)||10,tokenAnimationPath:tokenAnimationPathInput.value.trim(),completionAnimationPath:completionAnimationPathInput.value.trim(),completionAudioPath:completionAudioPathInput.value.trim(),waitTimeSeconds:Number(waitTimeInput.value)||10,promptStepTimeSeconds:Number(promptStepTimeInput.value)||5,audioSdEnabled:audioSdEnabledInput.checked,activityLevel:activityLevelInput.value,listItemCount:Number(listItemCountInput.value)||2,cartTargetCount:Number(cartTargetCountInput.value)||2,cartOptionCount:Number(cartOptionCountInput.value)||4,budgetMode:budgetModeInput.value,minimumBudget:Number(minimumBudgetInput.value)||2,maximumBudget:Number(maximumBudgetInput.value)||10,useWholeDollarBudgets:useWholeDollarBudgetsInput.checked,reinforcementType:reinforcementTypeInput.value,praiseText:(praiseTextInput.value.trim()||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(feedbackDurationInput.value)||2,responseDelaySeconds:Math.max(0,Math.min(10,Number(responseDelaySecondsInput.value)||0)),
+errorCorrection:{
+ modelCorrectResponse:errorModelCorrectResponseInput.checked,
+ requireCorrectionResponse:errorRequireCorrectionResponseInput.checked,
+ withholdToken:errorWithholdTokenInput.checked,
+ continueSession:errorContinueSessionInput.checked
+},
+dataCollection:{
+ accuracy:dataAccuracyInput.checked,
+ latency:dataLatencyInput.checked,
+ promptLevel:dataPromptLevelInput.checked,
+ independent:dataIndependentInput.checked,
+ tokens:dataTokensInput.checked,
+ corrections:dataCorrectionsInput.checked,
+ cartAttempts:dataCartAttemptsInput.checked,
+ responseDistribution:dataResponseDistributionInput.checked
+}});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();settingsMessage.textContent=p.name+"'s profile was saved."}
 function deleteSelectedStudent(){const id=studentIdInput.value;if(!id)return;const s=appState.students.find(x=>x.id===id);if(!s||!confirm("Delete "+s.name+"'s profile?"))return;appState.students=appState.students.filter(x=>x.id!==id);appState.selectedStudentId=appState.students[0]?.id||"";saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();updateReportStudentFilter();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent()}
 
 function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;appState.currentStudent=s;welcomeStudentName.textContent="Welcome, "+s.name+"!";if(s.activityLevel==="cart-builder"){
@@ -872,7 +928,7 @@ function recordTrial(answer,correct,ok,latency,postPromptLatency){
         studentAnswer:answer,
         correctAnswer:correct,
         correct:ok,
-        tokenEarned:isTokenTeachingSession()&&ok,
+        tokenEarned:isTokenTeachingSession()&&ok,correctedResponse:false,
         latencySeconds:latency,
         postPromptLatencySeconds:postPromptLatency,
         promptLevel:appState.currentPromptLevel,
@@ -919,6 +975,8 @@ function finishSession(){
         tokenGoalMet:isTokenTeachingSession()?appState.tokensEarned>=(Number(appState.currentStudent.tokenGoal)||5):null,
         waitTimeSeconds:appState.currentStudent.waitTimeSeconds,
         promptStepTimeSeconds:appState.currentStudent.promptStepTimeSeconds,
+        errorCorrection:{...appState.currentStudent.errorCorrection},
+        dataCollection:{...appState.currentStudent.dataCollection},
         trials:trials
     };
 
@@ -1075,27 +1133,74 @@ function recordCartTrial(ok,latency,postPromptLatency){
 }
 
 
+function finishAfterCorrection(){
+    appState.awaitingModelCorrection=false;
+    appState.acceptingResponse=false;
+    disableAnswerButtons();
+    hideFeedback();
+
+    const settings=appState.currentStudent?.errorCorrection||{};
+
+    if(settings.continueSession===false){
+        window.setTimeout(finishSession,500);
+    }else{
+        window.setTimeout(loadNextTrial,700);
+    }
+}
+
 function beginModelCorrection(){
+    const settings=appState.currentStudent?.errorCorrection||{};
+
+    appState.lastTrialCorrected=true;
+
+    if(settings.modelCorrectResponse===false){
+        feedbackArea.textContent="Let's try another one.";
+        feedbackArea.className="feedbackArea feedbackIncorrect modelCorrectionNotice";
+
+        if(settings.continueSession===false){
+            window.setTimeout(finishSession,700);
+        }else{
+            window.setTimeout(loadNextTrial,700);
+        }
+        return;
+    }
+
     appState.awaitingModelCorrection=true;
-    appState.acceptingResponse=true;
     resetPromptDisplay();
     appState.currentPromptLevel="gesture";
     promptArea.className="promptArea promptGesture";
     promptMessage.textContent="Now choose the highlighted answer.";
-    feedbackArea.textContent="No token this time. Let's correct it together.";
+    feedbackArea.textContent=settings.withholdToken===false
+        ? "Correct the response to earn the token."
+        : "No token this time. Let's correct it together.";
     feedbackArea.className="feedbackArea feedbackIncorrect modelCorrectionNotice";
     groceryScreen.classList.add("promptGesture");
     getCorrectButton().classList.add("correctChoice");
     showGesturePrompt();
+
+    if(settings.requireCorrectionResponse===false){
+        appState.acceptingResponse=false;
+        disableAnswerButtons();
+        window.setTimeout(finishAfterCorrection,1100);
+        return;
+    }
+
+    appState.acceptingResponse=true;
     setResponsesLocked(false);
 }
 
 function completeModeledCorrection(answer){
     if(answer!==getCorrectAnswer())return;
-    appState.acceptingResponse=false;
-    disableAnswerButtons();
-    hideFeedback();
-    window.setTimeout(loadNextTrial,700);
+
+    const settings=appState.currentStudent?.errorCorrection||{};
+
+    if(settings.withholdToken===false && isTokenTeachingSession()){
+        appState.tokensEarned+=1;
+        renderTokenBoard();
+        showTokenCelebration();
+    }
+
+    finishAfterCorrection();
 }
 
 function handleAnswer(answer){
@@ -1120,6 +1225,9 @@ function handleAnswer(answer){
             showTokenCelebration();
             window.setTimeout(loadNextTrial,1600);
         }else{
+            if(appState.responses.length){
+                appState.responses[appState.responses.length-1].correctedResponse=true;
+            }
             window.setTimeout(beginModelCorrection,350);
         }
         return;
@@ -1133,10 +1241,37 @@ function handleAnswer(answer){
 
 function updateReportStudentFilter(){const cur=reportStudentFilter.value||"all";reportStudentFilter.innerHTML='<option value="all">All Students</option>';appState.students.forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=s.name;reportStudentFilter.appendChild(o)});reportStudentFilter.value=[...reportStudentFilter.options].some(o=>o.value===cur)?cur:"all"}
 function getFilteredSessions(){const id=reportStudentFilter.value;return!id||id==="all"?[...appState.sessions]:appState.sessions.filter(s=>s.studentId===id)}
+
+function sessionMeasureEnabled(session,key){
+    return session?.dataCollection?.[key]!==false;
+}
+
+function displayMetric(session,key,value,fallback="—"){
+    return sessionMeasureEnabled(session,key) ? value : fallback;
+}
+
 function renderReports(){updateReportStudentFilter();const sessions=getFilteredSessions();renderSummaryCards(sessions);renderSessionTable(sessions);const sel=appState.sessions.find(s=>s.id===appState.selectedSessionId)||sessions[0]||null;if(sel){appState.selectedSessionId=sel.id;renderTrialDetails(sel)}else{selectedSessionLabel.textContent="No saved sessions are available.";trialDetailBody.innerHTML=""}}
 function renderSummaryCards(sessions){reportSummaryCards.innerHTML="";const trials=sessions.flatMap(s=>s.trials||[]),correct=trials.filter(t=>t.correct).length,ind=trials.filter(t=>t.independent).length,cards=[["Sessions",sessions.length],["Trials",trials.length],["Overall Accuracy",(trials.length?correct/trials.length*100:0).toFixed(1)+"%"],["Independent",(trials.length?ind/trials.length*100:0).toFixed(1)+"%"],["Average Latency",formatSeconds(average(trials.map(t=>t.latencySeconds)))]];cards.forEach(([l,v])=>{const d=document.createElement("div");d.className="summaryCard";d.innerHTML="<span>"+l+"</span><strong>"+v+"</strong>";reportSummaryCards.appendChild(d)})}
-function renderSessionTable(sessions){sessionTableBody.innerHTML="";if(!sessions.length){sessionTableBody.innerHTML='<tr><td colspan="7">No sessions have been saved.</td></tr>';return}sessions.forEach(s=>{const r=document.createElement("tr");r.className="sessionRow"+(s.id===appState.selectedSessionId?" selected":"");[new Date(s.completedAt).toLocaleString(),s.studentName,s.completedTrials,s.accuracyPercent+"%",(s.independentPercent??0)+"%",formatSeconds(s.averageLatencySeconds),PROMPT_LABELS[s.highestPromptLevel||"independent"]].forEach(v=>{const c=document.createElement("td");c.textContent=v;r.appendChild(c)});r.onclick=()=>{appState.selectedSessionId=s.id;renderReports()};sessionTableBody.appendChild(r)})}
-function renderTrialDetails(s){selectedSessionLabel.textContent=s.studentName+" — "+new Date(s.completedAt).toLocaleString();trialDetailBody.innerHTML="";(s.trials||[]).forEach(t=>{const r=document.createElement("tr");[t.trialNumber,t.item,formatCurrency(t.price),formatCurrency(t.budget),t.studentAnswer.toUpperCase(),t.correct?"Yes":"No",formatSeconds(t.latencySeconds),PROMPT_LABELS[t.promptLevel||"independent"],formatSeconds(t.postPromptLatencySeconds)].forEach(v=>{const c=document.createElement("td");c.textContent=v;r.appendChild(c)});trialDetailBody.appendChild(r)})}
+function renderSessionTable(sessions){sessionTableBody.innerHTML="";if(!sessions.length){sessionTableBody.innerHTML='<tr><td colspan="7">No sessions have been saved.</td></tr>';return}sessions.forEach(s=>{const r=document.createElement("tr");r.className="sessionRow"+(s.id===appState.selectedSessionId?" selected":"");[
+ new Date(s.completedAt).toLocaleString(),
+ s.studentName,
+ s.completedTrials,
+ displayMetric(s,"accuracy",s.accuracyPercent+"%"),
+ displayMetric(s,"independent",(s.independentPercent??0)+"%"),
+ displayMetric(s,"latency",formatSeconds(s.averageLatencySeconds)),
+ displayMetric(s,"promptLevel",PROMPT_LABELS[s.highestPromptLevel||"independent"])
+].forEach(v=>{const c=document.createElement("td");c.textContent=v;r.appendChild(c)});r.onclick=()=>{appState.selectedSessionId=s.id;renderReports()};sessionTableBody.appendChild(r)})}
+function renderTrialDetails(s){selectedSessionLabel.textContent=s.studentName+" — "+new Date(s.completedAt).toLocaleString();trialDetailBody.innerHTML="";(s.trials||[]).forEach(t=>{const r=document.createElement("tr");[
+ t.trialNumber,
+ t.item,
+ formatCurrency(t.price),
+ formatCurrency(t.budget),
+ t.studentAnswer.toUpperCase(),
+ displayMetric(s,"accuracy",t.correct?"Yes":"No"),
+ displayMetric(s,"latency",formatSeconds(t.latencySeconds)),
+ displayMetric(s,"promptLevel",PROMPT_LABELS[t.promptLevel||"independent"]),
+ displayMetric(s,"latency",formatSeconds(t.postPromptLatencySeconds))
+].forEach(v=>{const c=document.createElement("td");c.textContent=v;r.appendChild(c)});trialDetailBody.appendChild(r)})}
 function downloadTextFile(name,content,type){const b=new Blob([content],{type}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u)}
 function exportSessionsToCsv(){const sessions=getFilteredSessions();if(!sessions.length){alert("There are no sessions to export.");return}const rows=[["Session ID","Student","Session Completed","Trial","Item","Category","Price","Budget","Student Answer","Correct Answer","Correct","Total Latency Seconds","Prompt Level","Independent","Post-Prompt Latency Seconds"]];sessions.forEach(s=>(s.trials||[]).forEach(t=>rows.push([s.id,s.studentName,s.completedAt,t.trialNumber,t.item,t.category,Number(t.price).toFixed(2),Number(t.budget).toFixed(2),t.studentAnswer,t.correctAnswer,t.correct?"Yes":"No",Number(t.latencySeconds).toFixed(2),t.promptLevel||"independent",t.independent?"Yes":"No",t.postPromptLatencySeconds==null?"":Number(t.postPromptLatencySeconds).toFixed(2)])));downloadTextFile("budget-buddy-session-data.csv",rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8;")}
 function clearSavedReports(){if(!confirm("Delete all saved session reports from this browser?"))return;appState.sessions=[];appState.selectedSessionId="";saveSessions();renderReports()}
@@ -1273,4 +1408,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.14.1 loaded successfully");
+loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.14.2 loaded successfully");

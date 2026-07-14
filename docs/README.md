@@ -228,3 +228,11 @@ The white background remains unchanged throughout the sequence.
 - Restored student loading and Student Programs navigation.
 - Restored student editing, saving, deleting, and session launch functions accidentally omitted from v0.14.
 - Preserved the new categorized ABA Student Program layout.
+
+
+## v0.14.2
+- Error Correction is now editable for each student program.
+- Teachers can enable or disable modeling, required correction responses, token withholding, and continuation after correction.
+- Data Collection is now configurable for each student.
+- Selected data measures control what appears in teacher reports and exported summaries.
+- Baseline continues to suppress error correction automatically.

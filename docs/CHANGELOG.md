@@ -1,5 +1,38 @@
 # Budget Buddy Changelog
 
+## v0.14.2 — Editable Protocol Options
+
+### Added
+- Editable Error Correction checkboxes
+- Editable Data Collection checkboxes
+- Student-specific saved protocol choices
+- Report visibility based on each student’s selected measures
+
+### Error Correction Options
+- Model the correct response
+- Require completion of the modeled response
+- Withhold or award a token after correction
+- Continue or end the session after correction
+
+### Data Options
+- Accuracy
+- Latency
+- Prompt level
+- Independent responses
+- Tokens
+- Corrected responses
+- Cart attempts
+- Yes / No response distribution
+
+### Preserved
+- Baseline suppression of error correction
+- Existing student programs and stored data
+- Levels 1–3
+- Prompting, token, and reinforcement procedures
+
+---
+
+
 ## v0.14.1 — Student Program Navigation Fix
 
 ### Fixed

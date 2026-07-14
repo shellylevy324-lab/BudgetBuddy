@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.14.1">
+  <link rel="stylesheet" href="style.css?v=0.14.2">
 </head>
 <body>
 <main class="container">
@@ -139,16 +139,41 @@
 
             <details class="programSection">
               <summary><span class="sectionIcon">↩️</span><span><strong>Error Correction</strong><small>Review what happens after an incorrect teaching response.</small></span></summary>
-              <div class="programSectionBody protocolChecklist">
-                <div>✓ Model the correct response</div><div>✓ Student completes the modeled response</div><div>✓ No token is awarded for the corrected trial</div><div>✓ Continue the teaching session</div>
-                <p class="fieldHelp">Error correction is disabled automatically during Baseline.</p>
+              <div class="programSectionBody protocolChecklist editableChecklist">
+                <label class="protocolOption">
+                  <input id="errorModelCorrectResponse" type="checkbox" checked>
+                  <span>Model the correct response after an error</span>
+                </label>
+                <label class="protocolOption">
+                  <input id="errorRequireCorrectionResponse" type="checkbox" checked>
+                  <span>Require the student to complete the modeled response</span>
+                </label>
+                <label class="protocolOption">
+                  <input id="errorWithholdToken" type="checkbox" checked>
+                  <span>Withhold the token after an incorrect first response</span>
+                </label>
+                <label class="protocolOption">
+                  <input id="errorContinueSession" type="checkbox" checked>
+                  <span>Continue the teaching session after correction</span>
+                </label>
+                <p class="fieldHelp">Error correction is disabled automatically during Baseline. If “Continue” is turned off, the session ends after the correction sequence.</p>
               </div>
             </details>
 
             <details class="programSection">
               <summary><span class="sectionIcon">📊</span><span><strong>Data Collection</strong><small>See the measures Budget Buddy records automatically.</small></span></summary>
-              <div class="programSectionBody dataMeasureGrid">
-                <div>✓ First-response accuracy</div><div>✓ Response latency</div><div>✓ Prompt level</div><div>✓ Independent responses</div><div>✓ Tokens earned</div><div>✓ Corrected responses</div><div>✓ Cart attempts</div><div>✓ Yes / No response distribution</div>
+              <div class="programSectionBody">
+                <p class="fieldHelp">Choose which measures appear in teacher reports and exported data. Core response information remains available internally so the teaching procedure can run correctly.</p>
+                <div class="dataMeasureGrid editableDataGrid">
+                  <label class="protocolOption"><input id="dataAccuracy" type="checkbox" checked><span>First-response accuracy</span></label>
+                  <label class="protocolOption"><input id="dataLatency" type="checkbox" checked><span>Response latency</span></label>
+                  <label class="protocolOption"><input id="dataPromptLevel" type="checkbox" checked><span>Prompt level</span></label>
+                  <label class="protocolOption"><input id="dataIndependent" type="checkbox" checked><span>Independent responses</span></label>
+                  <label class="protocolOption"><input id="dataTokens" type="checkbox" checked><span>Tokens earned</span></label>
+                  <label class="protocolOption"><input id="dataCorrections" type="checkbox" checked><span>Corrected responses</span></label>
+                  <label class="protocolOption"><input id="dataCartAttempts" type="checkbox" checked><span>Cart attempts</span></label>
+                  <label class="protocolOption"><input id="dataResponseDistribution" type="checkbox" checked><span>Yes / No response distribution</span></label>
+                </div>
               </div>
             </details>
           </div>
@@ -362,9 +387,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.14.1 — Student Program Navigation Fix</footer>
+  <footer class="appFooter">Budget Buddy v0.14.2 — Editable Protocol Options</footer>
 </main>
 
-<script src="script.js?v=0.14.1"></script>
+<script src="script.js?v=0.14.2"></script>
 </body>
 </html>
