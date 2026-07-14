@@ -1,5 +1,28 @@
 # Budget Buddy Changelog
 
+## v0.13.3 — Universal Response Delay
+
+### Added
+- Student-specific response delay from 0–10 seconds
+- Default 2-second observation period
+- Disabled response controls during observation
+- Subtle “Please look carefully...” message
+- Visual ready-state transition
+
+### Changed
+- Latency begins when response controls activate
+- Token prompt-fading levels with audio keep controls disabled until the cue is complete
+
+### Preserved
+- Baseline, least-to-most, and token-fading procedures
+- Token goals and model correction
+- Levels 1–3
+- Reinforcement media
+- Reports and import/export
+
+---
+
+
 ## v0.13.2 — Token Session Start Fix
 
 ### Fixed

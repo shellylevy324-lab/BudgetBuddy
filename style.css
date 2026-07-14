@@ -776,3 +776,36 @@
 .answerButtonsLocked{opacity:.55;pointer-events:none}
 .modelCorrectionNotice{font-size:1.3rem;font-weight:900}
 @media(prefers-reduced-motion:reduce){.builtInTokenAnimation{animation:none}}
+
+
+/* =====================================
+   Budget Buddy v0.13.3
+   Universal response delay
+===================================== */
+
+.responseDelayMessage {
+    margin: 0 0 10px;
+    padding: 10px 14px;
+    border: 2px solid #bcccdc;
+    border-radius: 14px;
+    background: #f7fafc;
+    color: #40566b;
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+
+.responseLocked .answerButton,
+.responseLocked .checkCartButton {
+    opacity: 0.42;
+    filter: grayscale(0.35);
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.responseReady .answerButton,
+.responseReady .checkCartButton {
+    transition:
+        opacity 0.25s ease,
+        filter 0.25s ease,
+        transform 0.15s ease;
+}

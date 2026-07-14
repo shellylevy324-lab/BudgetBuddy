@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.13.2">
+  <link rel="stylesheet" href="style.css?v=0.13.3">
 </head>
 <body>
 <main class="container">
@@ -216,6 +216,25 @@
             </label>
           </div>
 
+
+          <div class="formGroup">
+            <label for="responseDelaySeconds">Response Delay Before Buttons Activate</label>
+            <div class="numberInputRow">
+              <input
+                id="responseDelaySeconds"
+                type="number"
+                min="0"
+                max="10"
+                step="1"
+                value="2"
+              >
+              <span>seconds</span>
+            </div>
+            <p class="fieldHelp">
+              The student can view the trial during this observation period, but cannot answer yet.
+            </p>
+          </div>
+
           <div class="formGroup">
             <label for="reinforcementType">Correct-Response Reinforcement</label>
             <select id="reinforcementType">
@@ -412,6 +431,7 @@
       </section>
 
       <section class="questionArea">
+        <p id="responseDelayMessage" class="responseDelayMessage hidden">Please look carefully...</p>
         <div class="questionHeadingRow">
           <h2 id="affordabilityQuestion">Can you afford this item?</h2>
           <button
@@ -464,9 +484,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.13.2 — Token Session Start Fix</footer>
+  <footer class="appFooter">Budget Buddy v0.13.3 — Universal Response Delay</footer>
 </main>
 
-<script src="script.js?v=0.13.2"></script>
+<script src="script.js?v=0.13.3"></script>
 </body>
 </html>

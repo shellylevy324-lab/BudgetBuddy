@@ -197,3 +197,12 @@ The white background remains unchanged throughout the sequence.
 - Comparison prompts now support single-item, grocery-list, and cart activities.
 - Replaced a compatibility-sensitive string method.
 - Improved the session-start error message so unrelated errors are not reported as grocery-data failures.
+
+
+## v0.13.3
+- Added a universal response delay before student response controls activate.
+- Default delay is 2 seconds and can be customized from 0–10 seconds per student.
+- Yes/No and Check My Cart remain disabled during the observation period.
+- A subtle “Please look carefully...” message appears while controls are locked.
+- Latency now begins when response controls activate.
+- Prompt-fading audio levels keep controls locked long enough for the audio cue to finish.
