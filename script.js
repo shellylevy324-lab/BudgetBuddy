@@ -7,7 +7,7 @@ const appState={students:[],sessions:[],selectedStudentId:"",selectedSessionId:"
 const $=id=>document.getElementById(id);
 const homeScreen=$("homeScreen"),teacherScreen=$("teacherScreen"),welcomeScreen=$("welcomeScreen"),groceryScreen=$("groceryScreen"),completeScreen=$("completeScreen");
 const homeStudentSelect=$("homeStudentSelect"),startButton=$("startButton"),teacherButton=$("teacherButton"),teacherBackButton=$("teacherBackButton"),studentsTabButton=$("studentsTabButton"),reportsTabButton=$("reportsTabButton"),dataTabButton=$("dataTabButton"),studentsPanel=$("studentsPanel"),reportsPanel=$("reportsPanel"),dataPanel=$("dataPanel");
-const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),tokenPromptSettings=$("tokenPromptSettings"),tokenReinforcementSettings=$("tokenReinforcementSettings"),startingPromptLevelInput=$("startingPromptLevel"),tokenGoalInput=$("tokenGoal"),maximumTokenTrialsInput=$("maximumTokenTrials"),tokenAnimationPathInput=$("tokenAnimationPath"),completionAnimationPathInput=$("completionAnimationPath"),completionAudioPathInput=$("completionAudioPath"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),cartTargetCountInput=$("cartTargetCount"),cartTargetCountGroup=$("cartTargetCountGroup"),cartOptionCountInput=$("cartOptionCount"),cartOptionCountGroup=$("cartOptionCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),responseDelaySecondsInput=$("responseDelaySeconds"),errorModelCorrectResponseInput=$("errorModelCorrectResponse"),errorRequireCorrectionResponseInput=$("errorRequireCorrectionResponse"),errorWithholdTokenInput=$("errorWithholdToken"),errorContinueSessionInput=$("errorContinueSession"),dataAccuracyInput=$("dataAccuracy"),dataLatencyInput=$("dataLatency"),dataPromptLevelInput=$("dataPromptLevel"),dataIndependentInput=$("dataIndependent"),dataTokensInput=$("dataTokens"),dataCorrectionsInput=$("dataCorrections"),dataCartAttemptsInput=$("dataCartAttempts"),dataResponseDistributionInput=$("dataResponseDistribution"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
+const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),tokenPromptSettings=$("tokenPromptSettings"),tokenReinforcementSettings=$("tokenReinforcementSettings"),startingPromptLevelInput=$("startingPromptLevel"),tokenGoalInput=$("tokenGoal"),maximumTokenTrialsInput=$("maximumTokenTrials"),tokenAnimationPathInput=$("tokenAnimationPath"),completionAnimationPathInput=$("completionAnimationPath"),completionAudioPathInput=$("completionAudioPath"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),cartTargetCountInput=$("cartTargetCount"),cartTargetCountGroup=$("cartTargetCountGroup"),cartOptionCountInput=$("cartOptionCount"),cartOptionCountGroup=$("cartOptionCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementPackageInput=$("reinforcementPackage"),differentialReinforcementInput=$("differentialReinforcement"),customReinforcementSettings=$("customReinforcementSettings"),previewTokenReinforcementButton=$("previewTokenReinforcement"),previewCompletionReinforcementButton=$("previewCompletionReinforcement"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),responseDelaySecondsInput=$("responseDelaySeconds"),errorModelCorrectResponseInput=$("errorModelCorrectResponse"),errorRequireCorrectionResponseInput=$("errorRequireCorrectionResponse"),errorWithholdTokenInput=$("errorWithholdToken"),errorContinueSessionInput=$("errorContinueSession"),dataAccuracyInput=$("dataAccuracy"),dataLatencyInput=$("dataLatency"),dataPromptLevelInput=$("dataPromptLevel"),dataIndependentInput=$("dataIndependent"),dataTokensInput=$("dataTokens"),dataCorrectionsInput=$("dataCorrections"),dataCartAttemptsInput=$("dataCartAttempts"),dataResponseDistributionInput=$("dataResponseDistribution"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
 const reportStudentFilter=$("reportStudentFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
 const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
 const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
@@ -18,7 +18,7 @@ const screens=[homeScreen,teacherScreen,welcomeScreen,groceryScreen,completeScre
 function showScreen(selected){screens.forEach(s=>s.classList.add("hidden"));selected.classList.remove("hidden")}
 function showTeacherPanel(name){studentsPanel.classList.toggle("hidden",name!=="students");reportsPanel.classList.toggle("hidden",name!=="reports");dataPanel.classList.toggle("hidden",name!=="data");studentsTabButton.classList.toggle("active",name==="students");reportsTabButton.classList.toggle("active",name==="reports");dataTabButton.classList.toggle("active",name==="data");if(name==="reports")renderReports()}
 
-function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2,responseDelaySeconds:Number.isFinite(Number(s.responseDelaySeconds))?Math.max(0,Math.min(10,Number(s.responseDelaySeconds))):2,
+function normalizeStudent(s){return{id:s.id,name:s.name,totalTrials:Number(s.totalTrials)||10,promptStyle:["baseline","prompt-fading-token"].includes(s.promptStyle)?s.promptStyle:"least-to-most",startingPromptLevel:["visual-audio","visual","audio","sd","independent"].includes(s.startingPromptLevel)?s.startingPromptLevel:"visual-audio",tokenGoal:Math.max(1,Math.min(20,Number(s.tokenGoal)||5)),maximumTokenTrials:Math.max(1,Math.min(50,Number(s.maximumTokenTrials)||10)),reinforcementPackage:["stars","rockets","dinosaurs","rainbow","trains","music","custom","none"].includes(s.reinforcementPackage)?s.reinforcementPackage:"stars",differentialReinforcement:["all-correct","independent-only","independent-bonus"].includes(s.differentialReinforcement)?s.differentialReinforcement:"all-correct",tokenAnimationPath:s.tokenAnimationPath||"",completionAnimationPath:s.completionAnimationPath||"",completionAudioPath:s.completionAudioPath||"",waitTimeSeconds:Number(s.waitTimeSeconds)||10,promptStepTimeSeconds:Number(s.promptStepTimeSeconds)||5,audioSdEnabled:s.audioSdEnabled!==false,activityLevel:["list-affordability","cart-builder"].includes(s.activityLevel)?s.activityLevel:"single-item",cartTargetCount:Math.max(2,Math.min(4,Number(s.cartTargetCount)||2)),cartOptionCount:Math.max(4,Math.min(5,Number(s.cartOptionCount)||4)),listItemCount:Math.max(2,Math.min(5,Number(s.listItemCount)||2)),budgetMode:s.budgetMode==="fixed"?"fixed":"range",minimumBudget:Number(s.minimumBudget)||2,maximumBudget:Number(s.maximumBudget)||10,useWholeDollarBudgets:s.useWholeDollarBudgets!==false,reinforcementType:s.reinforcementType||"text",praiseText:(s.praiseText||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(s.feedbackDurationSeconds)||2,responseDelaySeconds:Number.isFinite(Number(s.responseDelaySeconds))?Math.max(0,Math.min(10,Number(s.responseDelaySeconds))):2,
 errorCorrection:{
  modelCorrectResponse:s.errorCorrection?.modelCorrectResponse!==false,
  requireCorrectionResponse:s.errorCorrection?.requireCorrectionResponse!==false,
@@ -87,7 +87,7 @@ function renderStudentList(){
     });
 }
 
-function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;startingPromptLevelInput.value=s.startingPromptLevel||"visual-audio";tokenGoalInput.value=String(s.tokenGoal||5);maximumTokenTrialsInput.value=String(s.maximumTokenTrials||10);tokenAnimationPathInput.value=s.tokenAnimationPath||"";completionAnimationPathInput.value=s.completionAnimationPath||"";completionAudioPathInput.value=s.completionAudioPath||"";updatePromptStyleDisplay();waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;activityLevelInput.value=s.activityLevel||"single-item";listItemCountInput.value=String(s.listItemCount||2);cartTargetCountInput.value=String(s.cartTargetCount||2);cartOptionCountInput.value=String(s.cartOptionCount||4);updateActivityLevelDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);responseDelaySecondsInput.value=String(Number.isFinite(Number(s.responseDelaySeconds))?s.responseDelaySeconds:2);
+function selectStudentForEditing(id){const s=appState.students.find(x=>x.id===id);if(!s)return;appState.selectedStudentId=s.id;saveSelectedStudentId();studentIdInput.value=s.id;studentNameInput.value=s.name;sessionLengthSelect.value=String(s.totalTrials);promptStyleSelect.value=s.promptStyle;startingPromptLevelInput.value=s.startingPromptLevel||"visual-audio";tokenGoalInput.value=String(s.tokenGoal||5);maximumTokenTrialsInput.value=String(s.maximumTokenTrials||10);reinforcementPackageInput.value=s.reinforcementPackage||"stars";differentialReinforcementInput.value=s.differentialReinforcement||"all-correct";tokenAnimationPathInput.value=s.tokenAnimationPath||"";completionAnimationPathInput.value=s.completionAnimationPath||"";completionAudioPathInput.value=s.completionAudioPath||"";updatePromptStyleDisplay();updateReinforcementPackageDisplay();waitTimeInput.value=String(s.waitTimeSeconds);promptStepTimeInput.value=String(s.promptStepTimeSeconds);audioSdEnabledInput.checked=s.audioSdEnabled!==false;activityLevelInput.value=s.activityLevel||"single-item";listItemCountInput.value=String(s.listItemCount||2);cartTargetCountInput.value=String(s.cartTargetCount||2);cartOptionCountInput.value=String(s.cartOptionCount||4);updateActivityLevelDisplay();budgetModeInput.value=s.budgetMode||"range";minimumBudgetInput.value=Number(s.minimumBudget||2).toFixed(2);maximumBudgetInput.value=Number(s.maximumBudget||10).toFixed(2);useWholeDollarBudgetsInput.checked=s.useWholeDollarBudgets!==false;updateBudgetModeDisplay();reinforcementTypeInput.value=s.reinforcementType||"text";praiseTextInput.value=s.praiseText||"Nice job!";feedbackDurationInput.value=String(s.feedbackDurationSeconds||2);responseDelaySecondsInput.value=String(Number.isFinite(Number(s.responseDelaySeconds))?s.responseDelaySeconds:2);
 errorModelCorrectResponseInput.checked=s.errorCorrection?.modelCorrectResponse!==false;
 errorRequireCorrectionResponseInput.checked=s.errorCorrection?.requireCorrectionResponse!==false;
 errorWithholdTokenInput.checked=s.errorCorrection?.withholdToken!==false;
@@ -100,7 +100,7 @@ dataTokensInput.checked=s.dataCollection?.tokens!==false;
 dataCorrectionsInput.checked=s.dataCollection?.corrections!==false;
 dataCartAttemptsInput.checked=s.dataCollection?.cartAttempts!==false;
 dataResponseDistributionInput.checked=s.dataCollection?.responseDistribution!==false;profileFormTitle.textContent="Edit "+s.name;deleteStudentButton.disabled=false;settingsMessage.textContent="";updateHomeStudentSelect();renderStudentList()}
-function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";startingPromptLevelInput.value="visual-audio";tokenGoalInput.value="5";maximumTokenTrialsInput.value="10";tokenAnimationPathInput.value="";completionAnimationPathInput.value="";completionAudioPathInput.value="";updatePromptStyleDisplay();waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;activityLevelInput.value="single-item";listItemCountInput.value="2";cartTargetCountInput.value="2";cartOptionCountInput.value="4";updateActivityLevelDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";responseDelaySecondsInput.value="2";
+function beginNewStudent(){studentIdInput.value="";studentNameInput.value="";sessionLengthSelect.value="10";promptStyleSelect.value="least-to-most";startingPromptLevelInput.value="visual-audio";tokenGoalInput.value="5";maximumTokenTrialsInput.value="10";reinforcementPackageInput.value="stars";differentialReinforcementInput.value="all-correct";tokenAnimationPathInput.value="";completionAnimationPathInput.value="";completionAudioPathInput.value="";updatePromptStyleDisplay();updateReinforcementPackageDisplay();waitTimeInput.value="10";promptStepTimeInput.value="5";audioSdEnabledInput.checked=true;activityLevelInput.value="single-item";listItemCountInput.value="2";cartTargetCountInput.value="2";cartOptionCountInput.value="4";updateActivityLevelDisplay();budgetModeInput.value="range";minimumBudgetInput.value="2.00";maximumBudgetInput.value="10.00";useWholeDollarBudgetsInput.checked=true;updateBudgetModeDisplay();reinforcementTypeInput.value="text";praiseTextInput.value="Nice job!";feedbackDurationInput.value="2";responseDelaySecondsInput.value="2";
 errorModelCorrectResponseInput.checked=true;
 errorRequireCorrectionResponseInput.checked=true;
 errorWithholdTokenInput.checked=true;
@@ -114,7 +114,7 @@ dataCorrectionsInput.checked=true;
 dataCartAttemptsInput.checked=true;
 dataResponseDistributionInput.checked=true;profileFormTitle.textContent="Add Student";deleteStudentButton.disabled=true;settingsMessage.textContent="";studentNameInput.focus()}
 function createStudentId(name){const safe=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");return(safe||"student")+"-"+Date.now()}
-function saveStudentProfile(){const name=studentNameInput.value.trim();if(!name){settingsMessage.textContent="Please enter a student name.";studentNameInput.focus();return}const id=studentIdInput.value;const p=normalizeStudent({id:id||createStudentId(name),name,totalTrials:Number(sessionLengthSelect.value),promptStyle:promptStyleSelect.value,startingPromptLevel:startingPromptLevelInput.value,tokenGoal:Number(tokenGoalInput.value)||5,maximumTokenTrials:Number(maximumTokenTrialsInput.value)||10,tokenAnimationPath:tokenAnimationPathInput.value.trim(),completionAnimationPath:completionAnimationPathInput.value.trim(),completionAudioPath:completionAudioPathInput.value.trim(),waitTimeSeconds:Number(waitTimeInput.value)||10,promptStepTimeSeconds:Number(promptStepTimeInput.value)||5,audioSdEnabled:audioSdEnabledInput.checked,activityLevel:activityLevelInput.value,listItemCount:Number(listItemCountInput.value)||2,cartTargetCount:Number(cartTargetCountInput.value)||2,cartOptionCount:Number(cartOptionCountInput.value)||4,budgetMode:budgetModeInput.value,minimumBudget:Number(minimumBudgetInput.value)||2,maximumBudget:Number(maximumBudgetInput.value)||10,useWholeDollarBudgets:useWholeDollarBudgetsInput.checked,reinforcementType:reinforcementTypeInput.value,praiseText:(praiseTextInput.value.trim()||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(feedbackDurationInput.value)||2,responseDelaySeconds:Math.max(0,Math.min(10,Number(responseDelaySecondsInput.value)||0)),
+function saveStudentProfile(){const name=studentNameInput.value.trim();if(!name){settingsMessage.textContent="Please enter a student name.";studentNameInput.focus();return}const id=studentIdInput.value;const p=normalizeStudent({id:id||createStudentId(name),name,totalTrials:Number(sessionLengthSelect.value),promptStyle:promptStyleSelect.value,startingPromptLevel:startingPromptLevelInput.value,tokenGoal:Number(tokenGoalInput.value)||5,maximumTokenTrials:Number(maximumTokenTrialsInput.value)||10,reinforcementPackage:reinforcementPackageInput.value,differentialReinforcement:differentialReinforcementInput.value,tokenAnimationPath:tokenAnimationPathInput.value.trim(),completionAnimationPath:completionAnimationPathInput.value.trim(),completionAudioPath:completionAudioPathInput.value.trim(),waitTimeSeconds:Number(waitTimeInput.value)||10,promptStepTimeSeconds:Number(promptStepTimeInput.value)||5,audioSdEnabled:audioSdEnabledInput.checked,activityLevel:activityLevelInput.value,listItemCount:Number(listItemCountInput.value)||2,cartTargetCount:Number(cartTargetCountInput.value)||2,cartOptionCount:Number(cartOptionCountInput.value)||4,budgetMode:budgetModeInput.value,minimumBudget:Number(minimumBudgetInput.value)||2,maximumBudget:Number(maximumBudgetInput.value)||10,useWholeDollarBudgets:useWholeDollarBudgetsInput.checked,reinforcementType:reinforcementTypeInput.value,praiseText:(praiseTextInput.value.trim()||"Nice job!").slice(0,80),feedbackDurationSeconds:Number(feedbackDurationInput.value)||2,responseDelaySeconds:Math.max(0,Math.min(10,Number(responseDelaySecondsInput.value)||0)),
 errorCorrection:{
  modelCorrectResponse:errorModelCorrectResponseInput.checked,
  requireCorrectionResponse:errorRequireCorrectionResponseInput.checked,
@@ -397,9 +397,97 @@ function waitForSpeechToFinish(callback){
     },100);
 }
 
-function showTokenCelebration(){
-    const path=appState.currentStudent.tokenAnimationPath||"";
-    tokenCelebrationText.textContent="Token earned!";
+
+const REINFORCEMENT_PACKAGES={
+    stars:{token:"★",completion:["✨","⭐","✨"],tokenText:"Star earned!",praise:"Super work!",tones:[659.25,783.99]},
+    rockets:{token:"🚀",completion:["✨","🚀","✨"],tokenText:"Rocket earned!",praise:"Blast off!",tones:[523.25,783.99]},
+    dinosaurs:{token:"🦕",completion:["🌿","🦖","🌿"],tokenText:"Dino token earned!",praise:"Dino-mite work!",tones:[392,523.25]},
+    rainbow:{token:"🌈",completion:["✨","🌈","✨"],tokenText:"Rainbow earned!",praise:"Wonderful work!",tones:[587.33,880]},
+    trains:{token:"🚂",completion:["🚦","🚂","🚦"],tokenText:"Train token earned!",praise:"All aboard!",tones:[440,659.25]},
+    music:{token:"🎵",completion:["🎶","🎉","🎶"],tokenText:"Music token earned!",praise:"Great rhythm!",tones:[523.25,659.25,783.99]}
+};
+
+function getReinforcementPackage(profile=appState.currentStudent){
+    const key=profile?.reinforcementPackage||"stars";
+    return REINFORCEMENT_PACKAGES[key]||REINFORCEMENT_PACKAGES.stars;
+}
+
+function updateReinforcementPackageDisplay(){
+    if(!reinforcementPackageInput || !customReinforcementSettings){
+        return;
+    }
+
+    customReinforcementSettings.classList.toggle(
+        "hidden",
+        reinforcementPackageInput.value!=="custom"
+    );
+}
+
+function playPackageSound(completion=false){
+    const profile=appState.currentStudent||getSelectedStudent();
+    const pack=getReinforcementPackage(profile);
+    const tones=completion
+        ? [...pack.tones,pack.tones[pack.tones.length-1]*1.25]
+        : pack.tones;
+
+    try{
+        const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+        if(!AudioContextClass){return}
+
+        const context=new AudioContextClass();
+
+        tones.forEach(function(frequency,index){
+            const oscillator=context.createOscillator();
+            const gain=context.createGain();
+            const start=context.currentTime+index*0.11;
+
+            oscillator.type="sine";
+            oscillator.frequency.setValueAtTime(frequency,start);
+            gain.gain.setValueAtTime(0.0001,start);
+            gain.gain.exponentialRampToValueAtTime(0.16,start+0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001,start+0.18);
+            oscillator.connect(gain);
+            gain.connect(context.destination);
+            oscillator.start(start);
+            oscillator.stop(start+0.2);
+        });
+    }catch(error){
+        console.warn("Package sound could not play:",error);
+    }
+}
+
+function shouldEarnToken(ok,promptLevel){
+    if(!ok){return false}
+
+    const mode=appState.currentStudent?.differentialReinforcement||"all-correct";
+
+    if(mode==="independent-only"){
+        return promptLevel==="independent";
+    }
+
+    return true;
+}
+
+function showTokenCelebration(options={}){
+    const profile=appState.currentStudent||getSelectedStudent();
+    const packageKey=profile?.reinforcementPackage||"stars";
+    const pack=getReinforcementPackage(profile);
+    const path=packageKey==="custom"?(profile?.tokenAnimationPath||""):"";
+    const card=tokenCelebrationOverlay.querySelector(".tokenCelebrationCard");
+
+    tokenCelebrationOverlay.className=
+        "tokenCelebrationOverlay tokenTheme-"+packageKey;
+
+    tokenCelebrationText.textContent=
+        options.preview
+            ? "Token preview"
+            : (pack.tokenText||"Token earned!");
+
+    card.classList.toggle(
+        "independentBonus",
+        Boolean(options.independentBonus)
+    );
+
     if(path){
         tokenCelebrationImage.src=path+"?t="+Date.now();
         tokenCelebrationImage.classList.remove("hidden");
@@ -407,14 +495,32 @@ function showTokenCelebration(){
     }else{
         tokenCelebrationImage.classList.add("hidden");
         builtInTokenAnimation.classList.remove("hidden");
+        tokenThemeIcon.textContent=pack.token;
     }
+
     tokenCelebrationOverlay.classList.remove("hidden");
-    window.setTimeout(function(){tokenCelebrationOverlay.classList.add("hidden")},1500);
+
+    if(profile?.reinforcementType==="text-sound"){
+        playPackageSound(false);
+    }
+
+    window.setTimeout(function(){
+        tokenCelebrationOverlay.classList.add("hidden");
+        card.classList.remove("independentBonus");
+    },Math.min(2200,getFeedbackDelayMilliseconds()));
 }
 
-function playCompletionMedia(){
-    const imagePath=appState.currentStudent?.completionAnimationPath||"";
-    const audioPath=appState.currentStudent?.completionAudioPath||"";
+function playCompletionMedia(options={}){
+    const profile=appState.currentStudent||getSelectedStudent();
+    const packageKey=profile?.reinforcementPackage||"stars";
+    const pack=getReinforcementPackage(profile);
+    const imagePath=packageKey==="custom"?(profile?.completionAnimationPath||""):"";
+    const audioPath=packageKey==="custom"?(profile?.completionAudioPath||""):"";
+
+    completionIconLeft.textContent=pack.completion[0];
+    completionIconMain.textContent=pack.completion[1];
+    completionIconRight.textContent=pack.completion[2];
+
     if(imagePath){
         const img=document.createElement("img");
         img.src=imagePath+"?t="+Date.now();
@@ -425,8 +531,17 @@ function playCompletionMedia(){
         if(old)old.remove();
         card.insertBefore(img,card.children[2]||null);
     }
+
     if(audioPath){
-        try{const audio=new Audio(audioPath);audio.volume=.7;audio.play().catch(()=>{})}catch(error){console.warn(error)}
+        try{
+            const audio=new Audio(audioPath);
+            audio.volume=.7;
+            audio.play().catch(()=>{});
+        }catch(error){
+            console.warn(error);
+        }
+    }else if(profile?.reinforcementType==="text-sound" || options.preview){
+        playPackageSound(true);
     }
 }
 
@@ -698,13 +813,13 @@ function deliverCorrectReinforcement(){
         return false;
     }
 
-    const praise=profile.praiseText||"Nice job!";
+    const praise=profile.praiseText||getReinforcementPackage(profile).praise||"Nice job!";
 
     showFeedback(praise,true);
     feedbackArea.classList.add("reinforcementText");
 
     if(type==="text-sound"){
-        playReinforcementChime();
+        playPackageSound(false);
     }
 
     return true;
@@ -1220,10 +1335,36 @@ function handleAnswer(answer){
     if(isTokenTeachingSession()){
         recordTrial(answer,correct,ok,lat,post);
         if(ok){
-            appState.tokensEarned+=1;
-            renderTokenBoard();
-            showTokenCelebration();
-            window.setTimeout(loadNextTrial,1600);
+            const tokenEarned=shouldEarnToken(
+                ok,
+                appState.currentPromptLevel
+            );
+
+            if(appState.responses.length){
+                appState.responses[
+                    appState.responses.length-1
+                ].tokenEarned=tokenEarned;
+            }
+
+            if(tokenEarned){
+                appState.tokensEarned+=1;
+                renderTokenBoard();
+                showTokenCelebration({
+                    independentBonus:
+                        appState.currentStudent.differentialReinforcement==="independent-bonus" &&
+                        appState.currentPromptLevel==="independent"
+                });
+                window.setTimeout(loadNextTrial,1600);
+            }else{
+                showFeedback(
+                    "Correct response. Keep working toward your token.",
+                    true
+                );
+                window.setTimeout(
+                    loadNextTrial,
+                    getFeedbackDelayMilliseconds()
+                );
+            }
         }else{
             if(appState.responses.length){
                 appState.responses[appState.responses.length-1].correctedResponse=true;
@@ -1382,6 +1523,47 @@ if(minimumBudgetInput){minimumBudgetInput.addEventListener("change",function(){
     }
 })}
 
+
+function previewTokenReinforcement(){
+    const previous=appState.currentStudent;
+    appState.currentStudent={
+        ...(getSelectedStudent()||{}),
+        reinforcementPackage:reinforcementPackageInput.value,
+        reinforcementType:reinforcementTypeInput.value,
+        tokenAnimationPath:tokenAnimationPathInput.value.trim()
+    };
+
+    showTokenCelebration({preview:true,independentBonus:true});
+    appState.currentStudent=previous;
+}
+
+function previewCompletionReinforcement(){
+    const previous=appState.currentStudent;
+    appState.currentStudent={
+        ...(getSelectedStudent()||{}),
+        reinforcementPackage:reinforcementPackageInput.value,
+        reinforcementType:reinforcementTypeInput.value,
+        completionAnimationPath:completionAnimationPathInput.value.trim(),
+        completionAudioPath:completionAudioPathInput.value.trim()
+    };
+
+    playCompletionMedia({preview:true});
+    appState.currentStudent=previous;
+}
+
+reinforcementPackageInput.addEventListener(
+    "change",
+    updateReinforcementPackageDisplay
+);
+previewTokenReinforcementButton.addEventListener(
+    "click",
+    previewTokenReinforcement
+);
+previewCompletionReinforcementButton.addEventListener(
+    "click",
+    previewCompletionReinforcement
+);
+
 homeStudentSelect.onchange=()=>{appState.selectedStudentId=homeStudentSelect.value;saveSelectedStudentId()};
 startButton.onclick=openStudentWelcome;
 teacherButton.onclick=()=>{renderStudentList();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent();showTeacherPanel("students");showScreen(teacherScreen)};
@@ -1408,4 +1590,4 @@ newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
-loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.14.2 loaded successfully");
+loadStudents();loadSessions();updatePromptStyleDisplay();updateHomeStudentSelect();updateReportStudentFilter();disableAnswerButtons();showScreen(homeScreen);console.log("Budget Buddy v0.14.3 loaded successfully");

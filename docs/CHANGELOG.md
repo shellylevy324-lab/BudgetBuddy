@@ -1,5 +1,34 @@
 # Budget Buddy Changelog
 
+## v0.14.3 — Reinforcement Packages
+
+### Added
+- Super Stars package
+- Rocket Adventure package
+- Dino Celebration package
+- Rainbow Party package
+- Train Time package
+- Music Celebration package
+- Token preview
+- Completion preview
+- Original package sounds generated in the browser
+- Differential reinforcement settings
+
+### Differential Reinforcement
+- Token for every correct first response
+- Token for independent correct responses only
+- Token for all correct responses with a larger independent celebration
+
+### Preserved
+- Custom reinforcement media paths
+- Baseline suppression of reinforcement
+- Token goals and maximum-trial safeguards
+- Editable error correction and data collection
+- Levels 1–3
+
+---
+
+
 ## v0.14.2 — Editable Protocol Options
 
 ### Added

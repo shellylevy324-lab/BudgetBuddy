@@ -236,3 +236,13 @@ The white background remains unchanged throughout the sequence.
 - Data Collection is now configurable for each student.
 - Selected data measures control what appears in teacher reports and exported summaries.
 - Baseline continues to suppress error correction automatically.
+
+
+## v0.14.3
+- Added six original built-in reinforcement packages: Stars, Rockets, Dinosaurs, Rainbow, Trains, and Music.
+- Added token and completion preview buttons.
+- Added differential reinforcement choices.
+- Added Independent Only token earning.
+- Added a larger independent-response celebration option.
+- Preserved custom GIF, animation, and sound paths.
+- Baseline continues to suppress all trial-by-trial reinforcement.

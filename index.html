@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.14.2">
+  <link rel="stylesheet" href="style.css?v=0.14.3">
 </head>
 <body>
 <main class="container">
@@ -124,14 +124,51 @@
             <details class="programSection">
               <summary><span class="sectionIcon">🎉</span><span><strong>Reinforcement</strong><small>Individualize praise, tokens, and preferred media.</small></span></summary>
               <div class="programSectionBody">
-                <div class="formGroup"><label for="reinforcementType">Correct-Response Reinforcement</label><select id="reinforcementType"><option value="text">Written Praise</option><option value="text-sound">Written Praise + Chime</option><option value="none">None</option></select></div>
+                <div class="formGroup">
+                  <label for="reinforcementPackage">Reinforcement Package</label>
+                  <select id="reinforcementPackage">
+                    <option value="stars">⭐ Super Stars</option>
+                    <option value="rockets">🚀 Rocket Adventure</option>
+                    <option value="dinosaurs">🦕 Dino Celebration</option>
+                    <option value="rainbow">🌈 Rainbow Party</option>
+                    <option value="trains">🚂 Train Time</option>
+                    <option value="music">🎵 Music Celebration</option>
+                    <option value="custom">Custom Media</option>
+                    <option value="none">No Trial Reinforcement</option>
+                  </select>
+                </div>
+
+                <div class="reinforcementPreviewRow">
+                  <button id="previewTokenReinforcement" class="smallButton" type="button">Preview Token</button>
+                  <button id="previewCompletionReinforcement" class="smallButton" type="button">Preview Completion</button>
+                </div>
+
+                <div class="formGroup">
+                  <label for="differentialReinforcement">Differential Reinforcement</label>
+                  <select id="differentialReinforcement">
+                    <option value="all-correct">Token for every correct first response</option>
+                    <option value="independent-only">Token for independent correct responses only</option>
+                    <option value="independent-bonus">Token for all correct responses; larger celebration for independent responses</option>
+                  </select>
+                </div>
+
+                <div class="formGroup">
+                  <label for="reinforcementType">Praise and Sound</label>
+                  <select id="reinforcementType">
+                    <option value="text">Written Praise</option>
+                    <option value="text-sound">Written Praise + Package Sound</option>
+                    <option value="none">Animation / token only</option>
+                  </select>
+                </div>
                 <div class="formGroup"><label for="praiseText">Personalized Praise</label><input id="praiseText" type="text" maxlength="80" value="Nice job!" placeholder="Example: Great comparing!"></div>
                 <div class="formGroup"><label for="feedbackDuration">Celebration Duration</label><div class="numberInputRow"><input id="feedbackDuration" type="number" min="1" max="10" step="1" value="2"><span>seconds</span></div></div>
                 <div id="tokenReinforcementSettings" class="conditionalProgramSettings hidden">
                   <div class="budgetSettingsGrid"><div class="formGroup"><label for="tokenGoal">Tokens Needed</label><input id="tokenGoal" type="number" min="1" max="20" step="1" value="5"></div><div class="formGroup"><label for="maximumTokenTrials">Maximum Trials</label><input id="maximumTokenTrials" type="number" min="1" max="50" step="1" value="10"></div></div>
-                  <div class="formGroup"><label for="tokenAnimationPath">Token Animation (optional)</label><input id="tokenAnimationPath" type="text" placeholder="assets/reinforcement/token.gif"></div>
-                  <div class="formGroup"><label for="completionAnimationPath">Completed Board Animation (optional)</label><input id="completionAnimationPath" type="text" placeholder="assets/reinforcement/completed.gif"></div>
-                  <div class="formGroup"><label for="completionAudioPath">Completed Board Song/Sound (optional)</label><input id="completionAudioPath" type="text" placeholder="assets/reinforcement/completed.mp3"></div>
+                  <div id="customReinforcementSettings" class="customReinforcementSettings hidden">
+                    <div class="formGroup"><label for="tokenAnimationPath">Custom Token Animation</label><input id="tokenAnimationPath" type="text" placeholder="assets/reinforcement/token.gif"></div>
+                    <div class="formGroup"><label for="completionAnimationPath">Custom Completed Board Animation</label><input id="completionAnimationPath" type="text" placeholder="assets/reinforcement/completed.gif"></div>
+                    <div class="formGroup"><label for="completionAudioPath">Custom Completed Board Song/Sound</label><input id="completionAudioPath" type="text" placeholder="assets/reinforcement/completed.mp3"></div>
+                  </div>
                 </div>
                 <p class="fieldHelp">Baseline always suppresses trial-by-trial reinforcement.</p>
               </div>
@@ -369,7 +406,7 @@
   <div id="tokenCelebrationOverlay" class="tokenCelebrationOverlay hidden" role="status" aria-live="polite">
     <div class="tokenCelebrationCard">
       <img id="tokenCelebrationImage" class="tokenCelebrationImage hidden" src="" alt="">
-      <div id="builtInTokenAnimation" class="builtInTokenAnimation">★</div>
+      <div id="builtInTokenAnimation" class="builtInTokenAnimation" aria-hidden="true"><span id="tokenThemeIcon">★</span></div>
       <p id="tokenCelebrationText">Token earned!</p>
     </div>
   </div>
@@ -377,8 +414,8 @@
   <section id="completeScreen" class="screen hidden">
     <div class="completeCard">
       <h1>Session Complete</h1>
-      <div class="completionAnimation" aria-hidden="true">
-        <span>✨</span><span>🎉</span><span>✨</span>
+      <div id="completionAnimation" class="completionAnimation" aria-hidden="true">
+        <span id="completionIconLeft">✨</span><span id="completionIconMain">🎉</span><span id="completionIconRight">✨</span>
       </div>
       <p id="completionMessage">Nice work completing your shopping practice!</p>
       <button id="newSessionButton" class="primaryButton" type="button">Start Another Session</button>
@@ -387,9 +424,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.14.2 — Editable Protocol Options</footer>
+  <footer class="appFooter">Budget Buddy v0.14.3 — Reinforcement Packages</footer>
 </main>
 
-<script src="script.js?v=0.14.2"></script>
+<script src="script.js?v=0.14.3"></script>
 </body>
 </html>

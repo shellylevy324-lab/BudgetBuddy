@@ -870,3 +870,102 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =====================================
+   Budget Buddy v0.14.3
+   Reinforcement packages
+===================================== */
+
+.reinforcementPreviewRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.customReinforcementSettings {
+    padding: 12px;
+    border: 2px dashed #9fb3c8;
+    border-radius: 14px;
+    background: #f7fafc;
+}
+
+.builtInTokenAnimation {
+    display: grid;
+    place-items: center;
+    min-width: 150px;
+    min-height: 120px;
+}
+
+#tokenThemeIcon {
+    display: inline-block;
+    font-size: 5.2rem;
+    line-height: 1;
+}
+
+.tokenTheme-stars #tokenThemeIcon {
+    animation: starToken 0.55s ease-in-out infinite alternate;
+}
+
+.tokenTheme-rockets #tokenThemeIcon {
+    animation: rocketToken 0.75s ease-in-out infinite;
+}
+
+.tokenTheme-dinosaurs #tokenThemeIcon {
+    animation: dinoToken 0.48s ease-in-out infinite alternate;
+}
+
+.tokenTheme-rainbow #tokenThemeIcon {
+    animation: rainbowToken 0.7s ease-in-out infinite alternate;
+}
+
+.tokenTheme-trains #tokenThemeIcon {
+    animation: trainToken 0.8s linear infinite alternate;
+}
+
+.tokenTheme-music #tokenThemeIcon {
+    animation: musicToken 0.55s ease-in-out infinite alternate;
+}
+
+.tokenCelebrationCard.independentBonus {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 7px rgba(49, 130, 206, 0.22), 0 18px 36px rgba(31, 41, 51, 0.25);
+}
+
+@keyframes starToken {
+    from { transform: scale(0.88) rotate(-8deg); }
+    to { transform: scale(1.16) rotate(8deg); }
+}
+
+@keyframes rocketToken {
+    0% { transform: translate(-18px, 14px) rotate(-12deg); }
+    50% { transform: translate(0, -12px) rotate(2deg); }
+    100% { transform: translate(18px, -28px) rotate(12deg); }
+}
+
+@keyframes dinoToken {
+    from { transform: translateY(0) rotate(-4deg); }
+    to { transform: translateY(-12px) rotate(4deg); }
+}
+
+@keyframes rainbowToken {
+    from { transform: scale(0.9); filter: saturate(0.85); }
+    to { transform: scale(1.13); filter: saturate(1.25); }
+}
+
+@keyframes trainToken {
+    from { transform: translateX(-20px); }
+    to { transform: translateX(20px); }
+}
+
+@keyframes musicToken {
+    from { transform: translateY(5px) rotate(-10deg); }
+    to { transform: translateY(-10px) rotate(10deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #tokenThemeIcon {
+        animation: none !important;
+    }
+}
