@@ -1,8 +1,7 @@
-const MAX_IMAGE_UPLOAD_BYTES = 3 * 1024 * 1024; // 3 MB
-const MAX_AUDIO_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
-
 const CLASSROOM_STORAGE_KEY="budgetBuddyClassroom_v1";
 const REINFORCEMENT_LIBRARY_STORAGE_KEY="budgetBuddyReinforcementLibrary_v1";
+const MAX_IMAGE_UPLOAD_BYTES=3*1024*1024; // 3 MB GIF/image limit
+const MAX_AUDIO_UPLOAD_BYTES=5*1024*1024; // 5 MB audio limit
 const STAFF_STORAGE_KEY="budgetBuddyStaff_v1";
 const SELECTED_ADMIN_STORAGE_KEY="budgetBuddySelectedAdministrator_v1";
 const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="budgetBuddySelectedStudent",SESSION_STORAGE_KEY="budgetBuddySessions",nextTrialDelayMilliseconds=1800,rapidResponseThresholdSeconds=1;
@@ -2149,7 +2148,7 @@ function clearSavedReports(){if(!confirm("Delete all saved session reports from 
 function exportClassroomBackup(){
     const backup={
         app:"Budget Buddy",
-        version:"0.16.1",
+        version:"0.16.2",
         exportedAt:new Date().toISOString(),
         classroom:appState.classroom,
         staff:appState.staff,
@@ -2560,4 +2559,4 @@ updateAdministratorSelects();
 updateReinforcementPackageOptions();
 disableAnswerButtons();
 showScreen(homeScreen);
-console.log("Budget Buddy v0.16.1 stability release loaded successfully");
+console.log("Budget Buddy v0.16.2 GIF upload and version fix loaded successfully");
