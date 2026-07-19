@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.16.3">
+  <link rel="stylesheet" href="style.css?v=0.17">
 </head>
 <body>
 <main class="container">
@@ -431,14 +431,33 @@
     </div>
 
     <div id="dataPanel" class="teacherPanel hidden">
-      <section class="dataCard">
-        <h3>Classroom Backup</h3>
-        <p>Export students, settings, and reports into one file. Import it on another device.</p>
-        <button id="exportClassroomButton" class="primaryButton" type="button">Export Classroom Backup</button>
-        <label class="fileImportLabel" for="importClassroomInput">Import Classroom Backup</label>
-        <input id="importClassroomInput" type="file" accept=".json,application/json">
+      <section class="dataCard portableClassroomCard">
+        <p class="eyebrow">Portable Classroom</p>
+        <h3>Move the Same Teaching Setup Between Devices</h3>
+        <p>Export one classroom file after making changes on the teacher device. Import that file on the device used with the student.</p>
+
+        <div class="portableStatusGrid">
+          <div class="portableStatusItem"><span>Classroom revision</span><strong id="classroomRevisionDisplay">1</strong></div>
+          <div class="portableStatusItem"><span>Last program change</span><strong id="lastProgramChangeDisplay">Not recorded</strong></div>
+          <div class="portableStatusItem"><span>Last export</span><strong id="lastExportDisplay">Not exported</strong></div>
+          <div class="portableStatusItem"><span>Last import</span><strong id="lastImportDisplay">Not imported</strong></div>
+        </div>
+
+        <button id="exportClassroomButton" class="primaryButton" type="button">Export Portable Classroom</button>
+
+        <div class="formGroup portableImportMode">
+          <label for="importModeSelect">When importing on this device</label>
+          <select id="importModeSelect">
+            <option value="programs-only">Update teaching setup and keep this device's session reports</option>
+            <option value="full-replace">Replace the entire classroom, including reports</option>
+          </select>
+          <p class="fieldHelp">Use the first option on student devices so completed sessions remain available.</p>
+        </div>
+
+        <label class="fileImportLabel" for="importClassroomInput">Choose Portable Classroom File</label>
+        <input id="importClassroomInput" type="file" accept=".bbclass,.json,application/json">
         <div id="dataMessage" class="settingsMessage" role="status" aria-live="polite"></div>
-        <p class="privacyNote">This is a manual transfer, not automatic synchronization.</p>
+        <p class="privacyNote">This release provides reliable manual transfer. It does not automatically synchronize devices.</p>
       </section>
     </div>
   </section>
@@ -591,9 +610,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.16.3 — Completion Preview Fix</footer>
+  <footer class="appFooter">Budget Buddy v0.17 — Portable Classroom</footer>
 </main>
 
-<script src="script.js?v=0.16.3"></script>
+<script src="script.js?v=0.17"></script>
 </body>
 </html>

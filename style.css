@@ -1128,3 +1128,14 @@
 .reportViewButton {
     white-space: nowrap;
 }
+
+
+/* =====================================
+   Budget Buddy v0.17 Portable Classroom
+===================================== */
+.portableClassroomCard{max-width:900px}
+.portableStatusGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:18px 0}
+.portableStatusItem{padding:14px;border:2px solid #d9e2ec;border-radius:14px;background:#f7fafc;display:grid;gap:5px}
+.portableStatusItem span{font-size:.86rem;color:#52667a}
+.portableStatusItem strong{font-size:1rem;overflow-wrap:anywhere}
+.portableImportMode{margin-top:18px;max-width:620px}

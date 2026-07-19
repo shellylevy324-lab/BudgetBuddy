@@ -290,3 +290,12 @@ The white background remains unchanged throughout the sequence.
 
 ## v0.16.1 Stability Release
 This release centralizes teacher navigation and adds a visible **View Data** control for every saved session. A browser smoke test is included at `tests/navigation-smoke-test.html`.
+
+
+## v0.17 — Portable Classroom
+- Exports the classroom as a `.bbclass` file.
+- Includes classroom profile, staff, reinforcement library, student programs, and session reports.
+- Tracks classroom revision, last program change, last export, and last import.
+- Warns before importing an older revision.
+- Offers a student-device import mode that updates teaching programs while preserving reports already collected on that device.
+- Offers a full-replace mode for moving the entire classroom to another teacher device.

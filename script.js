@@ -1,4 +1,5 @@
 const CLASSROOM_STORAGE_KEY="budgetBuddyClassroom_v1";
+const PORTABLE_META_STORAGE_KEY="budgetBuddyPortableMeta_v1";
 const REINFORCEMENT_LIBRARY_STORAGE_KEY="budgetBuddyReinforcementLibrary_v1";
 const MAX_IMAGE_UPLOAD_BYTES=3*1024*1024; // 3 MB GIF/image limit
 const MAX_AUDIO_UPLOAD_BYTES=5*1024*1024; // 5 MB audio limit
@@ -8,7 +9,7 @@ const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="bu
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={classroom:{name:"My Classroom",leadTeacher:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false};
+const appState={classroom:{name:"My Classroom",leadTeacher:""},portableMeta:{revision:1,lastProgramChange:"",lastExport:"",lastImport:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false};
 let pendingLibraryTokenData="";
 let pendingLibraryTokenFileName="";
 let pendingLibraryCompletionData="";
@@ -25,7 +26,7 @@ const classroomTabButton=$("classroomTabButton"),studentsTabButton=$("studentsTa
 const classroomPanel=$("classroomPanel"),studentsPanel=$("studentsPanel"),reportsPanel=$("reportsPanel"),dataPanel=$("dataPanel");
 const addStudentButton=$("addStudentButton"),studentList=$("studentList"),profileFormTitle=$("profileFormTitle"),studentIdInput=$("studentId"),studentNameInput=$("studentName"),sessionLengthSelect=$("sessionLength"),promptStyleSelect=$("promptStyle"),tokenPromptSettings=$("tokenPromptSettings"),tokenReinforcementSettings=$("tokenReinforcementSettings"),startingPromptLevelInput=$("startingPromptLevel"),tokenGoalInput=$("tokenGoal"),maximumTokenTrialsInput=$("maximumTokenTrials"),tokenAnimationPathInput=$("tokenAnimationPath"),tokenAnimationUploadInput=$("tokenAnimationUpload"),tokenAnimationUploadStatus=$("tokenAnimationUploadStatus"),clearTokenAnimationUploadButton=$("clearTokenAnimationUpload"),completionAnimationPathInput=$("completionAnimationPath"),completionAnimationUploadInput=$("completionAnimationUpload"),completionAnimationUploadStatus=$("completionAnimationUploadStatus"),clearCompletionAnimationUploadButton=$("clearCompletionAnimationUpload"),completionAudioPathInput=$("completionAudioPath"),completionAudioUploadInput=$("completionAudioUpload"),completionAudioUploadStatus=$("completionAudioUploadStatus"),clearCompletionAudioUploadButton=$("clearCompletionAudioUpload"),waitTimeInput=$("waitTime"),promptStepTimeInput=$("promptStepTime"),audioSdEnabledInput=$("audioSdEnabled"),activityLevelInput=$("activityLevel"),listItemCountInput=$("listItemCount"),listItemCountGroup=$("listItemCountGroup"),cartTargetCountInput=$("cartTargetCount"),cartTargetCountGroup=$("cartTargetCountGroup"),cartOptionCountInput=$("cartOptionCount"),cartOptionCountGroup=$("cartOptionCountGroup"),budgetModeInput=$("budgetMode"),minimumBudgetInput=$("minimumBudget"),maximumBudgetInput=$("maximumBudget"),maximumBudgetGroup=$("maximumBudgetGroup"),useWholeDollarBudgetsInput=$("useWholeDollarBudgets"),reinforcementPackageInput=$("reinforcementPackage"),differentialReinforcementInput=$("differentialReinforcement"),customReinforcementSettings=$("customReinforcementSettings"),previewTokenReinforcementButton=$("previewTokenReinforcement"),previewCompletionReinforcementButton=$("previewCompletionReinforcement"),reinforcementTypeInput=$("reinforcementType"),praiseTextInput=$("praiseText"),feedbackDurationInput=$("feedbackDuration"),responseDelaySecondsInput=$("responseDelaySeconds"),errorModelCorrectResponseInput=$("errorModelCorrectResponse"),errorRequireCorrectionResponseInput=$("errorRequireCorrectionResponse"),errorWithholdTokenInput=$("errorWithholdToken"),errorContinueSessionInput=$("errorContinueSession"),dataAccuracyInput=$("dataAccuracy"),dataLatencyInput=$("dataLatency"),dataPromptLevelInput=$("dataPromptLevel"),dataIndependentInput=$("dataIndependent"),dataTokensInput=$("dataTokens"),dataCorrectionsInput=$("dataCorrections"),dataCartAttemptsInput=$("dataCartAttempts"),dataResponseDistributionInput=$("dataResponseDistribution"),saveStudentButton=$("saveStudent"),deleteStudentButton=$("deleteStudentButton"),settingsMessage=$("settingsMessage");
 const reportStudentFilter=$("reportStudentFilter"),reportAdministratorFilter=$("reportAdministratorFilter"),exportCsvButton=$("exportCsvButton"),clearReportsButton=$("clearReportsButton"),reportSummaryCards=$("reportSummaryCards"),sessionTableBody=$("sessionTableBody"),selectedSessionLabel=$("selectedSessionLabel"),trialDetailBody=$("trialDetailBody");
-const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),dataMessage=$("dataMessage");
+const exportClassroomButton=$("exportClassroomButton"),importClassroomInput=$("importClassroomInput"),importModeSelect=$("importModeSelect"),dataMessage=$("dataMessage"),classroomRevisionDisplay=$("classroomRevisionDisplay"),lastProgramChangeDisplay=$("lastProgramChangeDisplay"),lastExportDisplay=$("lastExportDisplay"),lastImportDisplay=$("lastImportDisplay");
 const classroomNameInput=$("classroomName"),classroomTeacherNameInput=$("classroomTeacherName"),saveClassroomButton=$("saveClassroomButton"),classroomMessage=$("classroomMessage"),staffList=$("staffList"),addStaffButton=$("addStaffButton"),staffEditor=$("staffEditor"),staffIdInput=$("staffId"),staffNameInput=$("staffName"),staffRoleInput=$("staffRole"),staffActiveInput=$("staffActive"),saveStaffButton=$("saveStaffButton"),cancelStaffButton=$("cancelStaffButton"),staffMessage=$("staffMessage");
 const reinforcementLibraryList=$("reinforcementLibraryList"),addLibraryPackageButton=$("addLibraryPackageButton"),libraryPackageEditor=$("libraryPackageEditor"),libraryPackageIdInput=$("libraryPackageId"),libraryPackageNameInput=$("libraryPackageName"),libraryPraiseTextInput=$("libraryPraiseText"),libraryTokenUploadInput=$("libraryTokenUpload"),libraryTokenStatus=$("libraryTokenStatus"),clearLibraryTokenButton=$("clearLibraryTokenButton"),libraryTokenPathInput=$("libraryTokenPath"),libraryCompletionUploadInput=$("libraryCompletionUpload"),libraryCompletionStatus=$("libraryCompletionStatus"),clearLibraryCompletionButton=$("clearLibraryCompletionButton"),libraryCompletionPathInput=$("libraryCompletionPath"),libraryAudioUploadInput=$("libraryAudioUpload"),libraryAudioStatus=$("libraryAudioStatus"),clearLibraryAudioButton=$("clearLibraryAudioButton"),libraryAudioPathInput=$("libraryAudioPath"),previewLibraryTokenButton=$("previewLibraryTokenButton"),previewLibraryCompletionButton=$("previewLibraryCompletionButton"),saveLibraryPackageButton=$("saveLibraryPackageButton"),deactivateLibraryPackageButton=$("deactivateLibraryPackageButton"),cancelLibraryPackageButton=$("cancelLibraryPackageButton"),libraryPackageMessage=$("libraryPackageMessage"),classroomReinforcementOptions=$("classroomReinforcementOptions");
 const welcomeStudentName=$("welcomeStudentName"),welcomeSessionDetails=$("welcomeSessionDetails"),sessionAdministratorSelect=$("sessionAdministratorSelect"),beginSessionButton=$("beginSessionButton"),welcomeBackButton=$("welcomeBackButton");
@@ -357,6 +358,7 @@ function saveLibraryPackage(){
     }
 
     saveReinforcementLibrary();
+    markProgramChange();
     renderReinforcementLibrary();
     updateReinforcementPackageOptions(
         "library:"+record.id
@@ -377,6 +379,7 @@ function toggleLibraryPackageActive(){
 
     item.active=!item.active;
     saveReinforcementLibrary();
+    markProgramChange();
     renderReinforcementLibrary();
     updateReinforcementPackageOptions();
     closeLibraryPackageEditor();
@@ -401,6 +404,65 @@ function buildLibraryPreviewProfile(){
             audioPath:libraryAudioPathInput.value.trim()
         })
     };
+}
+
+
+function normalizePortableMeta(meta){
+    return {
+        revision:Math.max(1,Number(meta?.revision)||1),
+        lastProgramChange:meta?.lastProgramChange||"",
+        lastExport:meta?.lastExport||"",
+        lastImport:meta?.lastImport||""
+    };
+}
+
+function savePortableMeta(){
+    localStorage.setItem(
+        PORTABLE_META_STORAGE_KEY,
+        JSON.stringify(appState.portableMeta)
+    );
+}
+
+function loadPortableMeta(){
+    try{
+        const raw=localStorage.getItem(PORTABLE_META_STORAGE_KEY);
+        appState.portableMeta=raw
+            ? normalizePortableMeta(JSON.parse(raw))
+            : normalizePortableMeta({});
+    }catch(error){
+        console.error(error);
+        appState.portableMeta=normalizePortableMeta({});
+    }
+}
+
+function formatPortableDate(value,fallback){
+    if(!value){return fallback}
+    const date=new Date(value);
+    return Number.isNaN(date.getTime()) ? fallback : date.toLocaleString();
+}
+
+function renderPortableStatus(){
+    if(!classroomRevisionDisplay){return}
+    classroomRevisionDisplay.textContent=String(appState.portableMeta.revision);
+    lastProgramChangeDisplay.textContent=formatPortableDate(
+        appState.portableMeta.lastProgramChange,
+        "Not recorded"
+    );
+    lastExportDisplay.textContent=formatPortableDate(
+        appState.portableMeta.lastExport,
+        "Not exported"
+    );
+    lastImportDisplay.textContent=formatPortableDate(
+        appState.portableMeta.lastImport,
+        "Not imported"
+    );
+}
+
+function markProgramChange(){
+    appState.portableMeta.revision+=1;
+    appState.portableMeta.lastProgramChange=new Date().toISOString();
+    savePortableMeta();
+    renderPortableStatus();
 }
 
 function normalizeStaff(staff){
@@ -579,6 +641,7 @@ function saveStaffMember(){
     }
 
     saveStaffDirectory();
+    markProgramChange();
     saveSelectedAdministrator();
     updateAdministratorSelects();
     renderStaffList();
@@ -754,8 +817,8 @@ dataCollection:{
  corrections:dataCorrectionsInput.checked,
  cartAttempts:dataCartAttemptsInput.checked,
  responseDistribution:dataResponseDistributionInput.checked
-}});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();updateAdministratorSelects();settingsMessage.textContent=p.name+"'s profile was saved."}
-function deleteSelectedStudent(){const id=studentIdInput.value;if(!id)return;const s=appState.students.find(x=>x.id===id);if(!s||!confirm("Delete "+s.name+"'s profile?"))return;appState.students=appState.students.filter(x=>x.id!==id);appState.selectedStudentId=appState.students[0]?.id||"";saveStudents();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();updateReportStudentFilter();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent()}
+}});const i=appState.students.findIndex(s=>s.id===id);if(i>=0)appState.students[i]=p;else appState.students.push(p);appState.selectedStudentId=p.id;saveStudents();markProgramChange();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();selectStudentForEditing(p.id);updateReportStudentFilter();updateAdministratorSelects();settingsMessage.textContent=p.name+"'s profile was saved."}
+function deleteSelectedStudent(){const id=studentIdInput.value;if(!id)return;const s=appState.students.find(x=>x.id===id);if(!s||!confirm("Delete "+s.name+"'s profile?"))return;appState.students=appState.students.filter(x=>x.id!==id);appState.selectedStudentId=appState.students[0]?.id||"";saveStudents();markProgramChange();saveSelectedStudentId();updateHomeStudentSelect();renderStudentList();updateReportStudentFilter();appState.selectedStudentId?selectStudentForEditing(appState.selectedStudentId):beginNewStudent()}
 
 function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;updateAdministratorSelects();appState.currentStudent=s;welcomeStudentName.textContent="Welcome, "+s.name+"!";if(s.activityLevel==="cart-builder"){
         welcomeSessionDetails.textContent=
@@ -2151,10 +2214,19 @@ function exportSessionsToCsv(){const sessions=getFilteredSessions();if(!sessions
 function clearSavedReports(){if(!confirm("Delete all saved session reports from this browser?"))return;appState.sessions=[];appState.selectedSessionId="";saveSessions();renderReports()}
 
 function exportClassroomBackup(){
+    const now=new Date().toISOString();
+    appState.portableMeta.lastExport=now;
+    savePortableMeta();
+
     const backup={
         app:"Budget Buddy",
-        version:"0.16.3",
-        exportedAt:new Date().toISOString(),
+        format:"portable-classroom",
+        version:"0.17",
+        exportedAt:now,
+        portableMeta:{
+            revision:appState.portableMeta.revision,
+            lastProgramChange:appState.portableMeta.lastProgramChange
+        },
         classroom:appState.classroom,
         staff:appState.staff,
         reinforcementLibrary:appState.reinforcementLibrary,
@@ -2164,13 +2236,21 @@ function exportClassroomBackup(){
         sessions:appState.sessions
     };
 
+    const safeName=(appState.classroom.name||"classroom")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,"-")
+        .replace(/^-|-$/g,"") || "classroom";
+
     downloadTextFile(
-        "budget-buddy-classroom-backup.json",
+        safeName+"-revision-"+appState.portableMeta.revision+".bbclass",
         JSON.stringify(backup,null,2),
         "application/json;charset=utf-8;"
     );
 
-    dataMessage.textContent="Classroom backup exported.";
+    renderPortableStatus();
+    dataMessage.textContent=
+        "Portable classroom revision "+appState.portableMeta.revision+
+        " was exported. Import this file on the student device.";
 }
 
 async function importClassroomBackup(event){
@@ -2188,12 +2268,35 @@ async function importClassroomBackup(event){
             throw new Error("Invalid backup");
         }
 
-        if(!confirm(
-            "Importing will replace the classroom data currently saved on this device. Continue?"
-        )){
+        const incomingMeta=normalizePortableMeta(
+            backup.portableMeta || {revision:1,lastProgramChange:backup.exportedAt||""}
+        );
+        const currentRevision=appState.portableMeta.revision;
+
+        if(incomingMeta.revision<currentRevision){
+            const continueOlder=confirm(
+                "This file is classroom revision "+incomingMeta.revision+
+                ", but this device currently has revision "+currentRevision+
+                ". Importing may restore older teaching settings. Continue anyway?"
+            );
+            if(!continueOlder){
+                importClassroomInput.value="";
+                dataMessage.textContent="Import canceled because the selected file was older.";
+                return;
+            }
+        }
+
+        const mode=importModeSelect?.value||"programs-only";
+        const message=mode==="programs-only"
+            ? "Update this device to classroom revision "+incomingMeta.revision+" and keep its existing session reports?"
+            : "Replace the entire classroom on this device with revision "+incomingMeta.revision+", including its session reports?";
+
+        if(!confirm(message)){
             importClassroomInput.value="";
             return;
         }
+
+        const existingSessions=appState.sessions;
 
         if(backup.classroom){
             appState.classroom={
@@ -2212,7 +2315,7 @@ async function importClassroomBackup(event){
                 : [];
 
         appState.students=backup.students.map(normalizeStudent);
-        appState.sessions=backup.sessions;
+        appState.sessions=mode==="full-replace" ? backup.sessions : existingSessions;
 
         appState.selectedStudentId=appState.students.some(function(student){
             return student.id===backup.selectedStudentId;
@@ -2224,6 +2327,13 @@ async function importClassroomBackup(event){
             appState.staff.find(function(staff){return staff.active})?.id||""
         );
 
+        appState.portableMeta={
+            revision:incomingMeta.revision,
+            lastProgramChange:incomingMeta.lastProgramChange||backup.exportedAt||"",
+            lastExport:appState.portableMeta.lastExport,
+            lastImport:new Date().toISOString()
+        };
+
         saveClassroomProfile();
         saveStaffDirectory();
         saveReinforcementLibrary();
@@ -2231,6 +2341,7 @@ async function importClassroomBackup(event){
         saveSessions();
         saveSelectedStudentId();
         saveSelectedAdministrator();
+        savePortableMeta();
 
         updateHomeStudentSelect();
         updateReportStudentFilter();
@@ -2239,8 +2350,14 @@ async function importClassroomBackup(event){
         renderStudentList();
         renderStaffList();
         renderReinforcementLibrary();
+        renderPortableStatus();
 
-        dataMessage.textContent="Classroom backup imported successfully.";
+        dataMessage.textContent=
+            "Classroom revision "+incomingMeta.revision+
+            " imported successfully. "+
+            (mode==="programs-only"
+                ? "Existing session reports on this device were kept."
+                : "The complete classroom and reports were replaced.");
     }catch(error){
         console.error(error);
         dataMessage.textContent="The selected file could not be imported.";
@@ -2509,6 +2626,7 @@ saveClassroomButton.onclick=function(){
     };
 
     saveClassroomProfile();
+    markProgramChange();
     classroomMessage.textContent="Classroom profile saved.";
 };
 
@@ -2575,6 +2693,7 @@ completeHomeButton.onclick=function(){
     showScreen(homeScreen);
 };
 
+loadPortableMeta();
 loadClassroomProfile();
 loadReinforcementLibrary();
 loadStudents();
@@ -2584,6 +2703,7 @@ updateHomeStudentSelect();
 updateReportStudentFilter();
 updateAdministratorSelects();
 updateReinforcementPackageOptions();
+renderPortableStatus();
 disableAnswerButtons();
 showScreen(homeScreen);
-console.log("Budget Buddy v0.16.2 GIF upload and version fix loaded successfully");
+console.log("Budget Buddy v0.17 Portable Classroom loaded successfully");

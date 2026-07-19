@@ -1,5 +1,17 @@
 # Budget Buddy Changelog
 
+## v0.16.1 — Navigation Stability
+
+- Centralized all teacher-platform navigation.
+- Verified Classroom, Student Programs, Session Reports, and Import / Export tabs.
+- Added an explicit **View Data** button to each saved session.
+- Made report rows keyboard accessible.
+- Added navigation layering protections for mouse and touch input.
+- Added `tests/navigation-smoke-test.html` for repeatable browser testing.
+- Removed the duplicate inline Student Programs click handler.
+
+---
+
 ## v0.16 — Classroom Reinforcement Library
 
 ### Added
