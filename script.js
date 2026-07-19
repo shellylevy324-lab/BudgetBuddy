@@ -1,3 +1,6 @@
+const MAX_IMAGE_UPLOAD_BYTES = 3 * 1024 * 1024; // 3 MB
+const MAX_AUDIO_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
+
 const CLASSROOM_STORAGE_KEY="budgetBuddyClassroom_v1";
 const REINFORCEMENT_LIBRARY_STORAGE_KEY="budgetBuddyReinforcementLibrary_v1";
 const STAFF_STORAGE_KEY="budgetBuddyStaff_v1";
