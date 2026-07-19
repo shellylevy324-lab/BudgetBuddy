@@ -286,3 +286,7 @@ The white background remains unchanged throughout the sequence.
 - A library package may include token media, completion media, completion audio, default praise, or project paths.
 - Student programs reference shared classroom packages instead of duplicating media.
 - Classroom backup and restore now include the classroom profile, staff directory, reinforcement library, students, and sessions.
+
+
+## v0.16.1 Stability Release
+This release centralizes teacher navigation and adds a visible **View Data** control for every saved session. A browser smoke test is included at `tests/navigation-smoke-test.html`.

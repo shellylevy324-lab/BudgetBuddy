@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.16">
+  <link rel="stylesheet" href="style.css?v=0.16.1">
 </head>
 <body>
 <main class="container">
@@ -16,7 +16,7 @@
       <label for="homeStudentSelect">Student</label>
       <select id="homeStudentSelect"></select>
       <button id="startButton" class="primaryButton" type="button">🛒 Start Shopping</button>
-      <button id="teacherButton" class="secondaryButton" type="button" onclick="openStudentPrograms()">📘 Student Programs</button>
+      <button id="teacherButton" class="secondaryButton" type="button">📘 Student Programs</button>
     </div>
   </section>
 
@@ -26,7 +26,7 @@
       <h2>Classroom</h2>
     </header>
 
-    <nav class="teacherTabs" aria-label="Student program sections">
+    <nav class="teacherTabs" aria-label="Teacher platform sections">
       <button id="classroomTabButton" class="tabButton" type="button">Classroom</button>
       <button id="studentsTabButton" class="tabButton active" type="button">Student Programs</button>
       <button id="reportsTabButton" class="tabButton" type="button">Session Reports</button>
@@ -405,10 +405,10 @@
             <thead>
               <tr>
                 <th>Date</th><th>Student</th><th>Trials</th><th>Accuracy</th>
-                <th>Independent</th><th>Avg. Latency</th><th>Highest Prompt</th>
+                <th>Independent</th><th>Avg. Latency</th><th>Highest Prompt</th><th>Action</th>
               </tr>
             </thead>
-            <tbody id="sessionTableBody"></tbody>
+            <tbody id="sessionTableBody" aria-live="polite"></tbody>
           </table>
         </div>
       </section>
@@ -424,7 +424,7 @@
                 <th>Correct</th><th>Total Latency</th><th>Prompt Level</th><th>Post-Prompt Latency</th>
               </tr>
             </thead>
-            <tbody id="trialDetailBody"></tbody>
+            <tbody id="trialDetailBody" aria-live="polite"></tbody>
           </table>
         </div>
       </section>
@@ -594,6 +594,6 @@
   <footer class="appFooter">Budget Buddy v0.16 — Classroom Reinforcement Library</footer>
 </main>
 
-<script src="script.js?v=0.16"></script>
+<script src="script.js?v=0.16.1"></script>
 </body>
 </html>

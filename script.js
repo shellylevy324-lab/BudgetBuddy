@@ -32,73 +32,84 @@ const completionMessage=$("completionMessage"),newSessionButton=$("newSessionBut
 const screens=[homeScreen,teacherScreen,welcomeScreen,groceryScreen,completeScreen];
 
 
-function openStudentPrograms(){
-    try{
-        showScreen(teacherScreen);
+function showScreen(selected){
+    screens.forEach(function(screen){
+        screen.classList.add("hidden");
+        screen.setAttribute("aria-hidden","true");
+    });
 
-        classroomPanel.classList.add("hidden");
-        reportsPanel.classList.add("hidden");
-        dataPanel.classList.add("hidden");
-        studentsPanel.classList.remove("hidden");
-
-        classroomTabButton.classList.remove("active");
-        reportsTabButton.classList.remove("active");
-        dataTabButton.classList.remove("active");
-        studentsTabButton.classList.add("active");
-
-        window.setTimeout(function(){
-            try{
-                renderStudentList();
-
-                if(appState.selectedStudentId){
-                    selectStudentForEditing(appState.selectedStudentId);
-                }else{
-                    beginNewStudent();
-                }
-
-                updateAdministratorSelects();
-            }catch(error){
-                console.error("Student Programs content could not finish loading:",error);
-            }
-        },0);
-    }catch(error){
-        console.error("Student Programs could not open:",error);
-
-        document.querySelectorAll(".screen").forEach(function(screen){
-            screen.classList.add("hidden");
-        });
-
-        const teacher=document.getElementById("teacherScreen");
-        if(teacher){
-            teacher.classList.remove("hidden");
-        }
+    if(!selected){
+        console.error("A screen could not be opened because it was not found.");
+        return false;
     }
+
+    selected.classList.remove("hidden");
+    selected.setAttribute("aria-hidden","false");
+    return true;
 }
 
-window.openStudentPrograms=openStudentPrograms;
-
-function showScreen(selected){screens.forEach(s=>s.classList.add("hidden"));selected.classList.remove("hidden")}
 function showTeacherPanel(name){
-    classroomPanel.classList.toggle("hidden",name!=="classroom");
-    studentsPanel.classList.toggle("hidden",name!=="students");
-    reportsPanel.classList.toggle("hidden",name!=="reports");
-    dataPanel.classList.toggle("hidden",name!=="data");
+    const panels={
+        classroom:classroomPanel,
+        students:studentsPanel,
+        reports:reportsPanel,
+        data:dataPanel
+    };
+    const tabs={
+        classroom:classroomTabButton,
+        students:studentsTabButton,
+        reports:reportsTabButton,
+        data:dataTabButton
+    };
 
-    classroomTabButton.classList.toggle("active",name==="classroom");
-    studentsTabButton.classList.toggle("active",name==="students");
-    reportsTabButton.classList.toggle("active",name==="reports");
-    dataTabButton.classList.toggle("active",name==="data");
+    if(!panels[name]){
+        console.error("Unknown teacher panel:",name);
+        return false;
+    }
+
+    Object.keys(panels).forEach(function(key){
+        const active=key===name;
+        panels[key].classList.toggle("hidden",!active);
+        panels[key].setAttribute("aria-hidden",String(!active));
+        tabs[key].classList.toggle("active",active);
+        tabs[key].setAttribute("aria-selected",String(active));
+        tabs[key].tabIndex=active?0:-1;
+    });
 
     if(name==="classroom"){
         renderClassroom();
         renderStaffList();
         renderReinforcementLibrary();
-    }
-
-    if(name==="reports"){
+    }else if(name==="students"){
+        renderStudentList();
+        if(appState.selectedStudentId){
+            selectStudentForEditing(appState.selectedStudentId);
+        }else{
+            beginNewStudent();
+        }
+    }else if(name==="reports"){
         renderReports();
     }
+
+    return true;
 }
+
+function openTeacherPlatform(panelName="students"){
+    if(!showScreen(teacherScreen)){return false}
+    return showTeacherPanel(panelName);
+}
+
+function openStudentPrograms(){
+    return openTeacherPlatform("students");
+}
+
+function openSessionReports(){
+    return openTeacherPlatform("reports");
+}
+
+window.openStudentPrograms=openStudentPrograms;
+window.openSessionReports=openSessionReports;
+window.showTeacherPanel=showTeacherPanel;
 
 
 
@@ -2055,15 +2066,68 @@ function getFilteredSessions(){
 
 function renderReports(){updateReportStudentFilter();const sessions=getFilteredSessions();renderSummaryCards(sessions);renderSessionTable(sessions);const sel=appState.sessions.find(s=>s.id===appState.selectedSessionId)||sessions[0]||null;if(sel){appState.selectedSessionId=sel.id;renderTrialDetails(sel)}else{selectedSessionLabel.textContent="No saved sessions are available.";trialDetailBody.innerHTML=""}}
 function renderSummaryCards(sessions){reportSummaryCards.innerHTML="";const trials=sessions.flatMap(s=>s.trials||[]),correct=trials.filter(t=>t.correct).length,ind=trials.filter(t=>t.independent).length,cards=[["Sessions",sessions.length],["Trials",trials.length],["Overall Accuracy",(trials.length?correct/trials.length*100:0).toFixed(1)+"%"],["Independent",(trials.length?ind/trials.length*100:0).toFixed(1)+"%"],["Average Latency",formatSeconds(average(trials.map(t=>t.latencySeconds)))]];cards.forEach(([l,v])=>{const d=document.createElement("div");d.className="summaryCard";d.innerHTML="<span>"+l+"</span><strong>"+v+"</strong>";reportSummaryCards.appendChild(d)})}
-function renderSessionTable(sessions){sessionTableBody.innerHTML="";if(!sessions.length){sessionTableBody.innerHTML='<tr><td colspan="7">No sessions have been saved.</td></tr>';return}sessions.forEach(s=>{const r=document.createElement("tr");r.className="sessionRow"+(s.id===appState.selectedSessionId?" selected":"");[
- new Date(s.completedAt).toLocaleString(),
- s.studentName,
- s.completedTrials,
- displayMetric(s,"accuracy",s.accuracyPercent+"%"),
- displayMetric(s,"independent",(s.independentPercent??0)+"%"),
- displayMetric(s,"latency",formatSeconds(s.averageLatencySeconds)),
- displayMetric(s,"promptLevel",PROMPT_LABELS[s.highestPromptLevel||"independent"])
-].forEach(v=>{const c=document.createElement("td");c.textContent=v;r.appendChild(c)});r.onclick=()=>{appState.selectedSessionId=s.id;renderReports()};sessionTableBody.appendChild(r)})}
+function selectSessionReport(sessionId){
+    appState.selectedSessionId=sessionId;
+    renderReports();
+    selectedSessionLabel.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function renderSessionTable(sessions){
+    sessionTableBody.innerHTML="";
+
+    if(!sessions.length){
+        sessionTableBody.innerHTML='<tr><td colspan="8">No sessions have been saved.</td></tr>';
+        return;
+    }
+
+    sessions.forEach(function(session){
+        const row=document.createElement("tr");
+        row.className="sessionRow"+(session.id===appState.selectedSessionId?" selected":"");
+        row.tabIndex=0;
+        row.setAttribute("role","button");
+        row.setAttribute("aria-label","View analyzed data for "+session.studentName);
+
+        const values=[
+            new Date(session.completedAt).toLocaleString(),
+            session.studentName,
+            session.trials?.length||0,
+            formatPercent(calculateAccuracy(session)),
+            formatPercent(calculateIndependence(session)),
+            calculateAverageLatency(session),
+            highestPromptLabel(session)
+        ];
+
+        values.forEach(function(value){
+            const cell=document.createElement("td");
+            cell.textContent=value;
+            row.appendChild(cell);
+        });
+
+        const actionCell=document.createElement("td");
+        const viewButton=document.createElement("button");
+        viewButton.type="button";
+        viewButton.className="smallButton reportViewButton";
+        viewButton.textContent="View Data";
+        viewButton.setAttribute("aria-label","View analyzed session data for "+session.studentName);
+        viewButton.onclick=function(event){
+            event.stopPropagation();
+            selectSessionReport(session.id);
+        };
+        actionCell.appendChild(viewButton);
+        row.appendChild(actionCell);
+
+        row.onclick=function(){selectSessionReport(session.id)};
+        row.onkeydown=function(event){
+            if(event.key==="Enter"||event.key===" "){
+                event.preventDefault();
+                selectSessionReport(session.id);
+            }
+        };
+
+        sessionTableBody.appendChild(row);
+    });
+}
+
 function renderTrialDetails(s){selectedSessionLabel.textContent=s.studentName+" — "+new Date(s.completedAt).toLocaleString();trialDetailBody.innerHTML="";(s.trials||[]).forEach(t=>{const r=document.createElement("tr");[
  t.trialNumber,
  t.item,
@@ -2423,10 +2487,6 @@ previewLibraryCompletionButton.onclick=function(){
     appState.currentStudent=previous;
 };
 
-classroomTabButton.onclick=function(){
-    showTeacherPanel("classroom");
-};
-
 saveClassroomButton.onclick=function(){
     appState.classroom={
         name:(classroomNameInput.value.trim()||"My Classroom").slice(0,80),
@@ -2451,13 +2511,22 @@ sessionAdministratorSelect.onchange=function(){
 
 reportAdministratorFilter.onchange=renderReports;
 
+function bindClick(element,handler,label){
+    if(!element){
+        console.error("Navigation control missing:",label);
+        return;
+    }
+    element.addEventListener("click",handler);
+}
+
 homeStudentSelect.onchange=()=>{appState.selectedStudentId=homeStudentSelect.value;saveSelectedStudentId()};
 startButton.onclick=openStudentWelcome;
-teacherButton.onclick=openStudentPrograms;
-teacherBackButton.onclick=()=>{updateHomeStudentSelect();showScreen(homeScreen)};
-studentsTabButton.onclick=()=>showTeacherPanel("students");
-reportsTabButton.onclick=()=>showTeacherPanel("reports");
-dataTabButton.onclick=()=>showTeacherPanel("data");
+bindClick(teacherButton,openStudentPrograms,"Student Programs");
+bindClick(teacherBackButton,()=>{updateHomeStudentSelect();showScreen(homeScreen)},"Teacher Back");
+bindClick(classroomTabButton,()=>showTeacherPanel("classroom"),"Classroom tab");
+bindClick(studentsTabButton,()=>showTeacherPanel("students"),"Student Programs tab");
+bindClick(reportsTabButton,()=>showTeacherPanel("reports"),"Session Reports tab");
+bindClick(dataTabButton,()=>showTeacherPanel("data"),"Import / Export tab");
 addStudentButton.onclick=beginNewStudent;
 saveStudentButton.onclick=saveStudentProfile;
 deleteStudentButton.onclick=deleteSelectedStudent;
@@ -2474,7 +2543,7 @@ yesButton.onclick=()=>handleAnswer("yes");
 noButton.onclick=()=>handleAnswer("no");
 endSessionButton.onclick=finishSession;
 newSessionButton.onclick=openStudentWelcome;
-viewReportButton.onclick=()=>{showTeacherPanel("reports");showScreen(teacherScreen)};
+viewReportButton.onclick=openSessionReports;
 completeHomeButton.onclick=()=>showScreen(homeScreen);
 
 loadClassroomProfile();
@@ -2488,4 +2557,4 @@ updateAdministratorSelects();
 updateReinforcementPackageOptions();
 disableAnswerButtons();
 showScreen(homeScreen);
-console.log("Budget Buddy v0.16 loaded successfully");
+console.log("Budget Buddy v0.16.1 stability release loaded successfully");

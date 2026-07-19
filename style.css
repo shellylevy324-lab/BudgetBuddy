@@ -1100,3 +1100,31 @@
     border-radius: 16px;
     background: #f7fafc;
 }
+
+
+/* v0.16.1 navigation and report-access stability */
+.teacherTabs {
+    position: relative;
+    z-index: 20;
+    pointer-events: auto;
+}
+
+.teacherTabs .tabButton {
+    position: relative;
+    z-index: 21;
+    pointer-events: auto;
+    touch-action: manipulation;
+}
+
+.sessionRow {
+    cursor: pointer;
+}
+
+.sessionRow:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: -3px;
+}
+
+.reportViewButton {
+    white-space: nowrap;
+}

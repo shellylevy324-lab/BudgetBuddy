@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Budget Buddy Navigation Smoke Test</title></head><body><h1>Navigation Smoke Test</h1><ol id="results"></ol><iframe id="app" src="../index.html" style="width:1200px;height:800px"></iframe><script>
+const results=[];
+function record(name,pass,detail=""){results.push({name,pass,detail});const li=document.createElement('li');li.dataset.status=pass?'PASS':'FAIL';li.textContent=(pass?'PASS: ':'FAIL: ')+name+(detail?' — '+detail:'');document.getElementById('results').appendChild(li)}
+const frame=document.getElementById('app');
+frame.onload=()=>setTimeout(()=>{
+ const w=frame.contentWindow,d=w.document;
+ if(phase>0)return;
+ try{
+  d.getElementById('teacherButton').click();
+  record('Teacher platform opens',!d.getElementById('teacherScreen').classList.contains('hidden'));
+  record('Student Programs opens',!d.getElementById('studentsPanel').classList.contains('hidden'));
+  d.getElementById('classroomTabButton').click();
+  record('Classroom profile tab opens',!d.getElementById('classroomPanel').classList.contains('hidden'));
+  d.getElementById('reportsTabButton').click();
+  record('Session Reports tab opens',!d.getElementById('reportsPanel').classList.contains('hidden'));
+  const sessions=[{id:'smoke-session',studentId:'student-a',studentName:'Student A',administratorId:'staff-default',administratorName:'Teacher',completedAt:new Date().toISOString(),trials:[{trialNumber:1,itemName:'Milk',price:3.5,budget:5,response:'yes',correct:true,totalLatencySeconds:2.1,promptLevel:'independent',independent:true,postPromptLatencySeconds:null}]}];
+  w.localStorage.setItem('budgetBuddySessions',JSON.stringify(sessions));
+  phase=1;
+  w.location.reload();
+ }catch(e){record('Initial navigation test',false,e.message);document.body.dataset.complete='true'}
+},300);
+let phase=0;
+setInterval(()=>{
+ const w=frame.contentWindow,d=w.document;
+ if(!d||!d.getElementById('teacherButton'))return;
+ if(w.localStorage.getItem('budgetBuddySessions')&&phase===1){
+  phase=2;
+  setTimeout(()=>{
+   try{
+    d.getElementById('teacherButton').click();
+    d.getElementById('reportsTabButton').click();
+    const row=d.querySelector('#sessionTableBody .sessionRow');
+    const btn=d.querySelector('#sessionTableBody .reportViewButton');
+    record('Saved session appears in reports',!!row);
+    record('View Data button is clickable',!!btn&&!btn.disabled);
+    if(btn)btn.click();
+    record('Analyzed trial data opens',d.querySelectorAll('#trialDetailBody tr').length===1);
+   }catch(e){record('Report data test',false,e.message)}
+   document.body.dataset.complete='true';
+   document.title=results.every(r=>r.pass)?'PASS - Budget Buddy Navigation Smoke Test':'FAIL - Budget Buddy Navigation Smoke Test';
+  },500);
+ }
+},200);
+</script></body></html>
