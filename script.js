@@ -2149,7 +2149,7 @@ function clearSavedReports(){if(!confirm("Delete all saved session reports from 
 function exportClassroomBackup(){
     const backup={
         app:"Budget Buddy",
-        version:"0.16",
+        version:"0.16.1",
         exportedAt:new Date().toISOString(),
         classroom:appState.classroom,
         staff:appState.staff,
