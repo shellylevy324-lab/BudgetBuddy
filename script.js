@@ -8,7 +8,7 @@ const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="bu
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={classroom:{name:"My Classroom",leadTeacher:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false};
+const appState={classroom:{name:"My Classroom",leadTeacher:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false};
 let pendingLibraryTokenData="";
 let pendingLibraryTokenFileName="";
 let pendingLibraryCompletionData="";
@@ -1175,14 +1175,19 @@ function playCompletionMedia(options={}){
     completionIconMain.textContent=pack.completion[1];
     completionIconRight.textContent=pack.completion[2];
 
+    const card=completeScreen.querySelector(".completeCard");
+    const old=card.querySelector(".completionMediaImage");
+    if(old){old.remove()}
+
     if(imagePath){
         const img=document.createElement("img");
         img.src=imagePath.startsWith("data:")?imagePath:imagePath+"?t="+Date.now();
         img.alt="Completion celebration";
         img.className="completionMediaImage";
-        const card=completeScreen.querySelector(".completeCard");
-        const old=card.querySelector(".completionMediaImage");
-        if(old)old.remove();
+        img.onerror=function(){
+            console.warn("Completion media could not be loaded:",imagePath);
+            img.remove();
+        };
         card.insertBefore(img,card.children[2]||null);
     }
 
@@ -2148,7 +2153,7 @@ function clearSavedReports(){if(!confirm("Delete all saved session reports from 
 function exportClassroomBackup(){
     const backup={
         app:"Budget Buddy",
-        version:"0.16.2",
+        version:"0.16.3",
         exportedAt:new Date().toISOString(),
         classroom:appState.classroom,
         staff:appState.staff,
@@ -2484,7 +2489,15 @@ previewLibraryTokenButton.onclick=function(){
 
 previewLibraryCompletionButton.onclick=function(){
     const previous=appState.currentStudent;
+    appState.previewingCompletion=true;
     appState.currentStudent=buildLibraryPreviewProfile();
+
+    completionMessage.textContent=libraryPraiseTextInput.value.trim()||"Nice job!";
+    newSessionButton.classList.add("hidden");
+    viewReportButton.classList.add("hidden");
+    completeHomeButton.textContent="Return to Reinforcement Library";
+
+    showScreen(completeScreen);
     playCompletionMedia({preview:true});
     appState.currentStudent=previous;
 };
@@ -2546,7 +2559,21 @@ noButton.onclick=()=>handleAnswer("no");
 endSessionButton.onclick=finishSession;
 newSessionButton.onclick=openStudentWelcome;
 viewReportButton.onclick=openSessionReports;
-completeHomeButton.onclick=()=>showScreen(homeScreen);
+completeHomeButton.onclick=function(){
+    if(appState.previewingCompletion){
+        appState.previewingCompletion=false;
+        newSessionButton.classList.remove("hidden");
+        viewReportButton.classList.remove("hidden");
+        completeHomeButton.textContent="Return Home";
+        completionMessage.textContent="Nice work completing your shopping practice!";
+        showScreen(teacherScreen);
+        showTeacherPanel("classroom");
+        libraryPackageEditor.classList.remove("hidden");
+        return;
+    }
+
+    showScreen(homeScreen);
+};
 
 loadClassroomProfile();
 loadReinforcementLibrary();
