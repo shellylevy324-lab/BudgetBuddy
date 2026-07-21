@@ -1,19 +1,29 @@
+const SELECTED_STUDENT_KEY = "buddySkillsSelectedStudent";
+
 async function loadTrainingStation() {
     try {
         const response = await fetch("data/training-station-data.json");
 
         if (!response.ok) {
-            throw new Error(`Could not load trainee data: ${response.status}`);
+            throw new Error(`Could not load training data: ${response.status}`);
         }
 
         const data = await response.json();
+        const selectedStudent = getSelectedStudent();
+        const trainee = selectedStudent
+            ? mergeSelectedStudent(data.trainee || {}, selectedStudent)
+            : data.trainee || {};
 
-        displayTrainee(data.trainee || {});
+        displayTrainee(trainee);
         displayTrainingAreas(data.trainingAreas || []);
         displayRecentTraining(data.recentTraining || {});
 
         const statusMessage = document.getElementById("statusMessage");
-        if (statusMessage) statusMessage.textContent = "";
+        if (statusMessage) {
+            statusMessage.textContent = selectedStudent
+                ? ""
+                : "No classroom student was selected. Showing the sample Training Station profile.";
+        }
     } catch (error) {
         console.error("Training Station error:", error);
         const statusMessage = document.getElementById("statusMessage");
@@ -22,6 +32,31 @@ async function loadTrainingStation() {
                 "Training information could not be loaded. Please ask your Job Coach for help.";
         }
     }
+}
+
+function getSelectedStudent() {
+    try {
+        const savedStudent = sessionStorage.getItem(SELECTED_STUDENT_KEY);
+        return savedStudent ? JSON.parse(savedStudent) : null;
+    } catch (error) {
+        console.warn("Selected student could not be read:", error);
+        return null;
+    }
+}
+
+function mergeSelectedStudent(defaultTrainee, selectedStudent) {
+    const firstName = selectedStudent.firstName || "";
+    const lastName = selectedStudent.lastName || "";
+    const fullName = [firstName, lastName].filter(Boolean).join(" ");
+
+    return {
+        ...defaultTrainee,
+        id: selectedStudent.id || defaultTrainee.id,
+        name: fullName || selectedStudent.preferredName || "Student",
+        preferredName: selectedStudent.preferredName || firstName || fullName || "Student",
+        jobCoach: selectedStudent.jobCoach || "Not assigned",
+        photo: ""
+    };
 }
 
 function displayTrainee(trainee) {

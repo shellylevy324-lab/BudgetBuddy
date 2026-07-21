@@ -1,0 +1,39 @@
+BUDDY SKILLS CLOUD CLASSROOM - INSTALLATION STEPS
+
+This is a DEVELOPMENT proof of concept. Use fictional student data only.
+
+FILES TO COPY INTO THE ROOT OF YOUR BUDDY SKILLS PROJECT
+- classroom.html (new)
+- classroom.js (new)
+- supabase-config.js (new)
+- platform.css (replace existing)
+- training-station.html (replace existing)
+- training-station.js (replace existing)
+
+CONFIGURE SUPABASE
+1. Open supabase-config.js in VS Code.
+2. In the Supabase Connect panel, copy the value after:
+   NEXT_PUBLIC_SUPABASE_URL=
+3. Paste that value between the quotation marks for url.
+4. Copy the value after:
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+5. Paste that value between the quotation marks for publishableKey.
+6. Do not use a secret key, service_role key, database password, or connection string.
+
+TEST LOCALLY
+1. Start Live Server.
+2. Open classroom.html.
+3. Add a fictional student, such as Test Student A.
+4. Confirm the student appears in the list.
+5. Select Open Training Station.
+6. Confirm the selected fictional student's name appears.
+
+TEST ACROSS DEVICES
+1. Commit and push these files to the branch being published by GitHub Pages.
+2. Open /classroom.html on Device A and add a fictional student.
+3. Open the same /classroom.html address on Device B.
+4. Select Refresh students if needed.
+5. Confirm the same fictional student appears.
+
+SECURITY WARNING
+The temporary anon policies currently allow anyone with access to the development site to read and add rows. Do not enter real student information. Staff authentication and private Row Level Security policies must be completed before real use.

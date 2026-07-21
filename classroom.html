@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom | Buddy Skills</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="platform.css">
+</head>
+<body class="platform-page">
+    <header class="platform-header">
+        <div class="platform-header-inner">
+            <p class="platform-kicker">Buddy Skills</p>
+            <h1 class="platform-name">Classroom</h1>
+            <p class="platform-tagline">Growing Skills. Building Independence.</p>
+        </div>
+    </header>
+
+    <main class="page-shell classroom-shell">
+        <section class="card classroom-intro" aria-labelledby="classroomHeading">
+            <div>
+                <p class="eyebrow">Cloud Student Profiles</p>
+                <h2 id="classroomHeading" class="page-title">Select a student</h2>
+                <p class="supporting-copy">Choose a student to open their Training Station. Students shown here are loaded from the Buddy Skills development database.</p>
+            </div>
+            <button id="refreshStudentsButton" class="platform-button platform-button-secondary" type="button">Refresh students</button>
+        </section>
+
+        <p id="classroomStatus" class="classroom-status" role="status" aria-live="polite"></p>
+
+        <section class="classroom-layout">
+            <section class="card student-directory-card" aria-labelledby="studentDirectoryHeading">
+                <div class="section-heading-row">
+                    <div>
+                        <p class="eyebrow">Available Students</p>
+                        <h2 id="studentDirectoryHeading" class="section-title">Student list</h2>
+                    </div>
+                    <span id="studentCount" class="student-count">0 students</span>
+                </div>
+
+                <div id="studentDirectory" class="student-directory">
+                    <p class="empty-message">Connecting to the development database...</p>
+                </div>
+            </section>
+
+            <section class="card add-student-card" aria-labelledby="addStudentHeading">
+                <p class="eyebrow">Development Test</p>
+                <h2 id="addStudentHeading" class="section-title">Add a fictional student</h2>
+                <p class="privacy-note"><strong>Testing only:</strong> Do not enter real student information until staff authentication and private access policies are complete.</p>
+
+                <form id="addStudentForm" class="platform-form">
+                    <div class="form-field">
+                        <label for="firstName">First name <span aria-hidden="true">*</span></label>
+                        <input id="firstName" name="first_name" type="text" maxlength="60" required autocomplete="off" placeholder="Example: Test">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="lastName">Last name</label>
+                        <input id="lastName" name="last_name" type="text" maxlength="60" autocomplete="off" placeholder="Example: Student A">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="preferredName">Preferred name</label>
+                        <input id="preferredName" name="preferred_name" type="text" maxlength="60" autocomplete="off" placeholder="Example: Alex">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="gradeLevel">Grade or program</label>
+                        <input id="gradeLevel" name="grade_level" type="text" maxlength="40" autocomplete="off" placeholder="Example: Transition Program">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="jobCoach">Job coach</label>
+                        <input id="jobCoach" name="job_coach" type="text" maxlength="80" autocomplete="off" placeholder="Example: Test Coach">
+                    </div>
+
+                    <button id="saveStudentButton" class="platform-button platform-button-full" type="submit">Add test student</button>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="classroom.js"></script>
+</body>
+</html>
