@@ -1,0 +1,32 @@
+BUDDY SKILLS VERSION 1.2 - TEACHER CENTER PREVIEW
+
+FILES
+1. teacher-center.html       NEW
+2. teacher-center.js         NEW
+3. teacher-config.js         NEW
+4. platform.css              REPLACE existing platform.css
+5. SUPABASE-UPDATE-POLICY.sql
+
+INSTALL
+1. Copy teacher-center.html, teacher-center.js, and teacher-config.js into the main BuddySkillsPlatform folder.
+2. Replace platform.css with the included version.
+3. Keep your existing supabase-config.js. Do not replace it.
+4. In Supabase DEVELOPMENT, open SQL Editor and run SUPABASE-UPDATE-POLICY.sql.
+5. Open teacher-config.js and change ChangeMe123! to a private pilot password.
+6. Open teacher-center.html with Live Server.
+
+TEST
+- Incorrect password stays locked.
+- Correct password opens the left-navigation Teacher Center.
+- Students load from Supabase.
+- Add Student creates a de-identified profile.
+- Selecting a student opens the editor.
+- Save Profile updates preferred name, program, job coach, and active status.
+- Lock Teacher Center returns to the password screen.
+- Student-facing Training Station and Budget Buddy pages are unchanged.
+
+IMPORTANT SECURITY LIMITATION
+The pilot password is visible in browser-delivered code. It prevents casual access only. Continue using de-identified student data. Real teacher accounts and stronger Row Level Security are still required before storing identifying information.
+
+SUGGESTED COMMIT
+Version 1.2 - Teacher Center Preview
