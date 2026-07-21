@@ -743,12 +743,59 @@ function loadStudents(){
         }
     });
 
-    saveStudents();
+    const classroomStudent=readClassroomStudent();
+    if(classroomStudent){
+        const existingIndex=appState.students.findIndex(function(student){
+            return student.id===classroomStudent.id;
+        });
 
-    const stored=localStorage.getItem(SELECTED_STUDENT_STORAGE_KEY);
-    appState.selectedStudentId=appState.students.some(function(student){
-        return student.id===stored;
-    }) ? stored : (appState.students[0]?.id||"");
+        if(existingIndex>=0){
+            appState.students[existingIndex]=normalizeStudent({
+                ...appState.students[existingIndex],
+                name:classroomStudent.name
+            });
+        }else{
+            appState.students.push(normalizeStudent({
+                id:classroomStudent.id,
+                name:classroomStudent.name
+            }));
+        }
+
+        appState.selectedStudentId=classroomStudent.id;
+    }else{
+        const stored=localStorage.getItem(SELECTED_STUDENT_STORAGE_KEY);
+        appState.selectedStudentId=appState.students.some(function(student){
+            return student.id===stored;
+        }) ? stored : (appState.students[0]?.id||"");
+    }
+
+    saveStudents();
+    saveSelectedStudentId();
+}
+
+function readClassroomStudent(){
+    try{
+        const raw=sessionStorage.getItem("buddySkillsSelectedStudent");
+        if(!raw)return null;
+
+        const student=JSON.parse(raw);
+        if(!student||!student.id)return null;
+
+        const name=String(
+            student.preferredName ||
+            student.firstName ||
+            [student.firstName,student.lastName].filter(Boolean).join(" ") ||
+            "Student"
+        ).trim();
+
+        return{
+            id:String(student.id),
+            name:name||"Student"
+        };
+    }catch(error){
+        console.warn("The Classroom student could not be connected to Budget Buddy:",error);
+        return null;
+    }
 }
 function saveStudents(){try{localStorage.setItem(STUDENT_STORAGE_KEY,JSON.stringify(appState.students))}catch(error){console.error(error);alert("The student program could not be saved because browser storage is full. Try a smaller media file or use a project path instead.");throw error}}
 function saveSelectedStudentId(){localStorage.setItem(SELECTED_STUDENT_STORAGE_KEY,appState.selectedStudentId)}
@@ -1838,6 +1885,15 @@ function finishSession(){
         ? "Shopping finished! You earned "+appState.tokensEarned+" token"+(appState.tokensEarned===1?".":"s.")
         : "Nice work, "+appState.currentStudent.name+"! You completed "+trials.length+" shopping trial"+(trials.length===1?".":"s.");
 
+    // Student-facing completion safety: teacher-only actions stay hidden.
+    newSessionButton.classList.add("hidden");
+    viewReportButton.classList.add("hidden");
+    newSessionButton.setAttribute("aria-hidden","true");
+    viewReportButton.setAttribute("aria-hidden","true");
+    newSessionButton.tabIndex=-1;
+    viewReportButton.tabIndex=-1;
+    completeHomeButton.textContent="Return to Training Station";
+
     showScreen(completeScreen);
     playCompletionMedia();
 }
@@ -2680,9 +2736,7 @@ viewReportButton.onclick=openSessionReports;
 completeHomeButton.onclick=function(){
     if(appState.previewingCompletion){
         appState.previewingCompletion=false;
-        newSessionButton.classList.remove("hidden");
-        viewReportButton.classList.remove("hidden");
-        completeHomeButton.textContent="Return Home";
+        completeHomeButton.textContent="Return to Training Station";
         completionMessage.textContent="Nice work completing your shopping practice!";
         showScreen(teacherScreen);
         showTeacherPanel("classroom");
@@ -2690,7 +2744,8 @@ completeHomeButton.onclick=function(){
         return;
     }
 
-    showScreen(homeScreen);
+    // Keep the active student in sessionStorage and return to that student's station.
+    window.location.href="training-station.html";
 };
 
 loadPortableMeta();
