@@ -1,61 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Training Station</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Training Station | Buddy Skills</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="platform.css">
 </head>
-
-<body>
-
+<body class="platform-page">
     <header class="platform-header">
         <div class="platform-header-inner">
-            <h1 class="platform-name">Training Station Platform</h1>
-            <p class="platform-tagline">Building Skills for Life</p>
+            <h1 class="platform-name">Training Station</h1>
+            <p class="platform-tagline">Growing Skills. Building Independence.</p>
         </div>
     </header>
 
     <main class="page-shell">
-        <section class="card">
-            <h2 class="page-title">Welcome to Your Training Station</h2>
+        <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
 
-            <p class="role-label">Trainee</p>
-            <p class="role-name">Jacob</p>
+        <section class="card identity-card" aria-labelledby="welcomeMessage">
+            <div>
+                <h2 id="welcomeMessage" class="page-title">Welcome</h2>
+                <div class="identity-details">
+                    <div class="identity-field">
+                        <p class="role-label">Trainee</p>
+                        <p id="traineeName" class="role-name">Loading...</p>
+                    </div>
+                    <div class="identity-field">
+                        <p class="role-label">Job Coach</p>
+                        <p id="jobCoachName" class="role-name">Loading...</p>
+                    </div>
+                </div>
+            </div>
 
-            <p class="role-label">Job Coach</p>
-            <p class="role-name">Shelly Wilbar</p>
-        </section>
-
-        <section class="card">
-            <h2 class="section-title">Today's Training</h2>
-
-            <div class="training-grid">
-                <a class="training-card" href="money-skills.html">
-                    <span class="training-card-title">Money Skills</span>
-                    <span>Practice budgeting and shopping decisions.</span>
-                </a>
-
-                <a class="training-card" href="community-skills.html">
-                    <span class="training-card-title">Community Skills</span>
-                    <span>Practice skills for participating in the community.</span>
-                </a>
-
-                <a class="training-card" href="communication-skills.html">
-                    <span class="training-card-title">Communication Skills</span>
-                    <span>Practice functional communication.</span>
-                </a>
+            <div id="traineePhotoWrap" class="trainee-photo-wrap" aria-label="Trainee profile photo">
+                <span id="traineePhotoPlaceholder" class="trainee-photo-placeholder" aria-hidden="true">BS</span>
             </div>
         </section>
 
-        <section class="card">
-            <button class="primary-button full-width-button" type="button">
-                Begin Training
-            </button>
+        <section class="card" aria-labelledby="availableTrainingHeading">
+            <h2 id="availableTrainingHeading" class="section-title">Available Training</h2>
+            <div id="trainingGrid" class="training-grid">
+                <p class="empty-message">Loading training areas...</p>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="previousTrainingHeading">
+            <h2 id="previousTrainingHeading" class="section-title">Previous Training</h2>
+            <div class="recent-training">
+                <div>
+                    <p id="recentArea" class="recent-title">Loading...</p>
+                    <p id="recentActivity"></p>
+                    <p id="recentCompleted"></p>
+                </div>
+                <p id="recentIndependence" class="independence-badge"></p>
+            </div>
         </section>
     </main>
 
+    <script src="training-station.js"></script>
 </body>
-
 </html>

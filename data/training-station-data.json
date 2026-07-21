@@ -1,0 +1,49 @@
+{
+  "trainee": {
+    "id": "trainee-001",
+    "name": "Jacob",
+    "preferredName": "Jacob",
+    "photo": "",
+    "jobCoach": "Shelly Wilbar"
+  },
+  "trainingAreas": [
+    {
+      "id": "money-skills",
+      "title": "Money Skills",
+      "icon": "💵",
+      "description": "Practice budgeting and everyday money decisions.",
+      "available": true,
+      "href": "money-skills.html"
+    },
+    {
+      "id": "communication-skills",
+      "title": "Communication Skills",
+      "icon": "💬",
+      "description": "Practice functional communication and self-advocacy.",
+      "available": true,
+      "href": "communication-skills.html"
+    },
+    {
+      "id": "community-skills",
+      "title": "Community Skills",
+      "icon": "🚌",
+      "description": "Practice safety and participation in the community.",
+      "available": true,
+      "href": "community-skills.html"
+    },
+    {
+      "id": "daily-living-skills",
+      "title": "Daily Living Skills",
+      "icon": "🏠",
+      "description": "Practice routines for greater independence.",
+      "available": false,
+      "href": ""
+    }
+  ],
+  "recentTraining": {
+    "area": "Money Skills",
+    "activity": "Shopping Budget",
+    "independence": 91,
+    "completed": "Previous training session"
+  }
+}
