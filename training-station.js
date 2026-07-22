@@ -7,7 +7,7 @@ const STUDENT_ACTIVITIES = [
         icon: "🛒",
         description: "Practice choosing items that fit within a budget.",
         available: true,
-        href: "index.html?launch=shopping-budget"
+        href: "budget-buddy.html?launch=shopping-budget"
     },
     {
         id: "making-change",

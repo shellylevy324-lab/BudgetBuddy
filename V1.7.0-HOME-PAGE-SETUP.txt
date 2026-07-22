@@ -1,0 +1,18 @@
+BUDDY SKILLS v1.7.0 - PLATFORM HOME PAGE
+
+WHAT CHANGED
+The main GitHub Pages URL now opens Buddy Skills and redirects to the secure Teacher Center.
+Budget Buddy has moved from index.html to budget-buddy.html and remains available through student activity launch links.
+
+REPLACE
+- index.html
+- training-station.js
+- money-skills.html
+- docs/CHANGELOG.md
+
+ADD
+- budget-buddy.html
+- V1.7.0-HOME-PAGE-SETUP.txt
+
+IMPORTANT
+Upload budget-buddy.html before or at the same time as the replacement files. No Supabase SQL changes are required.

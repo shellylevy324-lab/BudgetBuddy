@@ -524,3 +524,10 @@ Uploaded files remain in the current browser. Use project paths for reliable cro
 - Added cross-device package choices to universal student profiles.
 - Student activity launch now carries universal instructional defaults and the selected cloud reinforcement package into Budget Buddy.
 - Added `SUPABASE-v1.4.0-REINFORCEMENT-LIBRARY.sql` for the pilot database table, storage bucket, and temporary development policies.
+
+## v1.7.0 - Platform Home Entry
+
+- Changed the root `index.html` from the Budget Buddy activity to the Buddy Skills Teacher Center entry page.
+- Moved the former Budget Buddy entry page to `budget-buddy.html`.
+- Updated Shopping Budget links to open `budget-buddy.html`.
+- Root GitHub Pages URL now sends staff to the secure Teacher Center.
