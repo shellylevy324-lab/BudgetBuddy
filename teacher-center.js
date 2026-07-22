@@ -3,7 +3,6 @@
 
   const STUDENTS_TABLE = "students";
   const SETTINGS_TABLE = "student_instructional_settings";
-  const AUTH_KEY = "buddySkillsTeacherUnlocked";
   const REINFORCEMENT_LIBRARY_STORAGE_KEY = "budgetBuddyReinforcementLibrary_v1";
   const SELECTED_STUDENT_KEY = "buddySkillsSelectedStudent";
   const BUILT_IN_PACKAGES = ["stars", "rockets", "dinosaurs", "rainbow", "trains", "music", "none"];
@@ -14,17 +13,22 @@
   let students = [];
   let cloudReinforcementPackages = [];
   let editingReinforcementPackage = null;
+  let currentUser = null;
 
   document.addEventListener("DOMContentLoaded", initialize);
 
   function initialize() {
     bindEvents();
     populateReinforcementPackages();
-    if (sessionStorage.getItem(AUTH_KEY) === "true") openTeacherCenter();
+    initializeAuthentication();
   }
 
   function bindEvents() {
     document.getElementById("teacherLoginForm")?.addEventListener("submit", login);
+    document.getElementById("teacherSignupForm")?.addEventListener("submit", signUp);
+    document.getElementById("showSignupButton")?.addEventListener("click", () => toggleAuthMode(true));
+    document.getElementById("showLoginButton")?.addEventListener("click", () => toggleAuthMode(false));
+    document.getElementById("forgotPasswordButton")?.addEventListener("click", sendPasswordReset);
     document.getElementById("teacherLogoutButton")?.addEventListener("click", logout);
     document.querySelectorAll("[data-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.section)));
     document.querySelectorAll("[data-open-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.openSection)));
@@ -42,21 +46,68 @@
     document.getElementById("reinforcementAudioFile")?.addEventListener("change", event => previewSelectedFile(event.target.files?.[0], "reinforcementAudioPreview", "audio"));
   }
 
-  function login(event) {
-    event.preventDefault();
-    const entered = document.getElementById("teacherPassword").value;
-    const expected = window.BUDDY_SKILLS_TEACHER?.pilotPassword;
-    if (!expected || entered !== expected) return showLoginStatus("The password was not accepted.", "error");
-    sessionStorage.setItem(AUTH_KEY, "true");
-    document.getElementById("teacherPassword").value = "";
-    openTeacherCenter();
-  }
-
-  async function openTeacherCenter() {
-    document.getElementById("teacherLogin").hidden = true;
-    document.getElementById("teacherApp").hidden = false;
+  async function initializeAuthentication() {
     try {
       supabaseClient = createSupabaseClient();
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      supabaseClient.auth.onAuthStateChange((_event, nextSession) => {
+        if (nextSession?.user && (!currentUser || currentUser.id !== nextSession.user.id)) openTeacherCenter(nextSession.user);
+        if (!nextSession?.user) showSignedOutState();
+      });
+      if (session?.user) await openTeacherCenter(session.user);
+    } catch (error) {
+      console.error(error);
+      showLoginStatus(error.message, "error");
+    }
+  }
+
+  async function login(event) {
+    event.preventDefault();
+    const email = clean(document.getElementById("teacherEmail").value).toLowerCase();
+    const password = document.getElementById("teacherPassword").value;
+    showLoginStatus("Signing in...", "info");
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) return showLoginStatus(friendlyError(error), "error");
+    document.getElementById("teacherPassword").value = "";
+  }
+
+  async function signUp(event) {
+    event.preventDefault();
+    const email = clean(document.getElementById("signupEmail").value).toLowerCase();
+    const password = document.getElementById("signupPassword").value;
+    const confirmation = document.getElementById("signupPasswordConfirm").value;
+    if (password.length < 8) return showLoginStatus("Use at least 8 characters for the password.", "error");
+    if (password !== confirmation) return showLoginStatus("The passwords do not match.", "error");
+    showLoginStatus("Creating teacher account...", "info");
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if (error) return showLoginStatus(friendlyError(error), "error");
+    if (!data.session) {
+      toggleAuthMode(false);
+      showLoginStatus("Account created. Check your email to confirm the account, then sign in.", "success");
+    }
+  }
+
+  async function sendPasswordReset() {
+    const email = clean(document.getElementById("teacherEmail").value).toLowerCase();
+    if (!email) return showLoginStatus("Enter your email address first.", "error");
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+    showLoginStatus(error ? friendlyError(error) : "Password reset email sent.", error ? "error" : "success");
+  }
+
+  function toggleAuthMode(showSignup) {
+    document.getElementById("teacherLoginForm").hidden = showSignup;
+    document.getElementById("teacherSignupForm").hidden = !showSignup;
+    document.getElementById("loginIntro").textContent = showSignup ? "Create your secure teacher account." : "Sign in to access your cloud caseload.";
+    showLoginStatus("", "info");
+  }
+
+  async function openTeacherCenter(user) {
+    currentUser = user;
+    document.getElementById("teacherLogin").hidden = true;
+    document.getElementById("teacherApp").hidden = false;
+    document.getElementById("teacherAccountEmail").textContent = user.email || "Teacher account";
+    try {
+      await supabaseClient.rpc("claim_buddy_skills_pilot_data");
       populateReinforcementPackages();
       await Promise.all([loadStudents(), loadCloudReinforcementPackages()]);
     } catch (error) {
@@ -65,11 +116,18 @@
     }
   }
 
-  function logout() {
-    sessionStorage.removeItem(AUTH_KEY);
+  async function logout() {
+    if (supabaseClient) await supabaseClient.auth.signOut();
+  }
+
+  function showSignedOutState() {
+    currentUser = null;
+    students = [];
+    cloudReinforcementPackages = [];
     document.getElementById("teacherApp").hidden = true;
     document.getElementById("teacherLogin").hidden = false;
-    showLoginStatus("Teacher Center locked.", "success");
+    toggleAuthMode(false);
+    showLoginStatus("Signed out securely.", "success");
   }
 
   function createSupabaseClient() {
@@ -134,10 +192,10 @@
       if (packageValue.startsWith("library:")) {
         const packageId = packageValue.slice("library:".length);
         const { data, error } = await supabaseClient.from(REINFORCEMENT_TABLE)
-          .select("id, name, praise_text, token_url, completion_url, audio_url, active")
+          .select("id, name, praise_text, token_url, completion_url, audio_url, token_path, completion_path, audio_path, active")
           .eq("id", packageId).maybeSingle();
         if (error) throw error;
-        reinforcementPackage = data || null;
+        reinforcementPackage = data ? await hydrateReinforcementPackage(data) : null;
       }
       const selectedStudent = {
         id: student.id,
@@ -253,7 +311,8 @@
       grade_level: optional(document.getElementById("editGradeLevel").value),
       job_coach: optional(document.getElementById("editJobCoach").value),
       active: document.getElementById("editActive").checked,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      owner_id: currentUser.id
     };
     if (!profile.first_name) return showStatus("First name is required.", "error");
     setEditorEnabled(false);
@@ -287,6 +346,7 @@
     const reinforcementSystem = document.getElementById("editReinforcementSystem").value;
     return {
       student_id: studentId,
+      owner_id: currentUser.id,
       prompting_mode: promptingMode,
       wait_time_seconds: numberValue("editWaitTime", 10),
       reinforcement_system: reinforcementSystem,
@@ -365,7 +425,7 @@
     if (!supabaseClient) return;
     if (list) list.innerHTML = '<p class="empty-message">Loading reinforcement packages...</p>';
     const { data, error } = await supabaseClient.from(REINFORCEMENT_TABLE)
-      .select("id, name, praise_text, token_url, completion_url, audio_url, active, created_at, updated_at")
+      .select("id, name, praise_text, token_url, completion_url, audio_url, token_path, completion_path, audio_path, active, created_at, updated_at")
       .order("active", { ascending: false })
       .order("name", { ascending: true });
     if (error) {
@@ -375,9 +435,20 @@
       populateReinforcementPackages();
       return;
     }
-    cloudReinforcementPackages = data || [];
+    cloudReinforcementPackages = await Promise.all((data || []).map(hydrateReinforcementPackage));
     renderCloudReinforcementPackages();
     populateReinforcementPackages();
+  }
+
+  async function hydrateReinforcementPackage(item) {
+    const hydrated = { ...item };
+    for (const role of ["token", "completion", "audio"]) {
+      const path = item[`${role}_path`];
+      if (!path) continue;
+      const { data, error } = await supabaseClient.storage.from(REINFORCEMENT_BUCKET).createSignedUrl(path, 60 * 60 * 8);
+      if (!error) hydrated[`${role}_url`] = data.signedUrl;
+    }
+    return hydrated;
   }
 
   function renderCloudReinforcementPackages() {
@@ -456,16 +527,20 @@
       validateUpload(tokenFile, "image", 8);
       validateUpload(completionFile, "image", 12);
       validateUpload(audioFile, "audio", 8);
-      const tokenUrl = tokenFile ? await uploadReinforcementFile(packageId, "token", tokenFile) : (editingReinforcementPackage?.token_url || null);
-      const completionUrl = completionFile ? await uploadReinforcementFile(packageId, "completion", completionFile) : (editingReinforcementPackage?.completion_url || null);
-      const audioUrl = audioFile ? await uploadReinforcementFile(packageId, "audio", audioFile) : (editingReinforcementPackage?.audio_url || null);
+      const tokenPath = tokenFile ? await uploadReinforcementFile(packageId, "token", tokenFile) : (editingReinforcementPackage?.token_path || null);
+      const completionPath = completionFile ? await uploadReinforcementFile(packageId, "completion", completionFile) : (editingReinforcementPackage?.completion_path || null);
+      const audioPath = audioFile ? await uploadReinforcementFile(packageId, "audio", audioFile) : (editingReinforcementPackage?.audio_path || null);
       const payload = {
         id: packageId,
+        owner_id: currentUser.id,
         name,
         praise_text: clean(document.getElementById("reinforcementPraiseText").value) || "Nice job!",
-        token_url: tokenUrl,
-        completion_url: completionUrl,
-        audio_url: audioUrl,
+        token_path: tokenPath,
+        completion_path: completionPath,
+        audio_path: audioPath,
+        token_url: null,
+        completion_url: null,
+        audio_url: null,
         active: document.getElementById("reinforcementPackageActive").checked,
         updated_at: new Date().toISOString()
       };
@@ -490,15 +565,14 @@
 
   async function uploadReinforcementFile(packageId, role, file) {
     const extension = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
-    const path = `${packageId}/${role}.${extension}`;
+    const path = `${currentUser.id}/${packageId}/${role}.${extension}`;
     const { error } = await supabaseClient.storage.from(REINFORCEMENT_BUCKET).upload(path, file, {
       cacheControl: "3600",
       contentType: file.type,
       upsert: true
     });
     if (error) throw error;
-    const { data } = supabaseClient.storage.from(REINFORCEMENT_BUCKET).getPublicUrl(path);
-    return `${data.publicUrl}?v=${Date.now()}`;
+    return path;
   }
 
   async function deleteCloudReinforcementPackage() {
@@ -506,9 +580,10 @@
     if (!window.confirm(`Delete “${editingReinforcementPackage.name}” from the reinforcement library?`)) return;
     showReinforcementStatus("Deleting package...", "info");
     try {
-      const { data: files } = await supabaseClient.storage.from(REINFORCEMENT_BUCKET).list(String(editingReinforcementPackage.id));
+      const folder = `${currentUser.id}/${editingReinforcementPackage.id}`;
+      const { data: files } = await supabaseClient.storage.from(REINFORCEMENT_BUCKET).list(folder);
       if (files?.length) {
-        await supabaseClient.storage.from(REINFORCEMENT_BUCKET).remove(files.map(file => `${editingReinforcementPackage.id}/${file.name}`));
+        await supabaseClient.storage.from(REINFORCEMENT_BUCKET).remove(files.map(file => `${folder}/${file.name}`));
       }
       const { error } = await supabaseClient.from(REINFORCEMENT_TABLE).delete().eq("id", editingReinforcementPackage.id);
       if (error) throw error;

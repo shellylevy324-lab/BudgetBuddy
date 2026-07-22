@@ -1,0 +1,14 @@
+BUDDY SKILLS v1.5.0 SETUP
+
+1. In Supabase, open SQL Editor.
+2. Run SUPABASE-v1.5.0-TEACHER-AUTH-AND-CROSS-DEVICE.sql in full.
+3. In Supabase Authentication > Providers, confirm Email is enabled.
+4. In Authentication > URL Configuration, add your GitHub Pages site URL to Redirect URLs.
+5. Replace the listed site files and publish through GitHub Pages.
+6. Open Teacher Center, create the first teacher account, confirm the email if your Supabase project requires confirmation, and sign in.
+7. The first authenticated account automatically claims existing unowned pilot student profiles and reinforcement package records.
+
+IMPORTANT
+- Do not run the old v1.4 anonymous-policy SQL after this migration.
+- Existing v1.4 public media URLs cannot be made private automatically. Re-upload those media files inside v1.5 when practical.
+- Continue using de-identified student information during pilot testing.

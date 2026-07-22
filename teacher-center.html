@@ -14,16 +14,23 @@
     <div class="teacher-login-card">
       <p class="platform-kicker">Buddy Skills</p>
       <h1 id="teacherLoginHeading">Teacher Center</h1>
-      <p>Enter the pilot password to manage your student caseload.</p>
+      <p id="loginIntro">Sign in to access your cloud caseload.</p>
       <form id="teacherLoginForm" class="platform-form">
-        <div class="form-field">
-          <label for="teacherPassword">Password</label>
-          <input id="teacherPassword" type="password" required autocomplete="current-password">
-        </div>
-        <button class="platform-button platform-button-full" type="submit">Open Teacher Center</button>
+        <div class="form-field"><label for="teacherEmail">Email</label><input id="teacherEmail" type="email" required autocomplete="username"></div>
+        <div class="form-field"><label for="teacherPassword">Password</label><input id="teacherPassword" type="password" required autocomplete="current-password"></div>
+        <button class="platform-button platform-button-full" type="submit">Sign In</button>
+        <button id="forgotPasswordButton" class="teacher-link-button" type="button">Forgot password?</button>
+        <button id="showSignupButton" class="teacher-secondary-button platform-button-full" type="button">Create Teacher Account</button>
+      </form>
+      <form id="teacherSignupForm" class="platform-form" hidden>
+        <div class="form-field"><label for="signupEmail">Email</label><input id="signupEmail" type="email" required autocomplete="username"></div>
+        <div class="form-field"><label for="signupPassword">Password</label><input id="signupPassword" type="password" minlength="8" required autocomplete="new-password"></div>
+        <div class="form-field"><label for="signupPasswordConfirm">Confirm password</label><input id="signupPasswordConfirm" type="password" minlength="8" required autocomplete="new-password"></div>
+        <button class="platform-button platform-button-full" type="submit">Create Account</button>
+        <button id="showLoginButton" class="teacher-secondary-button platform-button-full" type="button">Back to Sign In</button>
       </form>
       <p id="loginStatus" class="classroom-status" role="status" aria-live="polite"></p>
-      <p class="pilot-security-note">Pilot safeguard only. This prevents casual student access but is not a replacement for teacher accounts and secure authentication.</p>
+      <p class="pilot-security-note">Use a school-approved email account. Continue using de-identified student information during the pilot.</p>
     </div>
   </section>
 
@@ -42,7 +49,8 @@
         <button class="teacher-nav-button" data-section="settings" type="button">Settings</button>
       </nav>
       <div class="teacher-sidebar-actions">
-        <button id="teacherLogoutButton" class="teacher-secondary-button" type="button">Lock Teacher Center</button>
+        <small id="teacherAccountEmail" class="teacher-account-email"></small>
+        <button id="teacherLogoutButton" class="teacher-secondary-button" type="button">Sign Out</button>
       </div>
     </aside>
 
@@ -52,7 +60,7 @@
           <p class="eyebrow">Protected teacher area</p>
           <h2 id="sectionTitle">Dashboard</h2>
         </div>
-        <span class="teacher-pilot-badge">Version 1.4.0</span>
+        <span class="teacher-pilot-badge">Version 1.5.0</span>
       </header>
 
       <p id="teacherStatus" class="classroom-status" role="status" aria-live="polite"></p>
@@ -255,19 +263,18 @@
                 <button id="deleteReinforcementPackageButton" class="platform-button platform-button-secondary" type="button" hidden>Delete Package</button>
               </div>
               <p id="reinforcementUploadStatus" class="classroom-status" role="status" aria-live="polite"></p>
-              <p class="privacy-note"><strong>Pilot privacy:</strong> Upload only school-approved, non-identifying media. This release uses the shared pilot Supabase project; secure individual teacher accounts are still required before multi-teacher use.</p>
+              <p class="privacy-note"><strong>Privacy:</strong> Upload only school-approved, non-identifying media. Packages are stored under the signed-in teacher account.</p>
             </form>
           </article>
         </div>
       </section>
       <section id="reportsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Student-centered reporting</p><h3>Reports</h3><p>Accuracy, latency, prompt use, and session summaries will be organized by student across all activities.</p></article></section>
-      <section id="settingsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Pilot settings</p><h3>Settings</h3><p>The pilot password is stored in <code>teacher-config.js</code>. Strong teacher accounts will replace this temporary safeguard.</p></article></section>
+      <section id="settingsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Pilot settings</p><h3>Settings</h3><p>Teacher access uses Supabase email/password authentication. Sign out when leaving a shared device.</p></article></section>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="teacher-config.js"></script>
   <script src="teacher-center.js"></script>
 </body>
 </html>
