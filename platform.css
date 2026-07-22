@@ -877,3 +877,35 @@ body.platform-page {
 /* v1.6.0 account settings */
 .account-settings-card { max-width: 720px; }
 .account-password-form { max-width: 520px; margin-top: 1.25rem; }
+/* Teacher account creation button — force visible styling */
+#showSignupButton,
+#showSignupButton.teacher-secondary-button {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: 100% !important;
+  margin-top: 16px !important;
+  padding: 15px 18px !important;
+
+  background-color: #eef5fc !important;
+  color: #173f73 !important;
+  border: 2px solid #173f73 !important;
+  border-radius: 14px !important;
+
+  font-family: inherit !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+
+  cursor: pointer !important;
+  -webkit-text-fill-color: #173f73 !important;
+}
+
+#showSignupButton:hover,
+#showSignupButton:focus {
+  background-color: #dceaf8 !important;
+  color: #102f59 !important;
+  -webkit-text-fill-color: #102f59 !important;
+}
