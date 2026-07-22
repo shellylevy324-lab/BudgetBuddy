@@ -1,3 +1,12 @@
+# Buddy Skills Changelog
+
+## v1.6.0 — Secure Teacher Accounts
+- Replaced the shared pilot password screen with Supabase email/password authentication.
+- Added account creation, sign-in, password-reset email, persistent sessions, and secure sign-out.
+- Added a My Account settings form for changing the signed-in teacher password.
+- Teacher-specific cloud students and reinforcement packages continue to use the v1.5 row-level security setup.
+- The legacy `teacher-config.js` password is no longer loaded by Teacher Center.
+
 # Buddy Skills Change Log
 
 ## v1.3.0 — Caseload Navigation

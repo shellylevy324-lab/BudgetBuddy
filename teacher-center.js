@@ -30,6 +30,7 @@
     document.getElementById("showLoginButton")?.addEventListener("click", () => toggleAuthMode(false));
     document.getElementById("forgotPasswordButton")?.addEventListener("click", sendPasswordReset);
     document.getElementById("teacherLogoutButton")?.addEventListener("click", logout);
+    document.getElementById("changePasswordForm")?.addEventListener("submit", changePassword);
     document.querySelectorAll("[data-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.section)));
     document.querySelectorAll("[data-open-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.openSection)));
     document.getElementById("newStudentButton")?.addEventListener("click", startNewStudent);
@@ -106,6 +107,8 @@
     document.getElementById("teacherLogin").hidden = true;
     document.getElementById("teacherApp").hidden = false;
     document.getElementById("teacherAccountEmail").textContent = user.email || "Teacher account";
+    const settingsEmail = document.getElementById("settingsAccountEmail");
+    if (settingsEmail) settingsEmail.textContent = user.email || "Teacher account";
     try {
       await supabaseClient.rpc("claim_buddy_skills_pilot_data");
       populateReinforcementPackages();
@@ -114,6 +117,26 @@
       console.error(error);
       showStatus(error.message, "error");
     }
+  }
+
+
+  async function changePassword(event) {
+    event.preventDefault();
+    const password = document.getElementById("newAccountPassword").value;
+    const confirmation = document.getElementById("confirmAccountPassword").value;
+    const status = document.getElementById("accountStatus");
+    const setStatus = (message, type = "info") => {
+      if (!status) return;
+      status.textContent = message;
+      status.dataset.state = type;
+    };
+    if (password.length < 8) return setStatus("Use at least 8 characters for the new password.", "error");
+    if (password !== confirmation) return setStatus("The passwords do not match.", "error");
+    setStatus("Changing password...", "info");
+    const { error } = await supabaseClient.auth.updateUser({ password });
+    if (error) return setStatus(friendlyError(error), "error");
+    event.target.reset();
+    setStatus("Password changed successfully.", "success");
   }
 
   async function logout() {

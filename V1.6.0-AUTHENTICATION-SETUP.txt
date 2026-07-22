@@ -1,0 +1,11 @@
+BUDDY SKILLS v1.6.0 - AUTHENTICATION SETUP
+
+1. Confirm the v1.5 authentication SQL was already run successfully in Supabase.
+2. In Supabase, open Authentication > Providers and confirm Email is enabled.
+3. In Authentication > URL Configuration, add the exact GitHub Pages site URL to Site URL and Redirect URLs.
+4. Replace the files listed in the release notes and push them to GitHub.
+5. Open Teacher Center and choose Create Teacher Account.
+6. After signing in, open Settings to change the account password at any time.
+7. Delete teacher-config.js after confirming the new sign-in works. It is not used by Teacher Center v1.6.0.
+
+Continue using de-identified student information during the pilot and sign out on shared devices.

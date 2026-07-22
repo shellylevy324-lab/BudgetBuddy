@@ -60,7 +60,7 @@
           <p class="eyebrow">Protected teacher area</p>
           <h2 id="sectionTitle">Dashboard</h2>
         </div>
-        <span class="teacher-pilot-badge">Version 1.5.0</span>
+        <span class="teacher-pilot-badge">Version 1.6.0</span>
       </header>
 
       <p id="teacherStatus" class="classroom-status" role="status" aria-live="polite"></p>
@@ -269,7 +269,25 @@
         </div>
       </section>
       <section id="reportsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Student-centered reporting</p><h3>Reports</h3><p>Accuracy, latency, prompt use, and session summaries will be organized by student across all activities.</p></article></section>
-      <section id="settingsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Pilot settings</p><h3>Settings</h3><p>Teacher access uses Supabase email/password authentication. Sign out when leaving a shared device.</p></article></section>
+      <section id="settingsSection" class="teacher-section" hidden>
+        <article class="card teacher-editor-panel account-settings-card">
+          <p class="eyebrow">Secure teacher account</p>
+          <h3 class="section-title">My Account</h3>
+          <p>Signed in as <strong id="settingsAccountEmail">Teacher account</strong>. Sign out when leaving a shared device.</p>
+          <form id="changePasswordForm" class="platform-form account-password-form">
+            <div class="form-field">
+              <label for="newAccountPassword">New password</label>
+              <input id="newAccountPassword" type="password" minlength="8" required autocomplete="new-password">
+            </div>
+            <div class="form-field">
+              <label for="confirmAccountPassword">Confirm new password</label>
+              <input id="confirmAccountPassword" type="password" minlength="8" required autocomplete="new-password">
+            </div>
+            <button class="platform-button" type="submit">Change Password</button>
+          </form>
+          <p id="accountStatus" class="classroom-status" role="status" aria-live="polite"></p>
+        </article>
+      </section>
     </main>
   </div>
 

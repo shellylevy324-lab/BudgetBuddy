@@ -852,3 +852,7 @@ body.platform-page {
 /* v1.5 authenticated teacher access */
 .teacher-link-button { background: none; border: 0; text-decoration: underline; cursor: pointer; font: inherit; padding: .5rem; }
 .teacher-account-email { display:block; overflow-wrap:anywhere; opacity:.85; margin-bottom:.6rem; }
+
+/* v1.6.0 account settings */
+.account-settings-card { max-width: 720px; }
+.account-password-form { max-width: 520px; margin-top: 1.25rem; }
