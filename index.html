@@ -3,22 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Budget Buddy</title>
-  <link rel="stylesheet" href="style.css?v=0.17">
+  <title>Buddy Skills</title>
+  <link rel="stylesheet" href="style.css?v=0.20">
 </head>
 <body>
 <main class="container">
+  <section id="homeScreen" class="screen buddyHomeScreen">
+    <header class="buddyHomeHeader">
+      <div class="buddyBrand" aria-label="Buddy Skills">
+        <span class="buddyLogoMark" aria-hidden="true">
+          <span class="buddyLogoStar">★</span>
+          <span class="buddyLogoPath"></span>
+        </span>
+        <div class="buddyBrandText">
+          <h1>Buddy Skills</h1>
+          <p class="buddyTagline">Growing Skills. Building Independence.</p>
+        </div>
+      </div>
+    </header>
 
-  <section id="homeScreen" class="screen">
-    <h1>Budget Buddy</h1>
-    <h2>Transition Skills Practice</h2>
-    <div class="homeCard">
-      <label for="homeStudentSelect">Student</label>
-      <select id="homeStudentSelect"></select>
-      <button id="startButton" class="primaryButton" type="button">🛒 Start Shopping</button>
-      <button id="teacherButton" class="secondaryButton" type="button">📘 Student Programs</button>
+    <section class="settingsCard studentWelcomeCard">
+      <div class="studentWelcomeText">
+        <p class="eyebrow">Student Training</p>
+        <h2>Welcome!</h2>
+        <p>Choose a student, then select an available training station.</p>
+
+        <div class="studentSelectArea">
+          <label for="homeStudentSelect">Choose Student</label>
+          <select id="homeStudentSelect"></select>
+        </div>
+      </div>
+
+      <div class="studentPhotoArea" aria-label="Student photo space">
+        <div class="studentPhotoPlaceholder" aria-hidden="true">
+          <span class="studentPhotoIcon">👤</span>
+        </div>
+        <p>Student Photo</p>
+      </div>
+    </section>
+
+    <div class="trainingGrid" aria-label="Available training areas">
+      <section class="settingsCard trainingCard activeTrainingCard">
+        <div>
+          <span class="trainingCardIcon" aria-hidden="true">🛒</span>
+          <h3>Budget Buddy</h3>
+          <p>Practice shopping, budgeting, and money skills.</p>
+        </div>
+        <button id="startButton" class="primaryButton" type="button">Start Budget Buddy</button>
+      </section>
+
+      <section class="settingsCard trainingCard comingSoonCard" aria-disabled="true">
+        <div>
+          <span class="trainingCardIcon" aria-hidden="true">☕</span>
+          <h3>Coffee Shop</h3>
+          <p>Practice ordering, payment, and workplace skills.</p>
+        </div>
+        <span class="comingSoonLabel">Coming Soon</span>
+      </section>
+
+      <section class="settingsCard trainingCard comingSoonCard" aria-disabled="true">
+        <div>
+          <span class="trainingCardIcon" aria-hidden="true">🧺</span>
+          <h3>Laundry</h3>
+          <p>Practice sorting, washing, drying, and folding.</p>
+        </div>
+        <span class="comingSoonLabel">Coming Soon</span>
+      </section>
+
+      <section class="settingsCard trainingCard comingSoonCard" aria-disabled="true">
+        <div>
+          <span class="trainingCardIcon" aria-hidden="true">🚌</span>
+          <h3>Community Skills</h3>
+          <p>Practice transportation, safety, and community routines.</p>
+        </div>
+        <span class="comingSoonLabel">Coming Soon</span>
+      </section>
+    </div>
+
+    <div class="teacherAccessArea">
+      <button id="teacherButton" class="secondaryButton" type="button">📘 Teacher Station</button>
     </div>
   </section>
+
+
 
   <section id="teacherScreen" class="screen hidden">
     <header class="screenHeader">
@@ -610,18 +677,9 @@
     </div>
   </section>
 
-  <footer class="appFooter">Budget Buddy v0.17 — Portable Classroom</footer>
+  <footer class="appFooter">Buddy Skills — Development Build v0.18</footer>
 </main>
 
-<script src="script.js?v=0.17"></script>
-    <!-- Existing Budget Buddy content -->
-
-    <div class="navigation-buttons">
-        <a href="money-skills.html" class="primary-button">
-            ← Back to Money Skills
-        </a>
-    </div>
-
-</main>
+<script src="script.js?v=0.18"></script>
 </body>
 </html>

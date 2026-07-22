@@ -2761,4 +2761,10 @@ updateReinforcementPackageOptions();
 renderPortableStatus();
 disableAnswerButtons();
 showScreen(homeScreen);
-console.log("Budget Buddy v0.17 Portable Classroom loaded successfully");
+
+const requestedActivity = new URLSearchParams(window.location.search).get("launch");
+if (requestedActivity === "shopping-budget") {
+    openStudentWelcome();
+}
+
+console.log("Buddy Skills v0.20 Navigation Cleanup loaded successfully");

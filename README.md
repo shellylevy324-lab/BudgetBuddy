@@ -1,4 +1,10 @@
-# Buddy Skills Platform
+# Buddy Skills
+
+Growing Skills. Building Independence.
+
+Buddy Skills is a transition-skills platform designed for middle school, high school, transition-age, and adult learners with diverse support needs.
+
+Budget Buddy is the first learning module within the Buddy Skills platform.
 
 ## Mission
 
@@ -71,7 +77,7 @@ main
 
 ## Long-Term Vision
 
-A cloud-based transition platform that allows Job Coaches to:
+A cloud-based transition platform that allows teachers, paraprofessionals, job coaches, and families to:
 
 - assign training
 - collect performance data
@@ -80,7 +86,7 @@ A cloud-based transition platform that allows Job Coaches to:
 - sync across multiple devices
 - support multiple schools
 
-while providing trainees with a respectful, adult-oriented learning experience.
+while providing students and adult learners with a respectful, age-appropriate learning experience.
 
 ---
 
