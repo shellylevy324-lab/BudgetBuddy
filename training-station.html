@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Training Station | Buddy Skills</title>
+    <title>Student Activities | Buddy Skills</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,13 +12,13 @@
 <body class="platform-page">
     <header class="platform-header">
         <div class="platform-header-inner">
-            <h1 class="platform-name">Training Station</h1>
+            <h1 class="platform-name">Buddy Skills</h1>
             <p class="platform-tagline">Growing Skills. Building Independence.</p>
         </div>
     </header>
 
     <main class="page-shell">
-        <nav class="platform-page-nav" aria-label="Training Station navigation">
+        <nav class="platform-page-nav" aria-label="Student activity navigation">
             <a class="platform-back-link" href="classroom.html">← Back to Classroom</a>
         </nav>
         <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
@@ -28,7 +28,7 @@
                 <h2 id="welcomeMessage" class="page-title">Welcome</h2>
                 <div class="identity-details">
                     <div class="identity-field">
-                        <p class="role-label">Trainee</p>
+                        <p class="role-label">Student</p>
                         <p id="traineeName" class="role-name">Loading...</p>
                     </div>
                     <div class="identity-field">
@@ -38,27 +38,15 @@
                 </div>
             </div>
 
-            <div id="traineePhotoWrap" class="trainee-photo-wrap" aria-label="Trainee profile photo">
-                <span id="traineePhotoPlaceholder" class="trainee-photo-placeholder" aria-hidden="true">BS</span>
+            <div id="traineePhotoWrap" class="trainee-photo-wrap" aria-label="Student profile photo">
+                <span class="trainee-photo-placeholder" aria-hidden="true">BS</span>
             </div>
         </section>
 
         <section class="card" aria-labelledby="availableTrainingHeading">
-            <h2 id="availableTrainingHeading" class="section-title">Available Training</h2>
+            <h2 id="availableTrainingHeading" class="section-title">Choose an Activity</h2>
             <div id="trainingGrid" class="training-grid">
-                <p class="empty-message">Loading training areas...</p>
-            </div>
-        </section>
-
-        <section class="card" aria-labelledby="previousTrainingHeading">
-            <h2 id="previousTrainingHeading" class="section-title">Previous Training</h2>
-            <div class="recent-training">
-                <div>
-                    <p id="recentArea" class="recent-title">Loading...</p>
-                    <p id="recentActivity"></p>
-                    <p id="recentCompleted"></p>
-                </div>
-                <p id="recentIndependence" class="independence-badge"></p>
+                <p class="empty-message">Loading activities...</p>
             </div>
         </section>
     </main>

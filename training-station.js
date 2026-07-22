@@ -1,36 +1,75 @@
 const SELECTED_STUDENT_KEY = "buddySkillsSelectedStudent";
 
-async function loadTrainingStation() {
-    try {
-        const response = await fetch("data/training-station-data.json");
+const STUDENT_ACTIVITIES = [
+    {
+        id: "shopping-budget",
+        title: "Shopping Budget",
+        icon: "🛒",
+        description: "Practice choosing items that fit within a budget.",
+        available: true,
+        href: "index.html?launch=shopping-budget"
+    },
+    {
+        id: "making-change",
+        title: "Making Change",
+        icon: "💵",
+        description: "Practice finding the correct amount of change.",
+        available: false
+    },
+    {
+        id: "price-comparison",
+        title: "Price Comparison",
+        icon: "🏷️",
+        description: "Practice comparing prices and choosing between options.",
+        available: false
+    },
+    {
+        id: "counting-money",
+        title: "Counting Money",
+        icon: "🪙",
+        description: "Practice identifying and combining bills and coins.",
+        available: false
+    },
+    {
+        id: "laundry-steps",
+        title: "Laundry Steps",
+        icon: "🧺",
+        description: "Practice sorting and putting laundry steps in order.",
+        available: false
+    },
+    {
+        id: "community-skills",
+        title: "Community Skills",
+        icon: "🚌",
+        description: "Practice community safety and everyday decisions.",
+        available: false
+    },
+    {
+        id: "work-skills",
+        title: "Work Skills",
+        icon: "💼",
+        description: "Practice matching, sorting, counting, and stocking tasks.",
+        available: false
+    }
+];
 
-        if (!response.ok) {
-            throw new Error(`Could not load training data: ${response.status}`);
-        }
+function loadStudentHome() {
+    const selectedStudent = getSelectedStudent();
+    const trainee = selectedStudent ? normalizeSelectedStudent(selectedStudent) : {
+        preferredName: "Student",
+        name: "Student",
+        jobCoach: "Not assigned",
+        photo: ""
+    };
 
-        const data = await response.json();
-        const selectedStudent = getSelectedStudent();
-        const trainee = selectedStudent
-            ? mergeSelectedStudent(data.trainee || {}, selectedStudent)
-            : data.trainee || {};
+    displayTrainee(trainee);
+    displayActivities(STUDENT_ACTIVITIES);
 
-        displayTrainee(trainee);
-        displayTrainingAreas(data.trainingAreas || []);
-        displayRecentTraining(data.recentTraining || {});
-
-        const statusMessage = document.getElementById("statusMessage");
-        if (statusMessage) {
-            statusMessage.textContent = selectedStudent
-                ? ""
-                : "No classroom student was selected. Showing the sample Training Station profile.";
-        }
-    } catch (error) {
-        console.error("Training Station error:", error);
-        const statusMessage = document.getElementById("statusMessage");
-        if (statusMessage) {
-            statusMessage.textContent =
-                "Training information could not be loaded. Please ask your Job Coach for help.";
-        }
+    const statusMessage = document.getElementById("statusMessage");
+    if (statusMessage) {
+        statusMessage.textContent = selectedStudent
+            ? ""
+            : "No student was selected. Return to the Teacher Center and choose Open Activities for a student.";
     }
 }
 
@@ -44,14 +83,13 @@ function getSelectedStudent() {
     }
 }
 
-function mergeSelectedStudent(defaultTrainee, selectedStudent) {
+function normalizeSelectedStudent(selectedStudent) {
     const firstName = selectedStudent.firstName || "";
     const lastName = selectedStudent.lastName || "";
     const fullName = [firstName, lastName].filter(Boolean).join(" ");
 
     return {
-        ...defaultTrainee,
-        id: selectedStudent.id || defaultTrainee.id,
+        id: selectedStudent.id,
         name: fullName || selectedStudent.preferredName || "Student",
         preferredName: selectedStudent.preferredName || firstName || fullName || "Student",
         jobCoach: selectedStudent.jobCoach || "Not assigned",
@@ -60,7 +98,7 @@ function mergeSelectedStudent(defaultTrainee, selectedStudent) {
 }
 
 function displayTrainee(trainee) {
-    const displayName = trainee.preferredName || trainee.name || "Trainee";
+    const displayName = trainee.preferredName || trainee.name || "Student";
 
     setText("welcomeMessage", `Welcome, ${displayName}`);
     setText("traineeName", displayName);
@@ -105,31 +143,26 @@ function getInitials(name) {
         .join("") || "BS";
 }
 
-function displayTrainingAreas(trainingAreas) {
+function displayActivities(activities) {
     const trainingGrid = document.getElementById("trainingGrid");
     if (!trainingGrid) return;
 
     trainingGrid.innerHTML = "";
-    const availableAreas = trainingAreas.filter((area) => area.available === true);
 
-    if (availableAreas.length === 0) {
-        const message = document.createElement("p");
-        message.className = "empty-message";
-        message.textContent =
-            "No training areas are currently available. Please ask your Job Coach for help.";
-        trainingGrid.appendChild(message);
-        return;
-    }
+    activities.forEach((activity) => {
+        const card = document.createElement(activity.available ? "a" : "div");
+        card.className = `training-card${activity.available ? "" : " coming-soon"}`;
 
-    availableAreas.forEach((area) => {
-        const card = document.createElement("a");
-        card.className = "training-card";
-        card.href = area.href || "#";
-        card.setAttribute("aria-label", `${area.title}: ${area.description}`);
+        if (activity.available) {
+            card.href = activity.href;
+            card.setAttribute("aria-label", `${activity.title}: ${activity.description}`);
+        } else {
+            card.setAttribute("aria-disabled", "true");
+        }
 
         const icon = document.createElement("span");
         icon.className = "training-card-icon";
-        icon.textContent = area.icon || "⭐";
+        icon.textContent = activity.icon || "⭐";
         icon.setAttribute("aria-hidden", "true");
 
         const copy = document.createElement("span");
@@ -137,28 +170,24 @@ function displayTrainingAreas(trainingAreas) {
 
         const title = document.createElement("span");
         title.className = "training-card-title";
-        title.textContent = area.title;
+        title.textContent = activity.title;
 
         const description = document.createElement("span");
         description.className = "training-card-description";
-        description.textContent = area.description;
+        description.textContent = activity.description;
 
         copy.append(title, description);
+
+        if (!activity.available) {
+            const label = document.createElement("span");
+            label.className = "coming-soon-label";
+            label.textContent = "Coming soon";
+            copy.appendChild(label);
+        }
+
         card.append(icon, copy);
         trainingGrid.appendChild(card);
     });
-}
-
-function displayRecentTraining(recentTraining) {
-    setText("recentArea", recentTraining.area || "No previous training");
-    setText("recentActivity", recentTraining.activity || "");
-    setText("recentCompleted", recentTraining.completed || "");
-
-    const independence = Number(recentTraining.independence);
-    setText(
-        "recentIndependence",
-        Number.isFinite(independence) ? `${independence}% Independent` : ""
-    );
 }
 
 function setText(id, value) {
@@ -166,4 +195,4 @@ function setText(id, value) {
     if (element) element.textContent = value;
 }
 
-document.addEventListener("DOMContentLoaded", loadTrainingStation);
+document.addEventListener("DOMContentLoaded", loadStudentHome);

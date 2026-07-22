@@ -14,7 +14,7 @@
     <div class="teacher-login-card">
       <p class="platform-kicker">Buddy Skills</p>
       <h1 id="teacherLoginHeading">Teacher Center</h1>
-      <p>Enter the pilot password to manage classroom profiles.</p>
+      <p>Enter the pilot password to manage your student caseload.</p>
       <form id="teacherLoginForm" class="platform-form">
         <div class="form-field">
           <label for="teacherPassword">Password</label>
@@ -37,13 +37,11 @@
       <nav class="teacher-nav" aria-label="Teacher Center navigation">
         <button class="teacher-nav-button is-active" data-section="dashboard" type="button">Dashboard</button>
         <button class="teacher-nav-button" data-section="students" type="button">Students</button>
-        <button class="teacher-nav-button" data-section="activities" type="button">Activities</button>
-        <button class="teacher-nav-button" data-section="progress" type="button">Progress</button>
+        <button class="teacher-nav-button" data-section="reinforcement" type="button">Reinforcement Library</button>
         <button class="teacher-nav-button" data-section="reports" type="button">Reports</button>
         <button class="teacher-nav-button" data-section="settings" type="button">Settings</button>
       </nav>
       <div class="teacher-sidebar-actions">
-        <a class="teacher-secondary-link" href="classroom.html">Open Classroom</a>
         <button id="teacherLogoutButton" class="teacher-secondary-button" type="button">Lock Teacher Center</button>
       </div>
     </aside>
@@ -54,7 +52,7 @@
           <p class="eyebrow">Protected teacher area</p>
           <h2 id="sectionTitle">Dashboard</h2>
         </div>
-        <span class="teacher-pilot-badge">Version 1.2.2</span>
+        <span class="teacher-pilot-badge">Version 1.4.0</span>
       </header>
 
       <p id="teacherStatus" class="classroom-status" role="status" aria-live="polite"></p>
@@ -67,9 +65,9 @@
         </div>
         <article class="card teacher-welcome-card">
           <p class="eyebrow">Teacher workspace</p>
-          <h3>Manage instruction without changing the student experience.</h3>
-          <p>Use Students to create or edit de-identified profiles. Future sections are already positioned in the left navigation so the layout can grow without redesigning student-facing pages.</p>
-          <button class="platform-button" type="button" data-open-section="students">Manage Students</button>
+          <h3>Your caseload is the center of Buddy Skills.</h3>
+          <p>Select Students to manage universal profiles, instructional defaults, reinforcement choices, and activity access. Select a student and choose Open Activities to begin student mode without passing through a separate Classroom page.</p>
+          <button class="platform-button" type="button" data-open-section="students">Open Caseload</button>
         </article>
       </section>
 
@@ -77,7 +75,7 @@
         <div class="teacher-student-layout">
           <article class="card teacher-directory-panel">
             <div class="section-heading-row">
-              <div><p class="eyebrow">Cloud profiles</p><h3 class="section-title">Students</h3></div>
+              <div><p class="eyebrow">Teacher caseload</p><h3 class="section-title">Students</h3></div>
               <button id="newStudentButton" class="platform-button" type="button">Add Student</button>
             </div>
             <div id="teacherStudentDirectory" class="teacher-student-directory"><p class="empty-message">Loading students...</p></div>
@@ -86,7 +84,7 @@
           <article class="card teacher-editor-panel">
             <p class="eyebrow" id="editorEyebrow">Student profile</p>
             <h3 id="studentEditorHeading" class="section-title">Select a student</h3>
-            <p id="editorHelp" class="supporting-copy">Choose a student from the list or add a new de-identified profile.</p>
+            <p id="editorHelp" class="supporting-copy">Choose Edit Profile to manage settings, or Open Activities to launch student mode.</p>
             <form id="studentEditorForm" class="platform-form" hidden>
               <input id="studentId" type="hidden">
               <div class="teacher-form-grid">
@@ -161,12 +159,12 @@
                           <option value="trains">🚂 Train Time</option>
                           <option value="music">🎵 Music Celebration</option>
                         </optgroup>
-                        <optgroup id="teacherClassroomReinforcementOptions" label="Classroom Library"></optgroup>
+                        <optgroup id="teacherClassroomReinforcementOptions" label="Teacher Library"></optgroup>
                         <optgroup label="Other">
                           <option value="none">No package</option>
                         </optgroup>
                       </select>
-                      <small id="reinforcementLibraryNote">Classroom packages created in Budget Buddy on this browser appear automatically.</small>
+                      <small id="reinforcementLibraryNote">Teacher-created packages currently stored on this browser appear here. Cloud uploads will be connected in the Reinforcement Library.</small>
                     </div>
                     <div class="form-field teacher-form-wide">
                       <label for="editDifferentialReinforcement">When to award tokens</label>
@@ -195,9 +193,74 @@
         </div>
       </section>
 
-      <section id="activitiesSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Next stage</p><h3>Activities</h3><p>Assign specific training activities to each student while keeping the Training Station uncluttered.</p></article></section>
-      <section id="progressSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Planned</p><h3>Progress</h3><p>Accuracy, latency, prompt use, and mastery data will appear here after session data is connected.</p></article></section>
-      <section id="reportsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Planned</p><h3>Reports</h3><p>Teacher-only summaries and exports will live here. Students will never see report or delete controls.</p></article></section>
+      <section id="reinforcementSection" class="teacher-section" hidden>
+        <div class="reinforcement-library-layout">
+          <article class="card reinforcement-library-panel">
+            <div class="section-heading-row">
+              <div>
+                <p class="eyebrow">Cloud teacher resource library</p>
+                <h3 class="section-title">Reinforcement Packages</h3>
+                <p class="supporting-copy">Packages saved here can be selected from any student profile on any device connected to this Buddy Skills site.</p>
+              </div>
+              <button id="newReinforcementPackageButton" class="platform-button" type="button">Upload New Package</button>
+            </div>
+            <div id="reinforcementPackageList" class="reinforcement-package-grid">
+              <p class="empty-message">Loading reinforcement packages...</p>
+            </div>
+          </article>
+
+          <article id="reinforcementPackageEditor" class="card reinforcement-editor-panel" hidden>
+            <div class="section-heading-row">
+              <div>
+                <p class="eyebrow">Teacher only</p>
+                <h3 id="reinforcementEditorHeading" class="section-title">New Package</h3>
+              </div>
+              <button id="closeReinforcementEditorButton" class="teacher-secondary-button" type="button">Close</button>
+            </div>
+            <form id="reinforcementPackageForm" class="platform-form">
+              <input id="reinforcementPackageId" type="hidden">
+              <div class="form-field">
+                <label for="reinforcementPackageName">Package name *</label>
+                <input id="reinforcementPackageName" maxlength="80" required placeholder="Example: Trains or Basketball">
+              </div>
+              <div class="form-field">
+                <label for="reinforcementPraiseText">Praise message</label>
+                <input id="reinforcementPraiseText" maxlength="120" value="Nice job!">
+              </div>
+
+              <div class="reinforcement-upload-grid">
+                <div class="reinforcement-upload-card">
+                  <label for="reinforcementTokenFile"><strong>Token image or GIF</strong></label>
+                  <p>Shown when a token is earned.</p>
+                  <input id="reinforcementTokenFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+                  <div id="reinforcementTokenPreview" class="reinforcement-media-preview"><span>No file selected</span></div>
+                </div>
+                <div class="reinforcement-upload-card">
+                  <label for="reinforcementCompletionFile"><strong>Completion image or GIF</strong></label>
+                  <p>Shown when the activity is completed.</p>
+                  <input id="reinforcementCompletionFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+                  <div id="reinforcementCompletionPreview" class="reinforcement-media-preview"><span>No file selected</span></div>
+                </div>
+                <div class="reinforcement-upload-card">
+                  <label for="reinforcementAudioFile"><strong>Celebration sound</strong></label>
+                  <p>Played at activity completion.</p>
+                  <input id="reinforcementAudioFile" type="file" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4">
+                  <div id="reinforcementAudioPreview" class="reinforcement-media-preview"><span>No file selected</span></div>
+                </div>
+              </div>
+
+              <label class="teacher-checkbox"><input id="reinforcementPackageActive" type="checkbox" checked> Available for student profiles</label>
+              <div class="teacher-form-actions">
+                <button id="saveReinforcementPackageButton" class="platform-button" type="submit">Save Package</button>
+                <button id="deleteReinforcementPackageButton" class="platform-button platform-button-secondary" type="button" hidden>Delete Package</button>
+              </div>
+              <p id="reinforcementUploadStatus" class="classroom-status" role="status" aria-live="polite"></p>
+              <p class="privacy-note"><strong>Pilot privacy:</strong> Upload only school-approved, non-identifying media. This release uses the shared pilot Supabase project; secure individual teacher accounts are still required before multi-teacher use.</p>
+            </form>
+          </article>
+        </div>
+      </section>
+      <section id="reportsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Student-centered reporting</p><h3>Reports</h3><p>Accuracy, latency, prompt use, and session summaries will be organized by student across all activities.</p></article></section>
       <section id="settingsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Pilot settings</p><h3>Settings</h3><p>The pilot password is stored in <code>teacher-config.js</code>. Strong teacher accounts will replace this temporary safeguard.</p></article></section>
     </main>
   </div>

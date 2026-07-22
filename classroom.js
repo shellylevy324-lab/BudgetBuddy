@@ -160,7 +160,7 @@
             const button = document.createElement("button");
             button.className = "platform-button select-student-button";
             button.type = "button";
-            button.textContent = "Open Training Station";
+            button.textContent = "Open Student Activities";
             button.addEventListener("click", () => selectStudent(student));
 
             details.append(name);

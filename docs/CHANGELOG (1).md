@@ -1,3 +1,15 @@
+# Buddy Skills Change Log
+
+## v1.3.0 — Caseload Navigation
+
+- Removed the separate Classroom step from active navigation.
+- Reframed the Teacher Center around a teacher caseload rather than a classroom.
+- Added **Edit Profile** and **Open Activities** actions to each student record.
+- Student activity launch now goes directly from Teacher Center → Students → Open Activities.
+- Added a dedicated Reinforcement Library destination in the Teacher Center navigation.
+- Updated student-selection messages and legacy Classroom links.
+- Kept `classroom.html` only as a redirect so older bookmarks do not break.
+
 # Budget Buddy Changelog
 
 ## v0.16.1 — Navigation Stability
@@ -488,3 +500,18 @@ Uploaded files remain in the current browser. Use project paths for reliable cro
 - Student-specific prompt settings
 - Continuous trial flow
 - Session welcome and completion screens
+
+## v0.20 - Navigation Cleanup
+- Replaced the category-based student path with one direct Student Activities screen.
+- Shopping Budget now opens Budget Buddy directly, skipping the duplicate Buddy Skills launcher.
+- Removed Money Skills and other category pages from the active student navigation path.
+- Added direct placeholders for future activities without making students open extra pages.
+- Updated the Classroom button label to "Open Student Activities."
+
+## v1.4.0 - Cloud Reinforcement Library
+
+- Added a teacher-facing upload form for token images/GIFs, completion images/GIFs, and celebration audio.
+- Added cloud package creation, editing, activation, and deletion through Supabase.
+- Added cross-device package choices to universal student profiles.
+- Student activity launch now carries universal instructional defaults and the selected cloud reinforcement package into Budget Buddy.
+- Added `SUPABASE-v1.4.0-REINFORCEMENT-LIBRARY.sql` for the pilot database table, storage bucket, and temporary development policies.

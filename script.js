@@ -749,18 +749,39 @@ function loadStudents(){
             return student.id===classroomStudent.id;
         });
 
+        const inherited=classroomStudent.instructionalSettings||{};
+        const inheritedProfile={
+            id:classroomStudent.id,
+            name:classroomStudent.name,
+            promptStyle:inherited.prompting_mode==="baseline"?"baseline":"least-to-most",
+            waitTimeSeconds:Number(inherited.wait_time_seconds)||10,
+            tokenGoal:Number(inherited.token_requirement)||5,
+            reinforcementPackage:inherited.reinforcement_package||"stars",
+            differentialReinforcement:inherited.differential_reinforcement||"all-correct",
+            reinforcementType:inherited.reinforcement_system==="token-board"?"text-sound":"text"
+        };
         if(existingIndex>=0){
             appState.students[existingIndex]=normalizeStudent({
                 ...appState.students[existingIndex],
-                name:classroomStudent.name
+                ...inheritedProfile
             });
         }else{
-            appState.students.push(normalizeStudent({
-                id:classroomStudent.id,
-                name:classroomStudent.name
-            }));
+            appState.students.push(normalizeStudent(inheritedProfile));
         }
-
+        if(classroomStudent.cloudReinforcementPackage){
+            const cloud=classroomStudent.cloudReinforcementPackage;
+            const record=normalizeLibraryPackage({
+                id:String(cloud.id),
+                name:cloud.name||"Teacher Package",
+                praiseText:cloud.praise_text||"Nice job!",
+                tokenPath:cloud.token_url||"",
+                completionPath:cloud.completion_url||"",
+                audioPath:cloud.audio_url||"",
+                active:cloud.active!==false
+            });
+            const cloudIndex=appState.reinforcementLibrary.findIndex(item=>item.id===record.id);
+            if(cloudIndex>=0){appState.reinforcementLibrary[cloudIndex]=record}else{appState.reinforcementLibrary.push(record)}
+        }
         appState.selectedStudentId=classroomStudent.id;
     }else{
         const stored=localStorage.getItem(SELECTED_STUDENT_STORAGE_KEY);
@@ -790,7 +811,9 @@ function readClassroomStudent(){
 
         return{
             id:String(student.id),
-            name:name||"Student"
+            name:name||"Student",
+            instructionalSettings:student.instructionalSettings||null,
+            cloudReinforcementPackage:student.cloudReinforcementPackage||null
         };
     }catch(error){
         console.warn("The Classroom student could not be connected to Budget Buddy:",error);
