@@ -38,6 +38,8 @@
     document.getElementById("cancelStudentEditButton")?.addEventListener("click", clearEditor);
     document.getElementById("editPromptingMode")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("editReinforcementSystem")?.addEventListener("change", updateControlledSettingsDisplay);
+    document.getElementById("editAdaptiveTeachingEnabled")?.addEventListener("change", updateControlledSettingsDisplay);
+    document.getElementById("editTeachingLessonType")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("newReinforcementPackageButton")?.addEventListener("click", () => openReinforcementEditor());
     document.getElementById("closeReinforcementEditorButton")?.addEventListener("click", closeReinforcementEditor);
     document.getElementById("reinforcementPackageForm")?.addEventListener("submit", saveCloudReinforcementPackage);
@@ -373,10 +375,24 @@
       prompting_mode: promptingMode,
       wait_time_seconds: numberValue("editWaitTime", 10),
       reinforcement_system: reinforcementSystem,
-      reinforcement_type: reinforcementSystem === "token-board" ? "token" : "none",
+      reinforcement_type: reinforcementSystem === "token-board"
+        ? "token"
+        : (reinforcementSystem === "trial-reinforcement" ? "trial" : "none"),
       reinforcement_package: document.getElementById("editReinforcementPackage").value,
-      token_requirement: numberValue("editTokenRequirement", 5),
+      token_requirement: reinforcementSystem === "token-board"
+        ? numberValue("editReinforcementRequirement", 5)
+        : 5,
+      trial_requirement: reinforcementSystem === "trial-reinforcement"
+        ? numberValue("editReinforcementRequirement", 5)
+        : 5,
       differential_reinforcement: document.getElementById("editDifferentialReinforcement").value,
+      adaptive_teaching_enabled: document.getElementById("editAdaptiveTeachingEnabled").checked,
+      mastery_threshold: numberValue("editMasteryThreshold", 50),
+      teaching_lesson_type: document.getElementById("editTeachingLessonType").value,
+      teaching_lesson_url: optional(document.getElementById("editTeachingLessonUrl").value),
+      retry_trial_count: document.getElementById("editRetryTrialCount").value,
+      maximum_reteaching_cycles: numberValue("editMaximumReteachingCycles", 1),
+      lesson_rights_confirmed: document.getElementById("editLessonRightsConfirmed").checked,
       staff_notes: optional(document.getElementById("editInstructionNotes").value),
       updated_at: new Date().toISOString()
     };
@@ -390,7 +406,15 @@
       reinforcement_type: "token",
       reinforcement_package: "stars",
       token_requirement: 5,
+      trial_requirement: 5,
       differential_reinforcement: "all-correct",
+      adaptive_teaching_enabled: false,
+      mastery_threshold: 50,
+      teaching_lesson_type: "built-in",
+      teaching_lesson_url: null,
+      retry_trial_count: "same",
+      maximum_reteaching_cycles: 1,
+      lesson_rights_confirmed: false,
       staff_notes: null
     };
   }
@@ -402,14 +426,26 @@
       : legacyPromptingMode(merged);
     document.getElementById("editPromptingMode").value = promptingMode;
     document.getElementById("editWaitTime").value = String(merged.wait_time_seconds ?? 10);
-    const system = ["none", "token-board"].includes(merged.reinforcement_system)
+    const system = ["none", "token-board", "trial-reinforcement"].includes(merged.reinforcement_system)
       ? merged.reinforcement_system
-      : (merged.reinforcement_type === "token" ? "token-board" : "none");
+      : (merged.reinforcement_type === "token"
+          ? "token-board"
+          : (merged.reinforcement_type === "trial" ? "trial-reinforcement" : "none"));
     document.getElementById("editReinforcementSystem").value = system;
-    document.getElementById("editTokenRequirement").value = String(merged.token_requirement ?? 5);
+    const requirement = system === "trial-reinforcement"
+      ? (merged.trial_requirement ?? 5)
+      : (merged.token_requirement ?? 5);
+    document.getElementById("editReinforcementRequirement").value = String(requirement);
     populateReinforcementPackages(merged.reinforcement_package || "stars");
     document.getElementById("editReinforcementPackage").value = merged.reinforcement_package || "stars";
     document.getElementById("editDifferentialReinforcement").value = merged.differential_reinforcement || "all-correct";
+    document.getElementById("editAdaptiveTeachingEnabled").checked = merged.adaptive_teaching_enabled === true;
+    document.getElementById("editMasteryThreshold").value = String(merged.mastery_threshold ?? 50);
+    document.getElementById("editTeachingLessonType").value = merged.teaching_lesson_type || "built-in";
+    document.getElementById("editTeachingLessonUrl").value = merged.teaching_lesson_url || "";
+    document.getElementById("editRetryTrialCount").value = String(merged.retry_trial_count || "same");
+    document.getElementById("editMaximumReteachingCycles").value = String(merged.maximum_reteaching_cycles ?? 1);
+    document.getElementById("editLessonRightsConfirmed").checked = merged.lesson_rights_confirmed === true;
     document.getElementById("editInstructionNotes").value = merged.staff_notes || "";
     updateControlledSettingsDisplay();
   }
@@ -422,10 +458,31 @@
 
   function updateControlledSettingsDisplay() {
     const baseline = document.getElementById("editPromptingMode").value === "baseline";
-    const tokenBoard = document.getElementById("editReinforcementSystem").value === "token-board" && !baseline;
-    ["editTokenRequirement", "editReinforcementPackage", "editDifferentialReinforcement"].forEach(id => {
-      document.getElementById(id).disabled = !tokenBoard;
+    const system = document.getElementById("editReinforcementSystem").value;
+    const tokenBoard = system === "token-board" && !baseline;
+    const trialReinforcement = system === "trial-reinforcement" && !baseline;
+    const hasProgrammedReinforcement = tokenBoard || trialReinforcement;
+
+    const requirementSelect = document.getElementById("editReinforcementRequirement");
+    const requirementLabel = document.getElementById("editReinforcementRequirementLabel");
+    const unit = tokenBoard ? "tokens" : "trials";
+    requirementLabel.textContent = tokenBoard ? "Tokens required" : "Number of trials";
+    Array.from(requirementSelect.options).forEach(option => {
+      option.textContent = `${option.value} ${unit}`;
     });
+
+    requirementSelect.disabled = !hasProgrammedReinforcement;
+    document.getElementById("editReinforcementPackage").disabled = !hasProgrammedReinforcement;
+    document.getElementById("editDifferentialReinforcement").disabled = !tokenBoard;
+    document.getElementById("editDifferentialReinforcement").closest(".form-field").hidden = !tokenBoard;
+
+    const adaptiveEnabled = document.getElementById("editAdaptiveTeachingEnabled").checked;
+    const lessonType = document.getElementById("editTeachingLessonType").value;
+    ["editMasteryThreshold", "editTeachingLessonType", "editRetryTrialCount", "editMaximumReteachingCycles", "editLessonRightsConfirmed"].forEach(id => {
+      document.getElementById(id).disabled = !adaptiveEnabled;
+    });
+    document.getElementById("editTeachingLessonUrl").disabled = !adaptiveEnabled || lessonType === "built-in" || lessonType === "teacher-upload";
+    document.getElementById("editTeachingLessonUrlField").hidden = !adaptiveEnabled || lessonType === "built-in" || lessonType === "teacher-upload";
   }
 
   function clearEditor() {

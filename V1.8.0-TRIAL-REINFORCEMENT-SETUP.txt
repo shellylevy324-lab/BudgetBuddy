@@ -1,0 +1,14 @@
+Buddy Skills v1.8.0 - Trial Reinforcement
+
+1. In Supabase, open SQL Editor.
+2. Run SUPABASE-v1.8.0-TRIAL-REINFORCEMENT.sql once.
+3. Replace the repository files with this version and deploy GitHub Pages.
+4. In a student profile, choose one of:
+   - No trial reinforcement
+   - Token board
+   - Trial reinforcement
+5. Token board changes the requirement label to Tokens required.
+6. Trial reinforcement changes the requirement label to Number of trials.
+7. Both use the choices 5, 10, 15, or 20.
+
+Note: This version updates the shared student-profile data model and Teacher Center controls. Activities should read reinforcement_system and either token_requirement or trial_requirement when applying the selected schedule.

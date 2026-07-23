@@ -20,14 +20,7 @@
         <div class="form-field"><label for="teacherPassword">Password</label><input id="teacherPassword" type="password" required autocomplete="current-password"></div>
         <button class="platform-button platform-button-full" type="submit">Sign In</button>
         <button id="forgotPasswordButton" class="teacher-link-button" type="button">Forgot password?</button>
-       <button
-  id="showSignupButton"
-  class="teacher-secondary-button platform-button-full"
-  type="button"
-  style="display:block; width:100%; margin-top:16px; padding:15px 18px; background:#eef5fc; color:#173f73; border:2px solid #173f73; border-radius:14px; font-size:18px; font-weight:700; -webkit-text-fill-color:#173f73;"
->
-  Create Teacher Account
-</button>
+        <button id="showSignupButton" class="teacher-secondary-button platform-button-full" type="button">Create Teacher Account</button>
       </form>
       <form id="teacherSignupForm" class="platform-form" hidden>
         <div class="form-field"><label for="signupEmail">Email</label><input id="signupEmail" type="email" required autocomplete="username"></div>
@@ -153,14 +146,16 @@
                       <select id="editReinforcementSystem">
                         <option value="none">No trial reinforcement</option>
                         <option value="token-board">Token board</option>
+                        <option value="trial-reinforcement">Trial reinforcement</option>
                       </select>
                     </div>
                     <div class="form-field">
-                      <label for="editTokenRequirement">Tokens required</label>
-                      <select id="editTokenRequirement">
-                        <option value="3">3 tokens</option>
+                      <label id="editReinforcementRequirementLabel" for="editReinforcementRequirement">Tokens required</label>
+                      <select id="editReinforcementRequirement">
                         <option value="5">5 tokens</option>
                         <option value="10">10 tokens</option>
+                        <option value="15">15 tokens</option>
+                        <option value="20">20 tokens</option>
                       </select>
                     </div>
                     <div class="form-field teacher-form-wide">
@@ -182,7 +177,7 @@
                       <small id="reinforcementLibraryNote">Teacher-created packages currently stored on this browser appear here. Cloud uploads will be connected in the Reinforcement Library.</small>
                     </div>
                     <div class="form-field teacher-form-wide">
-                      <label for="editDifferentialReinforcement">When to award tokens</label>
+                      <label id="editDifferentialReinforcementLabel" for="editDifferentialReinforcement">When to award tokens</label>
                       <select id="editDifferentialReinforcement">
                         <option value="all-correct">Every correct first response</option>
                         <option value="independent-only">Independent correct responses only</option>
@@ -190,6 +185,54 @@
                       </select>
                     </div>
                   </div>
+                </fieldset>
+
+                <fieldset class="instruction-fieldset">
+                  <legend>Adaptive teaching and reteaching</legend>
+                  <div class="teacher-form-grid">
+                    <label class="teacher-checkbox teacher-form-wide"><input id="editAdaptiveTeachingEnabled" type="checkbox"> Automatically teach and retry when accuracy is at or below the selected threshold</label>
+                    <div class="form-field">
+                      <label for="editMasteryThreshold">Reteaching threshold</label>
+                      <select id="editMasteryThreshold">
+                        <option value="50">50% or less</option>
+                        <option value="60">60% or less</option>
+                        <option value="70">70% or less</option>
+                        <option value="80">80% or less</option>
+                        <option value="90">90% or less</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="editTeachingLessonType">Teaching lesson type</label>
+                      <select id="editTeachingLessonType">
+                        <option value="built-in">Buddy Skills built-in lesson</option>
+                        <option value="youtube">YouTube video</option>
+                        <option value="external-link">External lesson link</option>
+                        <option value="teacher-upload">Teacher-uploaded lesson (coming next)</option>
+                      </select>
+                    </div>
+                    <div id="editTeachingLessonUrlField" class="form-field teacher-form-wide">
+                      <label for="editTeachingLessonUrl">Lesson URL</label>
+                      <input id="editTeachingLessonUrl" type="url" maxlength="500" placeholder="Paste a YouTube or school-approved lesson link">
+                      <small>YouTube lessons use the official privacy-enhanced embedded player. Buddy Skills does not download or rehost the video.</small>
+                    </div>
+                    <div class="form-field">
+                      <label for="editRetryTrialCount">Retry after teaching</label>
+                      <select id="editRetryTrialCount">
+                        <option value="same">Repeat the full trial set</option>
+                        <option value="5">5 new trials</option>
+                        <option value="10">10 new trials</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="editMaximumReteachingCycles">Maximum reteaching cycles</label>
+                      <select id="editMaximumReteachingCycles">
+                        <option value="1">1 cycle, then staff review</option>
+                        <option value="2">2 cycles, then staff review</option>
+                      </select>
+                    </div>
+                    <label class="teacher-checkbox teacher-form-wide"><input id="editLessonRightsConfirmed" type="checkbox"> I created this lesson, have permission to use it, or am authorized to use or link to it for instruction.</label>
+                  </div>
+                  <small>Activities will record initial accuracy, reteaching, reassessment accuracy, improvement, and the number of cycles when they connect to this adaptive-teaching engine.</small>
                 </fieldset>
 
                 <div class="form-field">
@@ -300,6 +343,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="adaptive-learning.js"></script>
   <script src="teacher-center.js"></script>
 </body>
 </html>

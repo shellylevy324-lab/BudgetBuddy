@@ -1,0 +1,22 @@
+BUDDY SKILLS v1.9.0 - ADAPTIVE TEACHING FOUNDATION
+
+This package includes every change from v1.8.0. You do not need to install v1.8.0 separately.
+
+1. In Supabase SQL Editor, run:
+   SUPABASE-v1.9.0-ADAPTIVE-TEACHING.sql
+
+2. Replace the website files with the contents of this package.
+
+3. In Teacher Center, edit a student profile and open Adaptive teaching and reteaching.
+
+4. Select:
+   - whether adaptive teaching is enabled
+   - the accuracy threshold
+   - lesson type and URL
+   - retry trial count
+   - maximum reteaching cycles
+
+IMPORTANT
+- The profile settings and reusable decision engine are included now.
+- Individual activities must call adaptive-learning.js at the end of a trial set before they can automatically route a student into a lesson and reassessment.
+- YouTube links are converted to privacy-enhanced youtube-nocookie.com embeds. Videos are not downloaded or rehosted.

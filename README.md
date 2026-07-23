@@ -108,3 +108,5 @@ Shelly Wilbar
 Special Education Teacher
 
 Transition Program
+## v1.9.0 Adaptive Teaching Foundation
+Student profiles can now store a teacher-selected reteaching threshold, lesson source, retry length, and maximum reteaching cycles. `adaptive-learning.js` supplies a reusable decision engine for activity modules. This release includes the v1.8.0 trial-reinforcement changes.
