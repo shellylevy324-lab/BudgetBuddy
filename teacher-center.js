@@ -3,7 +3,6 @@
 
   const STUDENTS_TABLE = "students";
   const SETTINGS_TABLE = "student_instructional_settings";
-  const REINFORCEMENT_LIBRARY_STORAGE_KEY = "budgetBuddyReinforcementLibrary_v1";
   const SELECTED_STUDENT_KEY = "buddySkillsSelectedStudent";
   const BUILT_IN_PACKAGES = ["stars", "rockets", "dinosaurs", "rainbow", "trains", "music", "none"];
   const REINFORCEMENT_TABLE = "reinforcement_packages";
@@ -286,51 +285,40 @@ if (packageValue.startsWith("library:")) {
   }
 
   function populateReinforcementPackages(selectedValue = "") {
-    const group = document.getElementById("teacherClassroomReinforcementOptions");
-    const select = document.getElementById("editReinforcementPackage");
-    if (!group || !select) return;
-    group.innerHTML = "";
-    const localLibrary = readLocalReinforcementLibrary();
-    const combined = [
-      ...cloudReinforcementPackages.map(item => ({ ...item, source: "cloud" })),
-      ...localLibrary.filter(local => !cloudReinforcementPackages.some(cloud => String(cloud.id) === String(local.id))).map(item => ({ ...item, source: "browser" }))
-    ];
-    combined.filter(item => item.active !== false).forEach(item => {
+  const group = document.getElementById("teacherClassroomReinforcementOptions");
+  const select = document.getElementById("editReinforcementPackage");
+
+  if (!group || !select) return;
+
+  group.innerHTML = "";
+
+  cloudReinforcementPackages
+    .filter(item => item.active !== false)
+    .forEach(item => {
       const option = document.createElement("option");
       option.value = `library:${item.id}`;
-      option.textContent = `${item.source === "cloud" ? "☁️" : "❤️"} ${item.name || "Teacher Package"}`;
+      option.textContent = `☁️ ${item.name || "Teacher Package"}`;
       group.appendChild(option);
     });
-    const note = document.getElementById("reinforcementLibraryNote");
-    if (note) note.textContent = cloudReinforcementPackages.length
-      ? "Cloud packages are available on every connected device. Browser-only legacy packages are also shown when present."
-      : (localLibrary.length ? "Legacy browser packages are shown. Run the v1.4.0 Supabase setup to enable cross-device uploads." : "No teacher-created packages have been saved yet.");
-    const desired = selectedValue || select.value || "stars";
-    ensureStoredPackageOption(desired);
-    select.value = [...select.options].some(option => option.value === desired) ? desired : "stars";
+
+  const note = document.getElementById("reinforcementLibraryNote");
+
+  if (note) {
+    note.textContent = cloudReinforcementPackages.length
+      ? "Cloud packages are available on every connected device."
+      : "No classroom reinforcement packages have been created yet.";
   }
 
-  function readLocalReinforcementLibrary() {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(REINFORCEMENT_LIBRARY_STORAGE_KEY) || "[]");
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-      console.warn("Could not read the Budget Buddy reinforcement library.", error);
-      return [];
-    }
-  }
+  const desired = selectedValue || select.value || "stars";
 
-  function ensureStoredPackageOption(value) {
-    const select = document.getElementById("editReinforcementPackage");
-    const group = document.getElementById("teacherClassroomReinforcementOptions");
-    if (!select || !group || !value || [...select.options].some(option => option.value === value)) return;
-    if (String(value).startsWith("library:")) {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = "❤️ Saved teacher package";
-      group.appendChild(option);
-    }
-  }
+  select.value = [...select.options].some(
+    option => option.value === desired
+  )
+    ? desired
+    : "stars";
+}
+
+
 
   function startNewStudent() {
     showSection("students");
