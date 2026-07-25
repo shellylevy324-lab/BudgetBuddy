@@ -750,16 +750,36 @@ function loadStudents(){
         });
 
         const inherited=classroomStudent.instructionalSettings||{};
-        const inheritedProfile={
-            id:classroomStudent.id,
-            name:classroomStudent.name,
-            promptStyle:inherited.prompting_mode==="baseline"?"baseline":"least-to-most",
-            waitTimeSeconds:Number(inherited.wait_time_seconds)||10,
-            tokenGoal:Number(inherited.token_requirement)||5,
-            reinforcementPackage:inherited.reinforcement_package||"stars",
-            differentialReinforcement:inherited.differential_reinforcement||"all-correct",
-            reinforcementType:inherited.reinforcement_system==="token-board"?"text-sound":"text"
-        };
+      const inheritedProfile = {
+    id: classroomStudent.id,
+    name: classroomStudent.name,
+
+    promptStyle:
+        inherited.prompting_mode === "baseline"
+            ? "baseline"
+            : inherited.reinforcement_system === "token-board"
+                ? "prompt-fading-token"
+                : "least-to-most",
+
+    waitTimeSeconds:
+        Number(inherited.wait_time_seconds) || 10,
+
+    tokenGoal:
+        Number(inherited.token_requirement) || 5,
+
+    reinforcementPackage:
+        inherited.reinforcement_package || "stars",
+
+    differentialReinforcement:
+        inherited.differential_reinforcement || "all-correct",
+
+    reinforcementType:
+        inherited.reinforcement_system === "token-board"
+            ? "text-sound"
+            : inherited.reinforcement_system === "none"
+                ? "none"
+                : "text"
+};
         if(existingIndex>=0){
             appState.students[existingIndex]=normalizeStudent({
                 ...appState.students[existingIndex],
