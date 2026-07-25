@@ -213,15 +213,60 @@
         .select("*").eq("student_id", student.id).maybeSingle();
       if (settingsError) throw settingsError;
       let reinforcementPackage = null;
-      const packageValue = settings?.reinforcement_package || "";
-      if (packageValue.startsWith("library:")) {
-        const packageId = packageValue.slice("library:".length);
-        const { data, error } = await supabaseClient.from(REINFORCEMENT_TABLE)
-          .select("id, name, praise_text, token_url, completion_url, audio_url, token_path, completion_path, audio_path, active")
-          .eq("id", packageId).maybeSingle();
-        if (error) throw error;
-        reinforcementPackage = data ? await hydrateReinforcementPackage(data) : null;
-      }
+const packageValue = settings?.reinforcement_package || "";
+
+if (packageValue.startsWith("library:")) {
+  const packageId = packageValue.slice("library:".length);
+
+  const isUuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      packageId
+    );
+
+  if (isUuid) {
+    const { data, error } = await supabaseClient
+      .from(REINFORCEMENT_TABLE)
+      .select(
+        "id, name, praise_text, token_url, completion_url, audio_url, token_path, completion_path, audio_path, active"
+      )
+      .eq("id", packageId)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    reinforcementPackage = data
+      ? await hydrateReinforcementPackage(data)
+      : null;
+  } else {
+    const legacyPackage = readLocalReinforcementLibrary().find(
+      item => String(item.id) === String(packageId)
+    );
+
+    if (legacyPackage) {
+      reinforcementPackage = {
+        id: legacyPackage.id,
+        name: legacyPackage.name || "Teacher Package",
+        praise_text: legacyPackage.praiseText || "Nice job!",
+        token_url:
+          legacyPackage.tokenData ||
+          legacyPackage.tokenPath ||
+          "",
+        completion_url:
+          legacyPackage.completionData ||
+          legacyPackage.completionPath ||
+          "",
+        audio_url:
+          legacyPackage.audioData ||
+          legacyPackage.audioPath ||
+          "",
+        token_path: legacyPackage.tokenPath || null,
+        completion_path: legacyPackage.completionPath || null,
+        audio_path: legacyPackage.audioPath || null,
+        active: legacyPackage.active !== false
+      };
+    }
+  }
+}
       const selectedStudent = {
         id: student.id,
         firstName: student.first_name || "",
