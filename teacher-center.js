@@ -212,60 +212,30 @@
         .select("*").eq("student_id", student.id).maybeSingle();
       if (settingsError) throw settingsError;
       let reinforcementPackage = null;
-const packageValue = settings?.reinforcement_package || "";
+      const packageValue = settings?.reinforcement_package || "";
 
-if (packageValue.startsWith("library:")) {
-  const packageId = packageValue.slice("library:".length);
+      if (packageValue.startsWith("library:")) {
+        const packageId = packageValue.slice("library:".length);
+        const isUuid =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(packageId);
 
-  const isUuid =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      packageId
-    );
+        if (isUuid) {
+          const { data, error } = await supabaseClient
+            .from(REINFORCEMENT_TABLE)
+            .select(
+              "id, name, praise_text, token_url, completion_url, audio_url, token_path, completion_path, audio_path, active"
+            )
+            .eq("id", packageId)
+            .maybeSingle();
 
-  if (isUuid) {
-    const { data, error } = await supabaseClient
-      .from(REINFORCEMENT_TABLE)
-      .select(
-        "id, name, praise_text, token_url, completion_url, audio_url, token_path, completion_path, audio_path, active"
-      )
-      .eq("id", packageId)
-      .maybeSingle();
+          if (error) throw error;
 
-    if (error) throw error;
+          reinforcementPackage = data
+            ? await hydrateReinforcementPackage(data)
+            : null;
+        }
+      }
 
-    reinforcementPackage = data
-      ? await hydrateReinforcementPackage(data)
-      : null;
-  } else {
-    const legacyPackage = readLocalReinforcementLibrary().find(
-      item => String(item.id) === String(packageId)
-    );
-
-    if (legacyPackage) {
-      reinforcementPackage = {
-        id: legacyPackage.id,
-        name: legacyPackage.name || "Teacher Package",
-        praise_text: legacyPackage.praiseText || "Nice job!",
-        token_url:
-          legacyPackage.tokenData ||
-          legacyPackage.tokenPath ||
-          "",
-        completion_url:
-          legacyPackage.completionData ||
-          legacyPackage.completionPath ||
-          "",
-        audio_url:
-          legacyPackage.audioData ||
-          legacyPackage.audioPath ||
-          "",
-        token_path: legacyPackage.tokenPath || null,
-        completion_path: legacyPackage.completionPath || null,
-        audio_path: legacyPackage.audioPath || null,
-        active: legacyPackage.active !== false
-      };
-    }
-  }
-}
       const selectedStudent = {
         id: student.id,
         firstName: student.first_name || "",
@@ -285,40 +255,33 @@ if (packageValue.startsWith("library:")) {
   }
 
   function populateReinforcementPackages(selectedValue = "") {
-  const group = document.getElementById("teacherClassroomReinforcementOptions");
-  const select = document.getElementById("editReinforcementPackage");
+    const group = document.getElementById("teacherClassroomReinforcementOptions");
+    const select = document.getElementById("editReinforcementPackage");
+    if (!group || !select) return;
 
-  if (!group || !select) return;
+    group.innerHTML = "";
 
-  group.innerHTML = "";
+    cloudReinforcementPackages
+      .filter(item => item.active !== false)
+      .forEach(item => {
+        const option = document.createElement("option");
+        option.value = `library:${item.id}`;
+        option.textContent = `☁️ ${item.name || "Teacher Package"}`;
+        group.appendChild(option);
+      });
 
-  cloudReinforcementPackages
-    .filter(item => item.active !== false)
-    .forEach(item => {
-      const option = document.createElement("option");
-      option.value = `library:${item.id}`;
-      option.textContent = `☁️ ${item.name || "Teacher Package"}`;
-      group.appendChild(option);
-    });
+    const note = document.getElementById("reinforcementLibraryNote");
+    if (note) {
+      note.textContent = cloudReinforcementPackages.length
+        ? "Cloud packages are available on every connected device."
+        : "No classroom reinforcement packages have been created yet.";
+    }
 
-  const note = document.getElementById("reinforcementLibraryNote");
-
-  if (note) {
-    note.textContent = cloudReinforcementPackages.length
-      ? "Cloud packages are available on every connected device."
-      : "No classroom reinforcement packages have been created yet.";
+    const desired = selectedValue || select.value || "stars";
+    select.value = [...select.options].some(option => option.value === desired)
+      ? desired
+      : "stars";
   }
-
-  const desired = selectedValue || select.value || "stars";
-
-  select.value = [...select.options].some(
-    option => option.value === desired
-  )
-    ? desired
-    : "stars";
-}
-
-
 
   function startNewStudent() {
     showSection("students");
