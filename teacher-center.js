@@ -46,6 +46,10 @@
     document.getElementById("reinforcementTokenFile")?.addEventListener("change", event => previewSelectedFile(event.target.files?.[0], "reinforcementTokenPreview", "image"));
     document.getElementById("reinforcementCompletionFile")?.addEventListener("change", event => previewSelectedFile(event.target.files?.[0], "reinforcementCompletionPreview", "image"));
     document.getElementById("reinforcementAudioFile")?.addEventListener("change", event => previewSelectedFile(event.target.files?.[0], "reinforcementAudioPreview", "audio"));
+    ["reportStudentFilter", "reportActivityFilter", "reportDateRangeFilter", "reportPhaseFilter"].forEach(id => {
+      document.getElementById(id)?.addEventListener("change", renderReports);
+    });
+    document.getElementById("exportReportCsvButton")?.addEventListener("click", exportReportCsv);
   }
 
   async function initializeAuthentication() {
@@ -173,6 +177,7 @@
     if (error) throw error;
     students = data || [];
     renderStudents();
+    populateReportStudentFilter();
     document.getElementById("activeStudentCount").textContent = students.filter(student => student.active).length;
     showStatus("Student profiles and shared settings are connected to Supabase.", "success");
   }
@@ -493,6 +498,50 @@
     document.querySelectorAll(".teacher-nav-button").forEach(button => button.classList.toggle("is-active", button.dataset.section === name));
     document.getElementById("sectionTitle").textContent = name.charAt(0).toUpperCase() + name.slice(1);
     if (name === "reinforcement" && supabaseClient) loadCloudReinforcementPackages();
+    if (name === "reports") renderReports();
+  }
+
+  function populateReportStudentFilter() {
+    const select = document.getElementById("reportStudentFilter");
+    if (!select) return;
+    const previous = select.value || "all";
+    select.innerHTML = '<option value="all">All students</option>';
+    students.forEach(student => {
+      const option = document.createElement("option");
+      option.value = student.id;
+      option.textContent = displayName(student);
+      select.appendChild(option);
+    });
+    select.value = [...select.options].some(option => option.value === previous) ? previous : "all";
+  }
+
+  function renderReports() {
+    populateReportStudentFilter();
+    // Version 2.0.0 establishes the clean reports interface. Cloud session
+    // records are connected in the next database step, so the UI remains
+    // truthful and displays an empty state rather than invented sample data.
+    const values = {
+      reportSessionsCount: "0",
+      reportTrialsCount: "0",
+      reportIndependentPercent: "—",
+      reportPromptedPercent: "—",
+      reportIncorrectPercent: "—",
+      reportAverageLatency: "—"
+    };
+    Object.entries(values).forEach(([id, value]) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    });
+    const body = document.getElementById("reportSessionTableBody");
+    if (body) body.innerHTML = '<tr><td colspan="9" class="reports-empty-cell">Cloud session storage will be connected in the next step. Completed sessions will appear here automatically.</td></tr>';
+    const detail = document.getElementById("reportSessionDetailCard");
+    if (detail) detail.hidden = true;
+    const exportButton = document.getElementById("exportReportCsvButton");
+    if (exportButton) exportButton.disabled = true;
+  }
+
+  function exportReportCsv() {
+    showStatus("CSV export will become available as soon as cloud session storage is connected.", "info");
   }
 
 

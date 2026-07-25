@@ -60,7 +60,7 @@
           <p class="eyebrow">Protected teacher area</p>
           <h2 id="sectionTitle">Dashboard</h2>
         </div>
-        <span class="teacher-pilot-badge">Version 1.9.0</span>
+        <span class="teacher-pilot-badge">Version 2.0.0</span>
       </header>
 
       <p id="teacherStatus" class="classroom-status" role="status" aria-live="polite"></p>
@@ -318,7 +318,89 @@
           </article>
         </div>
       </section>
-      <section id="reportsSection" class="teacher-section" hidden><article class="card teacher-placeholder"><p class="eyebrow">Student-centered reporting</p><h3>Reports</h3><p>Accuracy, latency, prompt use, and session summaries will be organized by student across all activities.</p></article></section>
+      <section id="reportsSection" class="teacher-section" hidden>
+        <article class="card reports-filter-card">
+          <div class="section-heading-row">
+            <div>
+              <p class="eyebrow">Student-centered reporting</p>
+              <h3 class="section-title">Student Progress</h3>
+              <p class="supporting-copy">Choose a student, activity, and date range. Reports will stay table-based and export cleanly for Excel or Google Sheets.</p>
+            </div>
+            <button id="exportReportCsvButton" class="platform-button" type="button" disabled>Export CSV</button>
+          </div>
+
+          <div class="reports-filter-grid">
+            <div class="form-field">
+              <label for="reportStudentFilter">Student</label>
+              <select id="reportStudentFilter"><option value="all">All students</option></select>
+            </div>
+            <div class="form-field">
+              <label for="reportActivityFilter">Activity</label>
+              <select id="reportActivityFilter">
+                <option value="all">All activities</option>
+                <option value="budget-buddy">Budget Buddy</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="reportDateRangeFilter">Date range</label>
+              <select id="reportDateRangeFilter">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="all">All available data</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="reportPhaseFilter">Teaching phase</label>
+              <select id="reportPhaseFilter">
+                <option value="all">All phases</option>
+                <option value="baseline">Baseline</option>
+                <option value="intervention">Intervention</option>
+                <option value="prompt-fading">Prompt fading</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="generalization">Generalization</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </article>
+
+        <div class="reports-summary-grid" aria-label="Report summary">
+          <article class="reports-summary-card"><span>Sessions</span><strong id="reportSessionsCount">0</strong></article>
+          <article class="reports-summary-card"><span>Trials</span><strong id="reportTrialsCount">0</strong></article>
+          <article class="reports-summary-card"><span>Independent</span><strong id="reportIndependentPercent">—</strong></article>
+          <article class="reports-summary-card"><span>Prompted</span><strong id="reportPromptedPercent">—</strong></article>
+          <article class="reports-summary-card"><span>Incorrect</span><strong id="reportIncorrectPercent">—</strong></article>
+          <article class="reports-summary-card"><span>Average latency</span><strong id="reportAverageLatency">—</strong></article>
+        </div>
+
+        <article class="card reports-table-card">
+          <div class="section-heading-row">
+            <div>
+              <p class="eyebrow">Session history</p>
+              <h3 class="section-title">Saved Sessions</h3>
+            </div>
+          </div>
+          <div class="reports-table-wrap">
+            <table class="reports-table">
+              <thead><tr><th>Date</th><th>Student</th><th>Activity</th><th>Phase</th><th>Trials</th><th>Independent</th><th>Prompted</th><th>Average latency</th><th></th></tr></thead>
+              <tbody id="reportSessionTableBody"><tr><td colspan="9" class="reports-empty-cell">Cloud session storage will be connected in the next step. Completed sessions will appear here automatically.</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article id="reportSessionDetailCard" class="card reports-table-card" hidden>
+          <div class="section-heading-row">
+            <div><p class="eyebrow">Trial-level data</p><h3 id="reportSessionDetailTitle" class="section-title">Session Details</h3></div>
+          </div>
+          <div class="reports-table-wrap">
+            <table class="reports-table reports-detail-table">
+              <thead><tr><th>Trial</th><th>Target</th><th>Result</th><th>Prompt</th><th>Latency</th><th>Token</th><th>Correction</th></tr></thead>
+              <tbody id="reportTrialTableBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
       <section id="settingsSection" class="teacher-section" hidden>
         <article class="card teacher-editor-panel account-settings-card">
           <p class="eyebrow">Secure teacher account</p>
@@ -343,7 +425,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
- <script src="adaptive-learning.js?v=1.9.1"></script>
-<script src="teacher-center.js?v=1.9.1"></script>
+ <script src="adaptive-learning.js?v=2.0.0"></script>
+<script src="teacher-center.js?v=2.0.0"></script>
 </body>
 </html>
