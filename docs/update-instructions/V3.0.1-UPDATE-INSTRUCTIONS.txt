@@ -1,0 +1,25 @@
+Buddy Skills Platform v3.0.1
+
+FIXES
+- Assigned teacher-uploaded token image now appears instead of the star fallback.
+- Assigned completion image and audio now load in student activities.
+- Money Identification is now a clickable, working activity.
+
+RUN ONCE IN SUPABASE
+SUPABASE-v3.0.1-REINFORCEMENT-AND-MONEY-ID.sql
+
+REPLACE
+skill-registry.js
+training-station.js
+training-station.html
+skill-framework.js
+community-signs.html
+community-signs.js
+
+ADD
+money-identification.html
+money-identification.js
+money-identification.css
+SUPABASE-v3.0.1-REINFORCEMENT-AND-MONEY-ID.sql
+
+After GitHub Pages deploys, hard refresh with Ctrl+Shift+R.

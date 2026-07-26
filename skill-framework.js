@@ -1,4 +1,4 @@
-/* Buddy Skills v3.0.0 - Shared Skill Framework
+/* Buddy Skills v3.0.1 - Shared Skill Framework
  * Shared profile normalization, prompting timers, reinforcement, cloud reporting,
  * and completion behavior for every skill activity.
  */
@@ -181,7 +181,7 @@
   function escapeAttribute(value) { return escapeHtml(value); }
 
   window.BuddySkillFramework = Object.freeze({
-    version: "3.0.0",
+    version: "3.0.1",
     selectedStudent,
     settingsFrom,
     normalizeShared,

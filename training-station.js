@@ -7,10 +7,11 @@ async function loadStudentHome(){
   if(code){
     try{
       const selected=await redeemStudentAccess(code);
+      await hydrateStudentReinforcement(selected);
       sessionStorage.setItem(SELECTED_STUDENT_KEY,JSON.stringify(selected));
       sessionStorage.setItem(STUDENT_MODE_KEY,"active");
       sessionStorage.setItem(ACCESS_CODE_KEY,code);
-      history.replaceState(null,"",`training-station.html?access=${encodeURIComponent(code)}&v=3.0.0`);
+      history.replaceState(null,"",`training-station.html?access=${encodeURIComponent(code)}&v=3.0.1`);
     }catch(error){
       console.error(error);
       return showLockedStudentView("This student link could not be opened. Ask the teacher to check the permanent QR code.");
@@ -27,6 +28,23 @@ async function loadStudentHome(){
   displayActivities(activities);
   setText("statusMessage","");
   document.getElementById("exitStudentMode").hidden=false;
+}
+
+async function hydrateStudentReinforcement(student){
+  const packageValue=student?.instructionalSettings?.reinforcement_package;
+  if(!packageValue||!String(packageValue).startsWith("library:"))return;
+  const packageId=String(packageValue).slice("library:".length);
+  const cfg=window.BUDDY_SKILLS_SUPABASE||window.BUDDY_SUPABASE_CONFIG;
+  if(!window.supabase?.createClient||!cfg?.url||!cfg?.publishableKey)return;
+  const client=window.supabase.createClient(cfg.url.trim(),cfg.publishableKey.trim());
+  const {data,error}=await client.rpc("get_student_reinforcement_package",{p_student_id:student.id,p_package_id:packageId});
+  if(error){console.warn("Reinforcement package could not be loaded:",error);return;}
+  if(!data)return;
+  const publicUrl=path=>path?client.storage.from("reinforcement-library").getPublicUrl(path).data.publicUrl:null;
+  student.cloudReinforcementPackage={
+    id:data.id, name:data.name, praise_text:data.praise_text, active:data.active!==false,
+    token_url:publicUrl(data.token_path), completion_url:publicUrl(data.completion_path), audio_url:publicUrl(data.audio_path)
+  };
 }
 
 async function redeemStudentAccess(code){
@@ -46,6 +64,6 @@ function displayTraineePhoto(photo,name){const wrap=document.getElementById("tra
 function showPhotoPlaceholder(wrap,name){wrap.innerHTML="";const span=document.createElement("span");span.className="trainee-photo-placeholder";span.setAttribute("aria-hidden","true");span.textContent=getInitials(name);wrap.appendChild(span);}
 function getInitials(name){return String(name).trim().split(/\s+/).slice(0,2).map(p=>p.charAt(0).toUpperCase()).join("")||"BS";}
 function displayActivities(activities){const grid=document.getElementById("trainingGrid");grid.innerHTML="";if(!activities.length){grid.innerHTML='<p class="empty-message">No activities are assigned right now. Ask your teacher to choose an activity.</p>';return;}activities.forEach(a=>{const card=document.createElement("a");card.className="training-card";card.href=a.href;card.setAttribute("aria-label",`${a.title}: ${a.description}`);card.innerHTML=`<span class="training-card-icon" aria-hidden="true">${a.icon}</span><span class="training-card-copy"><span class="training-card-title">${a.title}</span><span class="training-card-description">${a.description}</span></span>`;grid.appendChild(card);});}
-function endStudentMode(){sessionStorage.removeItem(SELECTED_STUDENT_KEY);sessionStorage.removeItem(STUDENT_MODE_KEY);sessionStorage.removeItem(ACCESS_CODE_KEY);location.replace("training-station.html?v=3.0.0");}
+function endStudentMode(){sessionStorage.removeItem(SELECTED_STUDENT_KEY);sessionStorage.removeItem(STUDENT_MODE_KEY);sessionStorage.removeItem(ACCESS_CODE_KEY);location.replace("training-station.html?v=3.0.1");}
 function setText(id,value){const e=document.getElementById(id);if(e)e.textContent=value;}
 document.addEventListener("DOMContentLoaded",()=>{loadStudentHome();document.getElementById("exitStudentMode")?.addEventListener("click",endStudentMode);});
