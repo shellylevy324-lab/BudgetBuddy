@@ -1,0 +1,31 @@
+BUDDY SKILLS PLATFORM v3.0.0
+STABILITY + SHARED SKILL FRAMEWORK
+
+REPLACE THESE FILES:
+- teacher-center.html
+- teacher-center.js
+- training-station.html
+- training-station.js
+- community-signs.html
+- community-signs.js
+- budget-buddy.html
+- session-engine.js
+- platform.css
+
+ADD THESE NEW FILES:
+- skill-registry.js
+- skill-framework.js
+- MONEY-IDENTIFICATION-NEXT-STEP.md
+
+NO NEW SUPABASE SQL IS REQUIRED.
+
+AFTER UPLOADING:
+1. Commit and push all replacement and new files together.
+2. Wait for GitHub Pages to finish deploying.
+3. Hard refresh with Ctrl + Shift + R.
+4. Sign in and edit one student.
+5. Confirm Shared Settings appear first.
+6. Use the Skill to customize menu to switch between Community Signs and Shopping Budget.
+7. Open the student's permanent QR link and confirm assigned activities appear.
+
+Money Identification is registered as the next skill but is not yet student-visible.

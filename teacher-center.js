@@ -17,9 +17,29 @@
   document.addEventListener("DOMContentLoaded", initialize);
 
   function initialize() {
+    const missing = validateTeacherCenterContract();
     bindEvents();
     populateReinforcementPackages();
+    if (missing.length) {
+      console.error("Buddy Skills Teacher Center is missing required elements:", missing);
+      showLoginStatus("Teacher Center files are out of sync. Replace teacher-center.html and teacher-center.js from the same release.", "error");
+      return;
+    }
     initializeAuthentication();
+  }
+
+  function validateTeacherCenterContract() {
+    const required = [
+      "teacherLoginForm", "teacherApp", "studentEditorForm", "studentId", "editFirstName",
+      "editPromptingMode", "editWaitTime", "editReinforcementSystem", "editReinforcementRequirement",
+      "editReinforcementPackage", "editDifferentialReinforcement", "skillSettingsSelect",
+      "editActivityCommunitySigns", "editCommunitySignsSet", "editCommunitySignsResponseLevel",
+      "editCommunitySignsTrialCount", "editCommunitySignsPromptStep", "editCommunitySignsAudio",
+      "editCommunityTeachingEnabled", "editCommunityTeachingType", "editCommunityTeachingUrl",
+      "editActivityShoppingBudget", "editShoppingTeachingEnabled", "editShoppingTeachingType",
+      "editShoppingTeachingUrl", "editLessonRightsConfirmed", "editInstructionNotes"
+    ];
+    return required.filter(id => !document.getElementById(id));
   }
 
   function bindEvents() {
@@ -36,7 +56,7 @@
     document.getElementById("studentEditorForm")?.addEventListener("submit", saveStudent);
     document.getElementById("cancelStudentEditButton")?.addEventListener("click", clearEditor);
     document.getElementById("backToStudentListButton")?.addEventListener("click", clearEditor);
-    document.querySelectorAll("[data-skill-tab]").forEach(button => button.addEventListener("click", () => switchSkillTab(button.dataset.skillTab)));
+    document.getElementById("skillSettingsSelect")?.addEventListener("change", event => switchSkillTab(event.target.value));
     document.getElementById("editPromptingMode")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("editReinforcementSystem")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("newReinforcementPackageButton")?.addEventListener("click", () => openReinforcementEditor());
@@ -329,11 +349,8 @@
 
   function switchSkillTab(skill) {
     const selected = skill === "shopping" ? "shopping" : "community";
-    document.querySelectorAll("[data-skill-tab]").forEach(button => {
-      const active = button.dataset.skillTab === selected;
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-selected", active ? "true" : "false");
-    });
+    const selector = document.getElementById("skillSettingsSelect");
+    if (selector) selector.value = selected;
     document.querySelectorAll("[data-skill-panel]").forEach(panel => {
       panel.hidden = panel.dataset.skillPanel !== selected;
     });
@@ -442,34 +459,34 @@
   }
 
   function collectSettings(studentId) {
-    const promptingMode = document.getElementById("editPromptingMode").value;
-    const reinforcementSystem = document.getElementById("editReinforcementSystem").value;
+    const promptingMode = fieldValue("editPromptingMode", "least-to-most");
+    const reinforcementSystem = fieldValue("editReinforcementSystem", "none");
     return {
       student_id: studentId,
       owner_id: currentUser.id,
       prompting_mode: promptingMode,
       wait_time_seconds: numberValue("editWaitTime", 10),
       activity_access: {
-        shoppingBudget: document.getElementById("editActivityShoppingBudget").checked,
-        communitySigns: document.getElementById("editActivityCommunitySigns").checked
+        shoppingBudget: checkedValue("editActivityShoppingBudget", true),
+        communitySigns: checkedValue("editActivityCommunitySigns", true)
       },
       community_signs_set: numberValue("editCommunitySignsSet", 1),
       community_signs_response_level: numberValue("editCommunitySignsResponseLevel", 1),
       community_signs_trial_count: numberValue("editCommunitySignsTrialCount", 10),
       community_signs_prompt_step_seconds: numberValue("editCommunitySignsPromptStep", 5),
-      community_signs_audio_enabled: document.getElementById("editCommunitySignsAudio").checked,
+      community_signs_audio_enabled: checkedValue("editCommunitySignsAudio", true),
       reinforcement_system: reinforcementSystem,
       reinforcement_type: reinforcementSystem === "token-board"
         ? "token"
         : (reinforcementSystem === "trial-reinforcement" ? "trial" : "none"),
-      reinforcement_package: document.getElementById("editReinforcementPackage").value,
+      reinforcement_package: fieldValue("editReinforcementPackage", "stars"),
       token_requirement: reinforcementSystem === "token-board"
         ? numberValue("editReinforcementRequirement", 5)
         : 5,
       trial_requirement: reinforcementSystem === "trial-reinforcement"
         ? numberValue("editReinforcementRequirement", 5)
         : 5,
-      differential_reinforcement: document.getElementById("editDifferentialReinforcement").value,
+      differential_reinforcement: fieldValue("editDifferentialReinforcement", "all-correct"),
       activity_teaching_settings: { communitySigns: { enabled: checkedValue("editCommunityTeachingEnabled"), type: fieldValue("editCommunityTeachingType", "built-in"), url: optional(fieldValue("editCommunityTeachingUrl")) }, shoppingBudget: { enabled: checkedValue("editShoppingTeachingEnabled"), type: fieldValue("editShoppingTeachingType", "built-in"), url: optional(fieldValue("editShoppingTeachingUrl")) } },
       adaptive_teaching_enabled: checkedValue("editShoppingTeachingEnabled"),
       mastery_threshold: 50,
@@ -477,8 +494,8 @@
       teaching_lesson_url: optional(fieldValue("editShoppingTeachingUrl")),
       retry_trial_count: "same",
       maximum_reteaching_cycles: 1,
-      lesson_rights_confirmed: document.getElementById("editLessonRightsConfirmed").checked,
-      staff_notes: optional(document.getElementById("editInstructionNotes").value),
+      lesson_rights_confirmed: checkedValue("editLessonRightsConfirmed"),
+      staff_notes: optional(fieldValue("editInstructionNotes")),
       updated_at: new Date().toISOString()
     };
   }

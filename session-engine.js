@@ -1,4 +1,4 @@
-/* Buddy Skills v2.2.0 - Shared Session Engine
+/* Buddy Skills v3.0.0 - Shared Session Engine
  * Shared cloud reporting adapter for every Buddy Skills activity.
  */
 (function () {
@@ -6,7 +6,7 @@
 
   const SESSION_TABLE = "student_sessions";
   const TRIAL_TABLE = "student_trials";
-  const MODULE_VERSION = "2.2.0";
+  const MODULE_VERSION = "3.0.0";
   let client = null;
   let active = null;
   let writeQueue = Promise.resolve();

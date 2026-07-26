@@ -59,7 +59,7 @@
 <p class="eyebrow">Protected teacher area</p>
 <h2 id="sectionTitle">Dashboard</h2>
 </div>
-<span class="teacher-pilot-badge">Version 2.5.2</span>
+<span class="teacher-pilot-badge">Version 3.0.0</span>
 </header>
 <p aria-live="polite" class="classroom-status" id="teacherStatus" role="status"></p>
 <section class="teacher-section" id="dashboardSection">
@@ -118,9 +118,8 @@
 </section>
 <section class="settings-layer skill-settings-layer">
 <div class="instruction-settings-heading"><div><p class="eyebrow">Customize one activity at a time</p><h4>Skill Settings</h4></div></div>
-<div aria-label="Choose skill settings" class="skill-tab-list" role="tablist">
-<button aria-selected="true" class="skill-tab is-active" data-skill-tab="community" role="tab" type="button">Community Signs</button>
-<button aria-selected="false" class="skill-tab" data-skill-tab="shopping" role="tab" type="button">Shopping Budget</button>
+<div class="skill-picker-row">
+<div class="form-field teacher-form-wide"><label for="skillSettingsSelect">Skill to customize</label><select id="skillSettingsSelect"><option value="community">Community Signs</option><option value="shopping">Shopping Budget</option><option value="money" disabled>Money Identification — next skill</option></select><small>Only the selected skill's settings are shown below.</small></div>
 </div>
 <div class="skill-settings-panel" data-skill-panel="community" id="communitySkillPanel">
 <fieldset class="instruction-fieldset"><legend>Community Signs access and practice</legend><div class="teacher-form-grid">
@@ -342,9 +341,11 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-<script src="adaptive-learning.js?v=2.2.0"></script>
+<script src="skill-registry.js?v=3.0.0"></script>
+<script src="skill-framework.js?v=3.0.0"></script>
+<script src="adaptive-learning.js?v=3.0.0"></script>
 <script src="reports.js?v=2.4.1"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="teacher-center.js?v=2.5.3"></script>
+<script src="teacher-center.js?v=3.0.0"></script>
 </body>
 </html>
