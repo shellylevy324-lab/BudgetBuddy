@@ -1,0 +1,37 @@
+BUDDY SKILLS PLATFORM v3.0.4
+MONEY IDENTIFICATION LEVEL 3
+
+WHAT THIS UPDATE ADDS
+- Level 3: Match a written value to the real coin with the same value.
+- Examples include:
+  1 cent -> penny
+  $0.05 -> nickel
+  10 cents -> dime
+  25¢ -> quarter
+- The written format changes across trials.
+- The value format shown is saved with trial data.
+
+FILES TO REPLACE
+1. teacher-center.html
+2. skill-registry.js
+3. money-identification.html
+4. money-identification.js
+5. money-identification.css
+
+INSTALLATION
+1. Close Visual Studio Code Live Server if it is running.
+2. Copy the five replacement files into the main BuddySkillsPlatform folder.
+3. Choose Replace the file in the destination for each file.
+4. Commit and push the changes in GitHub Desktop.
+5. Wait for the GitHub Pages deployment green checkmark.
+6. Refresh the Teacher Center with Ctrl+F5.
+
+TEST
+1. Open Teacher Center and select a student.
+2. Choose Money Identification under Skill to customize.
+3. Select Level 3 — Match a written value to the coin.
+4. Save Student Settings.
+5. Open the student's activities and start Money Identification.
+6. Confirm a written value appears above four real coin choices.
+7. Confirm the correct coin is reinforced and incorrect responses model the correct coin.
+8. Confirm custom tokens and the completion image still appear.

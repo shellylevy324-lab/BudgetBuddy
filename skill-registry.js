@@ -46,7 +46,7 @@
       shortTitle: "Money ID",
       icon: "💵",
       description: "Identify U.S. coins and bills by name and value.",
-      href: "money-identification.html?v=3.0.2",
+      href: "money-identification.html?v=3.0.4",
       available: true,
       teacherPanelId: "moneySkillPanel",
       accessInputId: "editActivityMoneyIdentification",
@@ -70,5 +70,5 @@
     return skills.find(skill => skill.key === key || skill.activityKey === key) || null;
   }
 
-  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.0.2" });
+  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.0.4" });
 })();
