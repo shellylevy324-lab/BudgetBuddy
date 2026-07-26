@@ -1,0 +1,18 @@
+BUDDY SKILLS v2.5.3 LOGIN AND STUDENT EDITOR FIX
+
+Replace:
+- teacher-center.html
+- teacher-center.js
+
+No Supabase SQL is required.
+
+After uploading to GitHub Pages:
+1. Wait for the deployment to finish.
+2. Open teacher-center.html directly.
+3. Press Ctrl+Shift+R for a hard refresh.
+
+Fixes:
+- Corrects invalid skill-teaching form assignments introduced in v2.5.2.
+- Prevents authenticated Teacher Center startup from silently stopping.
+- Adds visible login errors and safely disables the Sign In button while submitting.
+- Updates the JavaScript cache version to 2.5.3.

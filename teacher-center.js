@@ -82,12 +82,26 @@
 
   async function login(event) {
     event.preventDefault();
-    const email = clean(document.getElementById("teacherEmail").value).toLowerCase();
-    const password = document.getElementById("teacherPassword").value;
+    const form = event.currentTarget;
+    const submitButton = form?.querySelector('button[type="submit"]');
+    const email = clean(document.getElementById("teacherEmail")?.value).toLowerCase();
+    const password = document.getElementById("teacherPassword")?.value || "";
+    if (!supabaseClient) return showLoginStatus("The secure login service is still loading. Refresh the page and try again.", "error");
+    if (!email || !password) return showLoginStatus("Enter both your email address and password.", "error");
     showLoginStatus("Signing in...", "info");
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) return showLoginStatus(friendlyError(error), "error");
-    document.getElementById("teacherPassword").value = "";
+    if (submitButton) submitButton.disabled = true;
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) return showLoginStatus(friendlyError(error), "error");
+      if (!data?.session?.user) return showLoginStatus("Sign-in was not completed. Please try again.", "error");
+      document.getElementById("teacherPassword").value = "";
+      await openTeacherCenter(data.session.user);
+    } catch (error) {
+      console.error(error);
+      showLoginStatus(friendlyError(error), "error");
+    } finally {
+      if (submitButton) submitButton.disabled = false;
+    }
   }
 
   async function signUp(event) {
@@ -417,6 +431,16 @@
     return element ? element.value : fallback;
   }
 
+  function setChecked(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.checked = Boolean(value);
+  }
+
+  function setFieldValue(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.value = value ?? "";
+  }
+
   function collectSettings(studentId) {
     const promptingMode = document.getElementById("editPromptingMode").value;
     const reinforcementSystem = document.getElementById("editReinforcementSystem").value;
@@ -516,12 +540,12 @@
     document.getElementById("editReinforcementPackage").value = merged.reinforcement_package || "stars";
     document.getElementById("editDifferentialReinforcement").value = merged.differential_reinforcement || "all-correct";
     const teaching=merged.activity_teaching_settings||{}; const community=teaching.communitySigns||{}; const shopping=teaching.shoppingBudget||{};
-    checkedValue("editCommunityTeachingEnabled")=community.enabled===true;
-    fieldValue("editCommunityTeachingType", "built-in")=community.type||"built-in";
-    fieldValue("editCommunityTeachingUrl")=community.url||"";
-    checkedValue("editShoppingTeachingEnabled")=shopping.enabled===true||merged.adaptive_teaching_enabled===true;
-    fieldValue("editShoppingTeachingType", "built-in")=shopping.type||merged.teaching_lesson_type||"built-in";
-    fieldValue("editShoppingTeachingUrl")=shopping.url||merged.teaching_lesson_url||"";
+    setChecked("editCommunityTeachingEnabled", community.enabled === true);
+    setFieldValue("editCommunityTeachingType", community.type || "built-in");
+    setFieldValue("editCommunityTeachingUrl", community.url || "");
+    setChecked("editShoppingTeachingEnabled", shopping.enabled === true || merged.adaptive_teaching_enabled === true);
+    setFieldValue("editShoppingTeachingType", shopping.type || merged.teaching_lesson_type || "built-in");
+    setFieldValue("editShoppingTeachingUrl", shopping.url || merged.teaching_lesson_url || "");
     document.getElementById("editLessonRightsConfirmed").checked = merged.lesson_rights_confirmed === true;
     document.getElementById("editInstructionNotes").value = merged.staff_notes || "";
     updateControlledSettingsDisplay();
