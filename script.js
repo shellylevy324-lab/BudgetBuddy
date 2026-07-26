@@ -9,7 +9,7 @@ const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="bu
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={classroom:{name:"My Classroom",leadTeacher:""},portableMeta:{revision:1,lastProgramChange:"",lastExport:"",lastImport:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false,cloudReportingFinalized:false};
+const appState={classroom:{name:"My Classroom",leadTeacher:""},portableMeta:{revision:1,lastProgramChange:"",lastExport:"",lastImport:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false,cloudReportingFinalized:false,answerPlan:[],currentPlannedAnswer:null};
 let pendingLibraryTokenData="";
 let pendingLibraryTokenFileName="";
 let pendingLibraryCompletionData="";
@@ -1072,6 +1072,76 @@ function toggleCartChoice(index){
     }
 }
 
+
+function getPlannedSessionLength(){
+    if(!appState.currentStudent)return 10;
+    return isTokenTeachingSession()
+        ? Number(appState.currentStudent.maximumTokenTrials)||10
+        : Number(appState.currentStudent.totalTrials)||10;
+}
+
+function createBalancedAnswerPlan(totalTrials){
+    const total=Math.max(2,Number(totalTrials)||10);
+    const lower=Math.ceil(total*0.4);
+    const upper=Math.floor(total*0.6);
+    const yesCount=lower+Math.floor(Math.random()*(Math.max(lower,upper)-lower+1));
+    return shuffleArray([
+        ...Array(yesCount).fill("yes"),
+        ...Array(total-yesCount).fill("no")
+    ]);
+}
+
+function getAllowedBudgetValues(){
+    const student=appState.currentStudent||getSelectedStudent();
+    if(!student)return [...budgetOptions];
+    const minimum=Math.max(1,Number(student.minimumBudget)||2);
+    const maximum=Math.max(minimum,Number(student.maximumBudget)||10);
+    if(student.budgetMode==="fixed")return [Number(minimum.toFixed(2))];
+    const values=[];
+    const step=student.useWholeDollarBudgets!==false?1:0.5;
+    let value=student.useWholeDollarBudgets!==false?Math.ceil(minimum):minimum;
+    const end=student.useWholeDollarBudgets!==false?Math.floor(maximum):maximum;
+    for(;value<=end+0.001;value+=step)values.push(Number(value.toFixed(2)));
+    return values.length?values:[Number(minimum.toFixed(2))];
+}
+
+function getBudgetCandidatesForAnswer(answer,cost){
+    return getAllowedBudgetValues().filter(function(budget){
+        return answer==="yes"?budget>=cost:budget<cost;
+    });
+}
+
+function canCreateAnswer(answer,cost){
+    return getBudgetCandidatesForAnswer(answer,Number(cost)||0).length>0;
+}
+
+function getBudgetForPlannedAnswer(answer,cost){
+    const candidates=getBudgetCandidatesForAnswer(answer,Number(cost)||0);
+    if(candidates.length)return candidates[Math.floor(Math.random()*candidates.length)];
+    return getRandomBudget();
+}
+
+function getCurrentAffordabilityCost(){
+    return isListAffordabilityLevel()
+        ? Number(appState.currentListTotal)||0
+        : Number(appState.currentItem?.price)||0;
+}
+
+function getNextBalancedItem(answer){
+    const compatible=shuffleArray(appState.items).filter(function(item){
+        return canCreateAnswer(answer,Number(item.price));
+    });
+    return compatible[0]||getNextItem();
+}
+
+function buildBalancedListTrial(answer){
+    for(let attempt=0;attempt<30;attempt+=1){
+        buildCurrentListTrial();
+        if(canCreateAnswer(answer,appState.currentListTotal))return;
+    }
+    buildCurrentListTrial();
+}
+
 function getRandomBudget(){
     const student=appState.currentStudent||getSelectedStudent();
 
@@ -1710,7 +1780,7 @@ async function startSession(){
 
     appState.selectedAdministratorId=administrator.id;
     saveSelectedAdministrator();
-appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.cloudReportingFinalized=false;appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];
+appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.cloudReportingFinalized=false;appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];appState.answerPlan=createBalancedAnswerPlan(getPlannedSessionLength());appState.currentPlannedAnswer=null;
 if(window.BuddySessionEngine){
     try{
         await window.BuddySessionEngine.startSession({
@@ -1723,7 +1793,7 @@ if(window.BuddySessionEngine){
             reinforcementPackageId:appState.currentStudent.reinforcementPackage,
             staffName:administrator.name,
             startedAt:appState.sessionStartedAt,
-            moduleVersion:"2.2.0"
+            moduleVersion:"2.4.1"
         });
     }catch(reportingError){
         console.error("Cloud reporting session could not start:",reportingError);
@@ -1751,25 +1821,31 @@ function loadNextTrial(){
 
     appState.currentTrial+=1;
 
+    appState.currentPlannedAnswer=isCartBuilderLevel()
+        ? null
+        : (appState.answerPlan[appState.currentTrial-1]||null);
+
     if(isCartBuilderLevel()){
         buildCartTrial();
         appState.currentItem=appState.cartChoices[0]||null;
         appState.currentListItems=[];
         appState.currentListTotal=0;
     }else if(isListAffordabilityLevel()){
-        buildCurrentListTrial();
+        buildBalancedListTrial(appState.currentPlannedAnswer);
         appState.currentItem=appState.currentListItems[0]||null;
         appState.cartChoices=[];
         appState.selectedCartIndexes=[];
     }else{
-        appState.currentItem=getNextItem();
+        appState.currentItem=getNextBalancedItem(appState.currentPlannedAnswer);
         appState.currentListItems=[];
         appState.currentListTotal=0;
         appState.cartChoices=[];
         appState.selectedCartIndexes=[];
     }
 
-    appState.currentBudget=getRandomBudget();
+    appState.currentBudget=isCartBuilderLevel()
+        ? getRandomBudget()
+        : getBudgetForPlannedAnswer(appState.currentPlannedAnswer,getCurrentAffordabilityCost());
 
     if(isCartBuilderLevel()){
         const minimumSolvableBudget=

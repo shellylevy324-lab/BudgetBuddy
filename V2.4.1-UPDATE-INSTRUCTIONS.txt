@@ -1,0 +1,18 @@
+Buddy Skills Platform v2.4.1 Update
+
+Replace these four files in your existing v2.4.0 BuddySkillsPlatform folder:
+
+1. script.js
+2. reports.js
+3. budget-buddy.html
+4. teacher-center.html
+
+What this update fixes:
+- Budget Buddy creates a randomized answer plan whose Yes/No distribution stays between 40/60 and 60/40 for the planned session.
+- The item/list and budget are selected together so the planned answer is actually possible within the student's configured budget range.
+- Teacher Center reports use Supabase cloud reports when available.
+- If cloud reports are unavailable or empty, Teacher Center displays Budget Buddy's browser-backup sessions from the current device.
+- Browser-backup sessions include trial details and can be exported to CSV.
+- Visible report status explains whether cloud or browser-backup records are being shown.
+
+No new SQL is required for the browser-backup report fix. Cross-device cloud reporting still requires teacher sign-in and SUPABASE-v2.1.0-REPORTING.sql.
