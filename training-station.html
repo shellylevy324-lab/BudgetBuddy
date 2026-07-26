@@ -18,9 +18,10 @@
     </header>
 
     <main class="page-shell">
-        <nav class="platform-page-nav" aria-label="Student activity navigation">
-            <a class="platform-back-link" href="classroom.html">← Back to Classroom</a>
-        </nav>
+        <div class="platform-page-nav student-mode-nav">
+            <span class="teacher-pilot-badge">Student View</span>
+            <button id="exitStudentMode" class="platform-back-link student-exit-button" type="button">End Student Session</button>
+        </div>
         <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
 
         <section class="card identity-card" aria-labelledby="welcomeMessage">
@@ -51,6 +52,6 @@
         </section>
     </main>
 
-    <script src="training-station.js"></script>
+    <script src="training-station.js?v=2.4.4"></script>
 </body>
 </html>

@@ -263,7 +263,8 @@
         cloudReinforcementPackage: reinforcementPackage
       };
       sessionStorage.setItem(SELECTED_STUDENT_KEY, JSON.stringify(selectedStudent));
-      window.location.href = "training-station.html";
+      sessionStorage.setItem("buddySkillsStudentMode", "active");
+      window.location.replace("training-station.html?v=2.4.4");
     } catch (error) {
       console.error(error);
       showStatus(`Could not prepare student activities: ${friendlyError(error)}`, "error");
@@ -386,6 +387,14 @@
       owner_id: currentUser.id,
       prompting_mode: promptingMode,
       wait_time_seconds: numberValue("editWaitTime", 10),
+      activity_access: {
+        shoppingBudget: document.getElementById("editActivityShoppingBudget").checked,
+        communitySigns: document.getElementById("editActivityCommunitySigns").checked
+      },
+      community_signs_set: numberValue("editCommunitySignsSet", 1),
+      community_signs_trial_count: numberValue("editCommunitySignsTrialCount", 10),
+      community_signs_prompt_step_seconds: numberValue("editCommunitySignsPromptStep", 5),
+      community_signs_audio_enabled: document.getElementById("editCommunitySignsAudio").checked,
       reinforcement_system: reinforcementSystem,
       reinforcement_type: reinforcementSystem === "token-board"
         ? "token"
@@ -414,6 +423,11 @@
     return {
       prompting_mode: "least-to-most",
       wait_time_seconds: 10,
+      activity_access: { shoppingBudget: true, communitySigns: true },
+      community_signs_set: 1,
+      community_signs_trial_count: 10,
+      community_signs_prompt_step_seconds: 5,
+      community_signs_audio_enabled: true,
       reinforcement_system: "token-board",
       reinforcement_type: "token",
       reinforcement_package: "stars",
@@ -438,6 +452,13 @@
       : legacyPromptingMode(merged);
     document.getElementById("editPromptingMode").value = promptingMode;
     document.getElementById("editWaitTime").value = String(merged.wait_time_seconds ?? 10);
+    const access = merged.activity_access || { shoppingBudget: true, communitySigns: true };
+    document.getElementById("editActivityShoppingBudget").checked = access.shoppingBudget !== false;
+    document.getElementById("editActivityCommunitySigns").checked = access.communitySigns !== false;
+    document.getElementById("editCommunitySignsSet").value = String(merged.community_signs_set ?? 1);
+    document.getElementById("editCommunitySignsTrialCount").value = String(merged.community_signs_trial_count ?? 10);
+    document.getElementById("editCommunitySignsPromptStep").value = String(merged.community_signs_prompt_step_seconds ?? 5);
+    document.getElementById("editCommunitySignsAudio").checked = merged.community_signs_audio_enabled !== false;
     const system = ["none", "token-board", "trial-reinforcement"].includes(merged.reinforcement_system)
       ? merged.reinforcement_system
       : (merged.reinforcement_type === "token"

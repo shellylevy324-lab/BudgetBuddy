@@ -1,0 +1,15 @@
+Buddy Skills v2.4.4 update
+
+1. In Supabase SQL Editor, run SUPABASE-v2.4.4-STUDENT-ACTIVITY-ASSIGNMENTS.sql once.
+2. Replace these files:
+   teacher-center.html
+   teacher-center.js
+   training-station.html
+   training-station.js
+   community-skills.html
+   community-signs.html
+   community-signs.js
+3. Commit/push to GitHub.
+4. Hard refresh with Ctrl+Shift+R.
+
+Student View is now a separate, assignment-only route. It has no Teacher Center link. Teachers launch it from Open Activities. End Student Session clears the selected student and locks the page.

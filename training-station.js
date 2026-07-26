@@ -1,199 +1,35 @@
 const SELECTED_STUDENT_KEY = "buddySkillsSelectedStudent";
+const STUDENT_MODE_KEY = "buddySkillsStudentMode";
 
 const STUDENT_ACTIVITIES = [
-    {
-        id: "shopping-budget",
-        title: "Shopping Budget",
-        icon: "🛒",
-        description: "Practice choosing items that fit within a budget.",
-        available: true,
-        href: "budget-buddy.html?launch=shopping-budget&v=2.4.2"
-    },
-    {
-        id: "making-change",
-        title: "Making Change",
-        icon: "💵",
-        description: "Practice finding the correct amount of change.",
-        available: false
-    },
-    {
-        id: "price-comparison",
-        title: "Price Comparison",
-        icon: "🏷️",
-        description: "Practice comparing prices and choosing between options.",
-        available: false
-    },
-    {
-        id: "counting-money",
-        title: "Counting Money",
-        icon: "🪙",
-        description: "Practice identifying and combining bills and coins.",
-        available: false
-    },
-    {
-        id: "laundry-steps",
-        title: "Laundry Steps",
-        icon: "🧺",
-        description: "Practice sorting and putting laundry steps in order.",
-        available: false
-    },
-    {
-        id: "community-skills",
-        title: "Community Skills",
-        icon: "🚌",
-        description: "Practice community safety and everyday decisions.",
-        available: true,
-        href: "community-skills.html?v=2.4.2"
-    },
-    {
-        id: "work-skills",
-        title: "Work Skills",
-        icon: "💼",
-        description: "Practice matching, sorting, counting, and stocking tasks.",
-        available: false
-    }
+  { id:"shopping-budget", settingKey:"shoppingBudget", title:"Shopping Budget", icon:"🛒", description:"Practice choosing items that fit within a budget.", href:"budget-buddy.html?launch=shopping-budget&v=2.4.4" },
+  { id:"community-signs", settingKey:"communitySigns", title:"Community Signs", icon:"🛑", description:"Practice recognizing important safety and community signs.", href:"community-signs.html?v=2.4.4" }
 ];
 
-function loadStudentHome() {
-    const selectedStudent = getSelectedStudent();
-    const trainee = selectedStudent ? normalizeSelectedStudent(selectedStudent) : {
-        preferredName: "Student",
-        name: "Student",
-        jobCoach: "Not assigned",
-        photo: ""
-    };
-
-    displayTrainee(trainee);
-    displayActivities(STUDENT_ACTIVITIES);
-
-    const statusMessage = document.getElementById("statusMessage");
-    if (statusMessage) {
-        statusMessage.textContent = selectedStudent
-            ? ""
-            : "No student was selected. Return to the Teacher Center and choose Open Activities for a student.";
-    }
+function loadStudentHome(){
+  const selectedStudent=getSelectedStudent();
+  const active=sessionStorage.getItem(STUDENT_MODE_KEY)==="active";
+  if(!selectedStudent||!active){ return showLockedStudentView(); }
+  const trainee=normalizeSelectedStudent(selectedStudent);
+  displayTrainee(trainee);
+  const access=selectedStudent.instructionalSettings?.activity_access||{shoppingBudget:true,communitySigns:true};
+  displayActivities(STUDENT_ACTIVITIES.filter(activity=>access[activity.settingKey]!==false));
+  document.getElementById("statusMessage").textContent="";
 }
-
-function getSelectedStudent() {
-    try {
-        const savedStudent = sessionStorage.getItem(SELECTED_STUDENT_KEY);
-        return savedStudent ? JSON.parse(savedStudent) : null;
-    } catch (error) {
-        console.warn("Selected student could not be read:", error);
-        return null;
-    }
+function showLockedStudentView(){
+  setText("welcomeMessage","Student View Locked"); setText("traineeName","Ask your teacher"); setText("jobCoachName","Not signed in");
+  const grid=document.getElementById("trainingGrid");
+  grid.innerHTML='<p class="empty-message">A teacher must open a student profile from the Teacher Center before activities can begin.</p>';
+  document.getElementById("statusMessage").textContent="No student session is active.";
+  document.getElementById("exitStudentMode").hidden=true;
 }
-
-function normalizeSelectedStudent(selectedStudent) {
-    const firstName = selectedStudent.firstName || "";
-    const lastName = selectedStudent.lastName || "";
-    const fullName = [firstName, lastName].filter(Boolean).join(" ");
-
-    return {
-        id: selectedStudent.id,
-        name: fullName || selectedStudent.preferredName || "Student",
-        preferredName: selectedStudent.preferredName || firstName || fullName || "Student",
-        jobCoach: selectedStudent.jobCoach || "Not assigned",
-        photo: ""
-    };
-}
-
-function displayTrainee(trainee) {
-    const displayName = trainee.preferredName || trainee.name || "Student";
-
-    setText("welcomeMessage", `Welcome, ${displayName}`);
-    setText("traineeName", displayName);
-    setText("jobCoachName", trainee.jobCoach || "Not assigned");
-    displayTraineePhoto(trainee.photo, displayName);
-}
-
-function displayTraineePhoto(photoPath, displayName) {
-    const wrap = document.getElementById("traineePhotoWrap");
-    if (!wrap) return;
-
-    wrap.innerHTML = "";
-
-    if (photoPath) {
-        const image = document.createElement("img");
-        image.className = "trainee-photo";
-        image.src = photoPath;
-        image.alt = `${displayName}'s profile photo`;
-        image.addEventListener("error", () => showPhotoPlaceholder(wrap, displayName));
-        wrap.appendChild(image);
-        return;
-    }
-
-    showPhotoPlaceholder(wrap, displayName);
-}
-
-function showPhotoPlaceholder(wrap, displayName) {
-    wrap.innerHTML = "";
-    const placeholder = document.createElement("span");
-    placeholder.className = "trainee-photo-placeholder";
-    placeholder.setAttribute("aria-hidden", "true");
-    placeholder.textContent = getInitials(displayName);
-    wrap.appendChild(placeholder);
-}
-
-function getInitials(name) {
-    return String(name)
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map((part) => part.charAt(0).toUpperCase())
-        .join("") || "BS";
-}
-
-function displayActivities(activities) {
-    const trainingGrid = document.getElementById("trainingGrid");
-    if (!trainingGrid) return;
-
-    trainingGrid.innerHTML = "";
-
-    activities.forEach((activity) => {
-        const card = document.createElement(activity.available ? "a" : "div");
-        card.className = `training-card${activity.available ? "" : " coming-soon"}`;
-
-        if (activity.available) {
-            card.href = activity.href;
-            card.setAttribute("aria-label", `${activity.title}: ${activity.description}`);
-        } else {
-            card.setAttribute("aria-disabled", "true");
-        }
-
-        const icon = document.createElement("span");
-        icon.className = "training-card-icon";
-        icon.textContent = activity.icon || "⭐";
-        icon.setAttribute("aria-hidden", "true");
-
-        const copy = document.createElement("span");
-        copy.className = "training-card-copy";
-
-        const title = document.createElement("span");
-        title.className = "training-card-title";
-        title.textContent = activity.title;
-
-        const description = document.createElement("span");
-        description.className = "training-card-description";
-        description.textContent = activity.description;
-
-        copy.append(title, description);
-
-        if (!activity.available) {
-            const label = document.createElement("span");
-            label.className = "coming-soon-label";
-            label.textContent = "Coming soon";
-            copy.appendChild(label);
-        }
-
-        card.append(icon, copy);
-        trainingGrid.appendChild(card);
-    });
-}
-
-function setText(id, value) {
-    const element = document.getElementById(id);
-    if (element) element.textContent = value;
-}
-
-document.addEventListener("DOMContentLoaded", loadStudentHome);
+function getSelectedStudent(){try{return JSON.parse(sessionStorage.getItem(SELECTED_STUDENT_KEY)||"null");}catch(e){return null;}}
+function normalizeSelectedStudent(s){const full=[s.firstName||"",s.lastName||""].filter(Boolean).join(" ");return{id:s.id,name:full||s.preferredName||"Student",preferredName:s.preferredName||s.firstName||full||"Student",jobCoach:s.jobCoach||"Not assigned",photo:""};}
+function displayTrainee(t){const n=t.preferredName||t.name||"Student";setText("welcomeMessage",`Welcome, ${n}`);setText("traineeName",n);setText("jobCoachName",t.jobCoach||"Not assigned");displayTraineePhoto(t.photo,n);}
+function displayTraineePhoto(photo,name){const wrap=document.getElementById("traineePhotoWrap");if(!wrap)return;wrap.innerHTML="";if(photo){const img=document.createElement("img");img.className="trainee-photo";img.src=photo;img.alt=`${name}'s profile photo`;img.addEventListener("error",()=>showPhotoPlaceholder(wrap,name));wrap.appendChild(img);}else showPhotoPlaceholder(wrap,name);}
+function showPhotoPlaceholder(wrap,name){wrap.innerHTML="";const span=document.createElement("span");span.className="trainee-photo-placeholder";span.setAttribute("aria-hidden","true");span.textContent=getInitials(name);wrap.appendChild(span);}
+function getInitials(name){return String(name).trim().split(/\s+/).slice(0,2).map(p=>p.charAt(0).toUpperCase()).join("")||"BS";}
+function displayActivities(activities){const grid=document.getElementById("trainingGrid");grid.innerHTML="";if(!activities.length){grid.innerHTML='<p class="empty-message">No activities are assigned right now. Ask your teacher to choose an activity.</p>';return;}activities.forEach(a=>{const card=document.createElement("a");card.className="training-card";card.href=a.href;card.setAttribute("aria-label",`${a.title}: ${a.description}`);card.innerHTML=`<span class="training-card-icon" aria-hidden="true">${a.icon}</span><span class="training-card-copy"><span class="training-card-title">${a.title}</span><span class="training-card-description">${a.description}</span></span>`;grid.appendChild(card);});}
+function endStudentMode(){sessionStorage.removeItem(SELECTED_STUDENT_KEY);sessionStorage.removeItem(STUDENT_MODE_KEY);window.location.replace("training-station.html?v=2.4.4");}
+function setText(id,value){const e=document.getElementById(id);if(e)e.textContent=value;}
+document.addEventListener("DOMContentLoaded",()=>{history.replaceState(null,"",location.href);loadStudentHome();document.getElementById("exitStudentMode")?.addEventListener("click",endStudentMode);});

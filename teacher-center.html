@@ -139,6 +139,49 @@
                 </fieldset>
 
                 <fieldset class="instruction-fieldset">
+                  <legend>Assigned student activities</legend>
+                  <div class="teacher-form-grid">
+                    <label class="teacher-checkbox"><input id="editActivityShoppingBudget" type="checkbox" checked> Shopping Budget</label>
+                    <label class="teacher-checkbox"><input id="editActivityCommunitySigns" type="checkbox" checked> Community Signs</label>
+                  </div>
+                  <small>Only checked, currently available activities appear in this student's activity view. Coming-soon activities are hidden.</small>
+                </fieldset>
+
+                <fieldset class="instruction-fieldset">
+                  <legend>Community Signs assignment</legend>
+                  <div class="teacher-form-grid">
+                    <div class="form-field teacher-form-wide">
+                      <label for="editCommunitySignsSet">Assigned teaching set</label>
+                      <select id="editCommunitySignsSet">
+                        <option value="1">Set 1 — Immediate Safety</option>
+                        <option value="2">Set 2 — Movement and Exits</option>
+                        <option value="3">Set 3 — Rules and Access</option>
+                        <option value="4">Set 4 — Restroom Identification</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="editCommunitySignsTrialCount">Trials per session</label>
+                      <select id="editCommunitySignsTrialCount">
+                        <option value="5">5 trials</option>
+                        <option value="10">10 trials</option>
+                        <option value="15">15 trials</option>
+                        <option value="20">20 trials</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="editCommunitySignsPromptStep">Time between distractor removals</label>
+                      <select id="editCommunitySignsPromptStep">
+                        <option value="3">3 seconds</option>
+                        <option value="5">5 seconds</option>
+                        <option value="8">8 seconds</option>
+                      </select>
+                    </div>
+                    <label class="teacher-checkbox teacher-form-wide"><input id="editCommunitySignsAudio" type="checkbox" checked> Use spoken directions and feedback</label>
+                  </div>
+                  <small>The default prompting mode and wait time above also control Community Signs. Baseline and Independent modes do not remove distractors.</small>
+                </fieldset>
+
+                <fieldset class="instruction-fieldset">
                   <legend>Reinforcement defaults</legend>
                   <div class="teacher-form-grid">
                     <div class="form-field">
@@ -427,6 +470,6 @@
   <script src="supabase-config.js"></script>
  <script src="adaptive-learning.js?v=2.2.0"></script>
 <script src="reports.js?v=2.4.1"></script>
-<script src="teacher-center.js?v=2.4.3"></script>
+<script src="teacher-center.js?v=2.4.4"></script>
 </body>
 </html>
