@@ -32,6 +32,15 @@
     document.getElementById("changePasswordForm")?.addEventListener("submit", changePassword);
     document.querySelectorAll("[data-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.section)));
     document.querySelectorAll("[data-open-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.openSection)));
+  function requestedSectionFromHash() {
+    const requested = String(window.location.hash || "").replace(/^#/, "");
+    return ["dashboard", "students", "reinforcement", "reports", "settings"].includes(requested) ? requested : "dashboard";
+  }
+
+  window.addEventListener("hashchange", () => {
+    if (!document.getElementById("teacherApp")?.hidden) showSection(requestedSectionFromHash());
+  });
+
     document.getElementById("newStudentButton")?.addEventListener("click", startNewStudent);
     document.getElementById("studentEditorForm")?.addEventListener("submit", saveStudent);
     document.getElementById("cancelStudentEditButton")?.addEventListener("click", clearEditor);
@@ -118,6 +127,7 @@
       await supabaseClient.rpc("claim_buddy_skills_pilot_data");
       populateReinforcementPackages();
       await Promise.all([loadStudents(), loadCloudReinforcementPackages()]);
+      showSection(requestedSectionFromHash());
     } catch (error) {
       console.error(error);
       showStatus(error.message, "error");

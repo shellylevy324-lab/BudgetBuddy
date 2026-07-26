@@ -103,11 +103,13 @@ function openTeacherPlatform(panelName="students"){
 }
 
 function openStudentPrograms(){
-    return openTeacherPlatform("students");
+    window.location.href="teacher-center.html#students";
+    return true;
 }
 
 function openSessionReports(){
-    return openTeacherPlatform("reports");
+    window.location.href="teacher-center.html#reports";
+    return true;
 }
 
 window.openStudentPrograms=openStudentPrograms;
@@ -737,13 +739,18 @@ function loadStudents(){
         }
     }
 
-    starterStudents.forEach(function(starter){
-        if(!appState.students.some(function(student){return student.id===starter.id})){
-            appState.students.push(normalizeStudent(starter));
-        }
-    });
-
     const classroomStudent=readClassroomStudent();
+
+    // Student mode must show only the student launched from Teacher Center.
+    // Legacy starter profiles remain available only when Budget Buddy is opened directly.
+    if(!classroomStudent){
+        starterStudents.forEach(function(starter){
+            if(!appState.students.some(function(student){return student.id===starter.id})){
+                appState.students.push(normalizeStudent(starter));
+            }
+        });
+    }
+
     if(classroomStudent){
         const existingIndex=appState.students.findIndex(function(student){
             return student.id===classroomStudent.id;
@@ -760,14 +767,11 @@ function loadStudents(){
             differentialReinforcement:inherited.differential_reinforcement||"all-correct",
             reinforcementType:inherited.reinforcement_system==="token-board"?"text-sound":"text"
         };
-        if(existingIndex>=0){
-            appState.students[existingIndex]=normalizeStudent({
-                ...appState.students[existingIndex],
-                ...inheritedProfile
-            });
-        }else{
-            appState.students.push(normalizeStudent(inheritedProfile));
-        }
+        const existingProfile=existingIndex>=0 ? appState.students[existingIndex] : {};
+        appState.students=[normalizeStudent({
+            ...existingProfile,
+            ...inheritedProfile
+        })];
         if(classroomStudent.cloudReinforcementPackage){
             const cloud=classroomStudent.cloudReinforcementPackage;
             const record=normalizeLibraryPackage({
@@ -790,7 +794,9 @@ function loadStudents(){
         }) ? stored : (appState.students[0]?.id||"");
     }
 
-    saveStudents();
+    if(!classroomStudent){
+        saveStudents();
+    }
     saveSelectedStudentId();
 }
 
@@ -2874,7 +2880,7 @@ function bindClick(element,handler,label){
 
 homeStudentSelect.onchange=()=>{appState.selectedStudentId=homeStudentSelect.value;saveSelectedStudentId()};
 startButton.onclick=openStudentWelcome;
-bindClick(teacherButton,openStudentPrograms,"Student Programs");
+bindClick(teacherButton,()=>{window.location.href="teacher-center.html#students"},"Teacher Center");
 bindClick(teacherBackButton,()=>{updateHomeStudentSelect();showScreen(homeScreen)},"Teacher Back");
 bindClick(classroomTabButton,()=>showTeacherPanel("classroom"),"Classroom tab");
 bindClick(studentsTabButton,()=>showTeacherPanel("students"),"Student Programs tab");
@@ -2931,4 +2937,4 @@ if (requestedActivity === "shopping-budget") {
     openStudentWelcome();
 }
 
-console.log("Buddy Skills v0.20 Navigation Cleanup loaded successfully");
+console.log("Buddy Skills v2.4.2 unified navigation loaded successfully");

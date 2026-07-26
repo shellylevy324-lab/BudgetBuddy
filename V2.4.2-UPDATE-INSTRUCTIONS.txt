@@ -1,0 +1,20 @@
+Buddy Skills Platform v2.4.2 Navigation Repair
+
+Replace these files in the existing BuddySkillsPlatform folder:
+- budget-buddy.html
+- script.js
+- teacher-center.html
+- teacher-center.js
+- training-station.js
+- community-skills.html
+- community-signs.html
+
+What this repairs:
+1. Budget Buddy teacher and report routes now open the protected Teacher Center.
+2. A student launched from Teacher Center is the only student shown in Budget Buddy student mode.
+3. Legacy test profiles such as Student A are no longer injected into a Teacher Center-launched session.
+4. Community Skills is active from both Training Station and Budget Buddy navigation.
+5. Community Signs opens directly instead of being represented as Coming Soon.
+6. Versioned links reduce stale-browser-cache navigation.
+
+No new Supabase SQL is required.

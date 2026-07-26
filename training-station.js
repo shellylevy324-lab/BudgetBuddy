@@ -7,7 +7,7 @@ const STUDENT_ACTIVITIES = [
         icon: "🛒",
         description: "Practice choosing items that fit within a budget.",
         available: true,
-        href: "budget-buddy.html?launch=shopping-budget"
+        href: "budget-buddy.html?launch=shopping-budget&v=2.4.2"
     },
     {
         id: "making-change",
@@ -42,7 +42,8 @@ const STUDENT_ACTIVITIES = [
         title: "Community Skills",
         icon: "🚌",
         description: "Practice community safety and everyday decisions.",
-        available: false
+        available: true,
+        href: "community-skills.html?v=2.4.2"
     },
     {
         id: "work-skills",
