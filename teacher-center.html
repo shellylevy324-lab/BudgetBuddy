@@ -148,7 +148,7 @@
 <div class="skill-settings-panel" data-skill-panel="money" hidden id="moneySkillPanel">
 <fieldset class="instruction-fieldset"><legend>Money Identification access and practice</legend><div class="teacher-form-grid">
 <label class="teacher-checkbox teacher-form-wide"><input checked id="editActivityMoneyIdentification" type="checkbox"/> Show Money Identification in this student's activities</label>
-<div class="form-field teacher-form-wide"><label for="editMoneyLevel">Instructional level</label><select id="editMoneyLevel"><option value="1">Level 1 — Match coin heads to coin tails</option><option value="2">Level 2 — Identify the coin's value</option><option value="3">Level 3 — Match a written value to the coin</option></select><small>Levels 2 and 3 vary how values are written, such as 25¢, 25 cents, and $0.25.</small></div>
+<div class="form-field teacher-form-wide"><label for="editMoneyLevel">Instructional level</label><select id="editMoneyLevel"><option value="1">Level 1 — Match coin heads to coin tails</option><option value="2">Level 2 — Identify the coin's value</option><option value="3">Level 3 — Match a written value to the coin</option><option value="4">Level 4 — Generalization and mixed review</option></select><small>Level 4 mixes previously learned responses instead of adding another separate discrete-trial direction.</small></div>
 <div class="form-field"><label for="editMoneyTrialCount">Trials per session</label><select id="editMoneyTrialCount"><option value="4">4 trials</option><option value="8">8 trials</option><option value="10">10 trials</option><option value="12">12 trials</option><option value="16">16 trials</option><option value="20">20 trials</option></select></div>
 <div class="form-field teacher-form-wide"><span class="field-label">Coins included</span><div class="coin-checkbox-grid">
 <label class="teacher-checkbox"><input checked id="editMoneyCoinPenny" type="checkbox"/> Penny</label>
@@ -156,6 +156,14 @@
 <label class="teacher-checkbox"><input checked id="editMoneyCoinDime" type="checkbox"/> Dime</label>
 <label class="teacher-checkbox"><input checked id="editMoneyCoinQuarter" type="checkbox"/> Quarter</label>
 </div></div>
+<div class="form-field teacher-form-wide"><span class="field-label">Level 4 generalization</span><div class="coin-checkbox-grid">
+<label class="teacher-checkbox"><input checked id="editMoneyGeneralizeCoinNames" type="checkbox"/> Mix coin names</label>
+<label class="teacher-checkbox"><input checked id="editMoneyGeneralizeWrittenValues" type="checkbox"/> Mix written values</label>
+<label class="teacher-checkbox"><input checked id="editMoneyGeneralizeCoinSides" type="checkbox"/> Mix heads and tails</label>
+<label class="teacher-checkbox"><input checked id="editMoneyGeneralizeRotation" type="checkbox"/> Vary coin rotation</label>
+<label class="teacher-checkbox"><input checked id="editMoneyGeneralizeBackgrounds" type="checkbox"/> Vary backgrounds and lighting</label>
+<label class="teacher-checkbox"><input checked id="editMoneyGeneralizeRelativeSize" type="checkbox"/> Preserve relative coin sizes</label>
+</div><small>These options apply only to Level 4. Choose the variations the student is ready to practice.</small></div>
 </div></fieldset>
 <fieldset class="instruction-fieldset"><legend>Money Identification teaching activity</legend><div class="teacher-form-grid">
 <label class="teacher-checkbox teacher-form-wide"><input id="editMoneyTeachingEnabled" type="checkbox"/> Use a teaching activity or video for this skill</label>
@@ -360,11 +368,11 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-<script src="skill-registry.js?v=3.0.4"></script>
+<script src="skill-registry.js?v=3.0.6"></script>
 <script src="skill-framework.js?v=3.0.0"></script>
 <script src="adaptive-learning.js?v=3.0.0"></script>
 <script src="reports.js?v=2.4.1"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="teacher-center.js?v=3.0.4"></script>
+<script src="teacher-center.js?v=3.0.6"></script>
 </body>
 </html>

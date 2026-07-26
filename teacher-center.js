@@ -489,7 +489,7 @@
         ? numberValue("editReinforcementRequirement", 5)
         : 5,
       differential_reinforcement: fieldValue("editDifferentialReinforcement", "all-correct"),
-      activity_teaching_settings: { communitySigns: { enabled: checkedValue("editCommunityTeachingEnabled"), type: fieldValue("editCommunityTeachingType", "built-in"), url: optional(fieldValue("editCommunityTeachingUrl")) }, shoppingBudget: { enabled: checkedValue("editShoppingTeachingEnabled"), type: fieldValue("editShoppingTeachingType", "built-in"), url: optional(fieldValue("editShoppingTeachingUrl")) }, moneyIdentification: { enabled: checkedValue("editMoneyTeachingEnabled"), type: fieldValue("editMoneyTeachingType", "built-in"), url: optional(fieldValue("editMoneyTeachingUrl")), level: numberValue("editMoneyLevel", 1), trialCount: numberValue("editMoneyTrialCount", 10), coins: ["penny","nickel","dime","quarter"].filter(id => checkedValue(`editMoneyCoin${id[0].toUpperCase()+id.slice(1)}`, false)) } },
+      activity_teaching_settings: { communitySigns: { enabled: checkedValue("editCommunityTeachingEnabled"), type: fieldValue("editCommunityTeachingType", "built-in"), url: optional(fieldValue("editCommunityTeachingUrl")) }, shoppingBudget: { enabled: checkedValue("editShoppingTeachingEnabled"), type: fieldValue("editShoppingTeachingType", "built-in"), url: optional(fieldValue("editShoppingTeachingUrl")) }, moneyIdentification: { enabled: checkedValue("editMoneyTeachingEnabled"), type: fieldValue("editMoneyTeachingType", "built-in"), url: optional(fieldValue("editMoneyTeachingUrl")), level: numberValue("editMoneyLevel", 1), trialCount: numberValue("editMoneyTrialCount", 10), coins: ["penny","nickel","dime","quarter"].filter(id => checkedValue(`editMoneyCoin${id[0].toUpperCase()+id.slice(1)}`, false)), generalization: { coinNames: checkedValue("editMoneyGeneralizeCoinNames", true), writtenValues: checkedValue("editMoneyGeneralizeWrittenValues", true), coinSides: checkedValue("editMoneyGeneralizeCoinSides", true), rotation: checkedValue("editMoneyGeneralizeRotation", true), backgrounds: checkedValue("editMoneyGeneralizeBackgrounds", true), relativeSize: checkedValue("editMoneyGeneralizeRelativeSize", true) } } },
       adaptive_teaching_enabled: checkedValue("editShoppingTeachingEnabled"),
       mastery_threshold: 50,
       teaching_lesson_type: fieldValue("editShoppingTeachingType", "built-in"),
@@ -525,7 +525,7 @@
       retry_trial_count: "same",
       maximum_reteaching_cycles: 1,
       lesson_rights_confirmed: false,
-      activity_teaching_settings: {communitySigns:{enabled:false,type:"built-in",url:null},shoppingBudget:{enabled:false,type:"built-in",url:null},moneyIdentification:{enabled:false,type:"built-in",url:null,level:1,trialCount:10,coins:["penny","nickel","dime","quarter"]}},
+      activity_teaching_settings: {communitySigns:{enabled:false,type:"built-in",url:null},shoppingBudget:{enabled:false,type:"built-in",url:null},moneyIdentification:{enabled:false,type:"built-in",url:null,level:1,trialCount:10,coins:["penny","nickel","dime","quarter"],generalization:{coinNames:true,writtenValues:true,coinSides:true,rotation:true,backgrounds:true,relativeSize:true}}},
       staff_notes: null
     };
   }
@@ -573,6 +573,13 @@
     setFieldValue("editMoneyTrialCount", String(money.trialCount || 10));
     const moneyCoins = Array.isArray(money.coins) && money.coins.length ? money.coins : ["penny","nickel","dime","quarter"];
     ["penny","nickel","dime","quarter"].forEach(id => setChecked(`editMoneyCoin${id[0].toUpperCase()+id.slice(1)}`, moneyCoins.includes(id)));
+    const moneyGeneralization = money.generalization || {};
+    setChecked("editMoneyGeneralizeCoinNames", moneyGeneralization.coinNames !== false);
+    setChecked("editMoneyGeneralizeWrittenValues", moneyGeneralization.writtenValues !== false);
+    setChecked("editMoneyGeneralizeCoinSides", moneyGeneralization.coinSides !== false);
+    setChecked("editMoneyGeneralizeRotation", moneyGeneralization.rotation !== false);
+    setChecked("editMoneyGeneralizeBackgrounds", moneyGeneralization.backgrounds !== false);
+    setChecked("editMoneyGeneralizeRelativeSize", moneyGeneralization.relativeSize !== false);
     document.getElementById("editLessonRightsConfirmed").checked = merged.lesson_rights_confirmed === true;
     document.getElementById("editInstructionNotes").value = merged.staff_notes || "";
     updateControlledSettingsDisplay();

@@ -1,0 +1,11 @@
+Buddy Skills Platform v3.0.6
+
+Replace these six files in the main BuddySkillsPlatform folder:
+- money-identification.html
+- money-identification.js
+- money-identification.css
+- teacher-center.html
+- teacher-center.js
+- skill-registry.js
+
+Then commit and push in GitHub Desktop. After GitHub Pages finishes deploying, refresh Teacher Center with Ctrl+F5.
