@@ -1,112 +1,22 @@
-# Buddy Skills
+# Buddy Skills v2.1.0 Reporting Infrastructure
 
-Growing Skills. Building Independence.
+This update connects the Teacher Center Reports interface to shared Supabase reporting tables.
 
-Buddy Skills is a transition-skills platform designed for middle school, high school, transition-age, and adult learners with diverse support needs.
+## Included
 
-Budget Buddy is the first learning module within the Buddy Skills platform.
+- `SUPABASE-v2.1.0-REPORTING.sql`
+- `reports.js`
+- updated `teacher-center.html`
+- updated `teacher-center.js`
+- complete `platform.css`
+- installation instructions
 
-## Mission
+## Reporting model
 
-Buddy Skills Platform is a web-based transition curriculum designed to help adolescents and young adults with autism and intellectual disabilities build the skills needed for greater independence in adulthood.
+- `student_sessions`: one row per activity session
+- `student_trials`: one row per completed trial
+- `student_trial_export`: readable, RLS-protected export view
 
-The platform emphasizes dignity, authentic learning, accessibility, and evidence-based instructional practices.
+Reports support student, activity, date-range, and teaching-phase filters; session details; summary totals; and Excel-friendly CSV export.
 
----
-
-## Current Training Areas
-
-- Money Skills
-    - Shopping Budget (Budget Buddy)
-
-Future Training Areas:
-
-- Communication Skills
-- Community Skills
-- Daily Living Skills
-- Employment Skills
-- Health & Wellness
-- Executive Function
-- Leisure Skills
-
----
-
-## Current Navigation
-
-Landing Page
-
-↓
-
-Training Station
-
-↓
-
-Money Skills
-
-↓
-
-Shopping Budget
-
----
-
-## Technology
-
-- HTML
-- CSS
-- JavaScript
-- Git
-- GitHub
-- GitHub Pages
-- Supabase (planned)
-
----
-
-## Current Version
-
-Version 1.0 (Development)
-
-Current Branch:
-
-v1-cloud-classroom
-
-Production:
-
-main
-
----
-
-## Long-Term Vision
-
-A cloud-based transition platform that allows teachers, paraprofessionals, job coaches, and families to:
-
-- assign training
-- collect performance data
-- monitor independence
-- customize prompting
-- sync across multiple devices
-- support multiple schools
-
-while providing students and adult learners with a respectful, age-appropriate learning experience.
-
----
-
-## Design Principles
-
-- Independence First
-- Dignity First
-- Accessibility
-- Consistency
-- Evidence-Based Practice
-- Calm, Professional Design
-
----
-
-Developed by:
-
-Shelly Wilbar
-
-Special Education Teacher
-
-Transition Program
-## v1.9.0 Adaptive Teaching Foundation
-Student profiles can now store a teacher-selected reteaching threshold, lesson source, retry length, and maximum reteaching cycles. `adaptive-learning.js` supplies a reusable decision engine for activity modules. This release includes the v1.8.0 trial-reinforcement changes.
+The tables are intentionally shared across Buddy Skills modules. Budget Buddy will be connected to write session and trial rows in the next update.

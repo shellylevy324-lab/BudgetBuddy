@@ -1,39 +1,21 @@
-BUDDY SKILLS CLOUD CLASSROOM - INSTALLATION STEPS
+BUDDY SKILLS v2.1.0 - REPORTING INFRASTRUCTURE
 
-This is a DEVELOPMENT proof of concept. Use fictional student data only.
+1. In Supabase, open SQL Editor.
+2. Create a new query and paste the full contents of:
+   SUPABASE-v2.1.0-REPORTING.sql
+3. Run the query. It creates teacher-owned student_sessions and student_trials tables, indexes, validation triggers, RLS policies, and an export view.
+4. In your BuddySkillsPlatform project folder, replace:
+   - teacher-center.html
+   - teacher-center.js
+   - platform.css
+5. Add the new file:
+   - reports.js
+6. Keep reports.js in the same folder as teacher-center.js and teacher-center.html.
+7. Commit and push the changes to GitHub Pages.
+8. Hard-refresh Teacher Center (Ctrl+Shift+R on Windows or Cmd+Shift+R on Mac).
+9. Open Reports. A clean empty report should load without a database error.
 
-FILES TO COPY INTO THE ROOT OF YOUR BUDDY SKILLS PROJECT
-- classroom.html (new)
-- classroom.js (new)
-- supabase-config.js (new)
-- platform.css (replace existing)
-- training-station.html (replace existing)
-- training-station.js (replace existing)
-
-CONFIGURE SUPABASE
-1. Open supabase-config.js in VS Code.
-2. In the Supabase Connect panel, copy the value after:
-   NEXT_PUBLIC_SUPABASE_URL=
-3. Paste that value between the quotation marks for url.
-4. Copy the value after:
-   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-5. Paste that value between the quotation marks for publishableKey.
-6. Do not use a secret key, service_role key, database password, or connection string.
-
-TEST LOCALLY
-1. Start Live Server.
-2. Open classroom.html.
-3. Add a fictional student, such as Test Student A.
-4. Confirm the student appears in the list.
-5. Select Open Training Station.
-6. Confirm the selected fictional student's name appears.
-
-TEST ACROSS DEVICES
-1. Commit and push these files to the branch being published by GitHub Pages.
-2. Open /classroom.html on Device A and add a fictional student.
-3. Open the same /classroom.html address on Device B.
-4. Select Refresh students if needed.
-5. Confirm the same fictional student appears.
-
-SECURITY WARNING
-The temporary anon policies currently allow anyone with access to the development site to read and add rows. Do not enter real student information. Staff authentication and private Row Level Security policies must be completed before real use.
+IMPORTANT
+- This package creates and reads the reporting infrastructure.
+- Budget Buddy does not write new sessions into these tables yet. That is the next connection step.
+- Continue using de-identified pilot student information until your school approves storage of real student data.

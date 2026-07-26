@@ -517,31 +517,20 @@
 
   function renderReports() {
     populateReportStudentFilter();
-    // Version 2.0.0 establishes the clean reports interface. Cloud session
-    // records are connected in the next database step, so the UI remains
-    // truthful and displays an empty state rather than invented sample data.
-    const values = {
-      reportSessionsCount: "0",
-      reportTrialsCount: "0",
-      reportIndependentPercent: "—",
-      reportPromptedPercent: "—",
-      reportIncorrectPercent: "—",
-      reportAverageLatency: "—"
-    };
-    Object.entries(values).forEach(([id, value]) => {
-      const element = document.getElementById(id);
-      if (element) element.textContent = value;
+    if (!window.BuddyReports) {
+      showStatus("The reporting helper did not load. Confirm reports.js is beside teacher-center.js.", "error");
+      return;
+    }
+    window.BuddyReports.initialize({
+      getClient: () => supabaseClient,
+      getStudents: () => students,
+      showStatus
     });
-    const body = document.getElementById("reportSessionTableBody");
-    if (body) body.innerHTML = '<tr><td colspan="9" class="reports-empty-cell">Cloud session storage will be connected in the next step. Completed sessions will appear here automatically.</td></tr>';
-    const detail = document.getElementById("reportSessionDetailCard");
-    if (detail) detail.hidden = true;
-    const exportButton = document.getElementById("exportReportCsvButton");
-    if (exportButton) exportButton.disabled = true;
+    window.BuddyReports.render();
   }
 
   function exportReportCsv() {
-    showStatus("CSV export will become available as soon as cloud session storage is connected.", "info");
+    window.BuddyReports?.exportCsv();
   }
 
 
