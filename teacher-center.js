@@ -235,7 +235,7 @@
       if (error) throw error;
       const url = new URL("training-station.html", window.location.href);
       url.searchParams.set("access", accessCode);
-      url.searchParams.set("v", "2.4.6");
+      url.searchParams.set("v", "2.4.8");
       showStudentAccess(student, url.toString());
       showStatus("Student access is ready. Teacher Center will remain open.", "success");
     } catch (error) {
@@ -254,7 +254,11 @@
   function showStudentAccess(student, url) {
     const modal = document.getElementById("studentAccessModal");
     const input = document.getElementById("studentAccessUrl");
-    document.getElementById("studentAccessSummary").textContent = `Scan this code to open ${displayName(student)}'s assigned activities.`;
+    const summary = document.getElementById("studentAccessSummary");
+    if (!modal || !input || !summary) {
+      throw new Error("Student Access window is missing from teacher-center.html");
+    }
+    summary.textContent = `Scan this code to open ${displayName(student)}'s assigned activities.`;
     input.value = url;
     input.dataset.studentUrl = url;
     const qr = document.getElementById("studentAccessQr");

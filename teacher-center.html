@@ -473,10 +473,35 @@
     </main>
   </div>
 
+  <div id="studentAccessModal" class="student-access-modal" hidden>
+    <div class="student-access-dialog" role="dialog" aria-modal="true" aria-labelledby="studentAccessHeading">
+      <div class="section-heading-row">
+        <div><p class="eyebrow">Student device access</p><h2 id="studentAccessHeading">Open Student Activities</h2></div>
+        <button id="closeStudentAccessButton" class="teacher-secondary-button" type="button">Close</button>
+      </div>
+      <p id="studentAccessSummary" class="supporting-copy"></p>
+      <div class="student-access-grid">
+        <div>
+          <div id="studentAccessQr" class="student-access-qr" aria-label="QR code for student access"></div>
+          <p class="student-access-expiry">This access link expires after 12 hours.</p>
+        </div>
+        <div class="student-access-actions">
+          <label for="studentAccessUrl">Student link</label>
+          <input id="studentAccessUrl" type="text" readonly>
+          <button id="copyStudentAccessButton" class="platform-button" type="button">Copy Student Link</button>
+          <button id="openStudentTabButton" class="platform-button" type="button">Open Student View in New Tab</button>
+          <p class="supporting-copy">Keep Teacher Center open in this tab. Scan the QR code on the student device or open the student view in another tab.</p>
+        </div>
+      </div>
+      <p id="studentAccessStatus" class="classroom-status" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
  <script src="adaptive-learning.js?v=2.2.0"></script>
 <script src="reports.js?v=2.4.1"></script>
-<script src="teacher-center.js?v=2.4.7"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="teacher-center.js?v=2.4.8"></script>
 </body>
 </html>
