@@ -1,0 +1,34 @@
+BUDDY SKILLS PLATFORM v3.1.0
+BUILD THE AMOUNT — UPDATE INSTRUCTIONS
+
+Replace these files in the main BuddySkillsPlatform folder:
+
+1. money-amounts.html          (new)
+2. money-amounts.js            (new)
+3. money-amounts.css           (new)
+4. skill-registry.js
+5. teacher-center.html
+6. teacher-center.js
+7. training-station.html
+8. training-station.js
+9. money-skills.html
+
+Important:
+- Put all files directly in the main project folder, beside index.html.
+- Do not place them inside a separate replacement-files folder.
+- No new Supabase SQL is required for this update.
+
+After replacement:
+1. Open GitHub Desktop.
+2. Commit the changes with: Add Build the Amount skill v3.1.0
+3. Push origin.
+4. Wait for GitHub Pages to finish deploying.
+5. Refresh Teacher Center with Ctrl+F5.
+6. Open a student profile, choose Build the Amount, select a level, and save.
+7. Open the student's Training Station and test the activity.
+
+LEVELS
+Level 1 — Build a named amount using coins.
+Level 2 — Make the exact amount shown on a price tag.
+Level 3 — Pay with the next whole dollar up.
+Level 4 — Create the correct change after paying.

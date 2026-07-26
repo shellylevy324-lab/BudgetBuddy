@@ -11,7 +11,7 @@ async function loadStudentHome(){
       sessionStorage.setItem(SELECTED_STUDENT_KEY,JSON.stringify(selected));
       sessionStorage.setItem(STUDENT_MODE_KEY,"active");
       sessionStorage.setItem(ACCESS_CODE_KEY,code);
-      history.replaceState(null,"",`training-station.html?access=${encodeURIComponent(code)}&v=3.0.2`);
+      history.replaceState(null,"",`training-station.html?access=${encodeURIComponent(code)}&v=3.1.0`);
     }catch(error){
       console.error(error);
       return showLockedStudentView("This student link could not be opened. Ask the teacher to check the permanent QR code.");
@@ -64,6 +64,6 @@ function displayTraineePhoto(photo,name){const wrap=document.getElementById("tra
 function showPhotoPlaceholder(wrap,name){wrap.innerHTML="";const span=document.createElement("span");span.className="trainee-photo-placeholder";span.setAttribute("aria-hidden","true");span.textContent=getInitials(name);wrap.appendChild(span);}
 function getInitials(name){return String(name).trim().split(/\s+/).slice(0,2).map(p=>p.charAt(0).toUpperCase()).join("")||"BS";}
 function displayActivities(activities){const grid=document.getElementById("trainingGrid");grid.innerHTML="";if(!activities.length){grid.innerHTML='<p class="empty-message">No activities are assigned right now. Ask your teacher to choose an activity.</p>';return;}activities.forEach(a=>{const card=document.createElement("a");card.className="training-card";card.href=a.href;card.setAttribute("aria-label",`${a.title}: ${a.description}`);card.innerHTML=`<span class="training-card-icon" aria-hidden="true">${a.icon}</span><span class="training-card-copy"><span class="training-card-title">${a.title}</span><span class="training-card-description">${a.description}</span></span>`;grid.appendChild(card);});}
-function endStudentMode(){sessionStorage.removeItem(SELECTED_STUDENT_KEY);sessionStorage.removeItem(STUDENT_MODE_KEY);sessionStorage.removeItem(ACCESS_CODE_KEY);location.replace("training-station.html?v=3.0.2");}
+function endStudentMode(){sessionStorage.removeItem(SELECTED_STUDENT_KEY);sessionStorage.removeItem(STUDENT_MODE_KEY);sessionStorage.removeItem(ACCESS_CODE_KEY);location.replace("training-station.html?v=3.1.0");}
 function setText(id,value){const e=document.getElementById(id);if(e)e.textContent=value;}
 document.addEventListener("DOMContentLoaded",()=>{loadStudentHome();document.getElementById("exitStudentMode")?.addEventListener("click",endStudentMode);});

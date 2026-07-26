@@ -1,4 +1,4 @@
-/* Buddy Skills v3.0.2 - Skill Registry
+/* Buddy Skills v3.1.0 - Skill Registry
  * One source of truth for teacher controls, student cards, and activity metadata.
  */
 (function () {
@@ -46,7 +46,7 @@
       shortTitle: "Money ID",
       icon: "💵",
       description: "Identify U.S. coins and bills by name and value.",
-      href: "money-identification.html?v=3.0.6",
+      href: "money-identification.html?v=3.1.0",
       available: true,
       teacherPanelId: "moneySkillPanel",
       accessInputId: "editActivityMoneyIdentification",
@@ -54,6 +54,23 @@
         enabledInputId: "editMoneyTeachingEnabled",
         typeInputId: "editMoneyTeachingType",
         urlInputId: "editMoneyTeachingUrl"
+      }
+    },
+    {
+      key: "moneyAmounts",
+      activityKey: "money-amounts",
+      title: "Build the Amount",
+      shortTitle: "Amounts",
+      icon: "🪙",
+      description: "Build exact amounts, pay the next dollar up, and create change.",
+      href: "money-amounts.html?v=3.1.0",
+      available: true,
+      teacherPanelId: "moneyAmountsSkillPanel",
+      accessInputId: "editActivityMoneyAmounts",
+      teaching: {
+        enabledInputId: "editMoneyAmountsTeachingEnabled",
+        typeInputId: "editMoneyAmountsTeachingType",
+        urlInputId: "editMoneyAmountsTeachingUrl"
       }
     }
   ];
@@ -70,5 +87,5 @@
     return skills.find(skill => skill.key === key || skill.activityKey === key) || null;
   }
 
-  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.0.6" });
+  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.1.0" });
 })();
