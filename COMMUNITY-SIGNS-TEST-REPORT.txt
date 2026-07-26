@@ -1,0 +1,21 @@
+Buddy Skills Platform - Community Signs Test Report
+Module version: 2.4.0
+
+PASS - Community Signs now contains 21 requested targets across four sequential teaching sets.
+PASS - Sets 1-3 contain six signs each; Set 4 contains three restroom-identification signs.
+PASS - Current set is saved separately for each selected student using local progress storage.
+PASS - A set advances after at least 10 trials with 80% accuracy and 80% independent responding.
+PASS - Previously mastered sets remain available for review; later sets remain locked until progression.
+PASS - Every trial uses one target and two randomized distractors drawn from the active teaching set.
+PASS - Least-to-most prompting removes one distractor and then the second distractor.
+PASS - Audio directions, repeat directions, corrective feedback, and praise use speech synthesis.
+PASS - First-response latency, accuracy, independence, prompt level, teaching set, and mastery outcome are reported.
+PASS - Trial and session data continue through the existing BuddySessionEngine adapter.
+PASS - All 21 local SVG sign assets are present and referenced.
+PASS - JavaScript syntax and ZIP integrity checks passed.
+
+Teaching sets:
+1. Stop; Do Not Enter; Danger; Poison; Caution; Slippery When Wet
+2. Exit; Fire Exit; Walk; Don't Walk; Elevator; Stairs
+3. No Smoking; No Food or Drink; Open; Closed; Wheelchair Accessible; Unisex Restroom
+4. Men's Restroom; Women's Restroom; Family Restroom
