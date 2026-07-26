@@ -1,0 +1,5 @@
+Buddy Skills Platform v2.4.5
+
+Replace community-signs.js and community-signs.html in the BuddySkillsPlatform folder.
+This build embeds all Community Signs artwork directly in community-signs.js, so the module no longer depends on separate sign image paths.
+After uploading, hard refresh with Ctrl+Shift+R.
