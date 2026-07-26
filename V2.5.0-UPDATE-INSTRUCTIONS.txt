@@ -1,0 +1,8 @@
+Buddy Skills Platform v2.5.0 - Permanent Student QR Codes
+
+1. Run SUPABASE-v2.5.0-PERMANENT-STUDENT-ACCESS.sql once in Supabase.
+2. Replace teacher-center.js and teacher-center.html.
+3. Commit and push to GitHub.
+4. Hard refresh Teacher Center with Ctrl+Shift+R.
+
+Each student now keeps one stable QR code/link. Opening Activities again reuses the same code instead of creating a new 12-hour link.

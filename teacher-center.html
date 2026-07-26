@@ -238,25 +238,51 @@
                 </fieldset>
 
                 <fieldset class="instruction-fieldset">
-                  <legend>Skill-specific teaching activities</legend>
-                  <p class="supporting-copy">These settings apply only to the selected skill. Shared prompting and reinforcement settings above continue across all activities.</p>
-                  <div class="skill-teaching-card">
-                    <h5>Community Signs</h5>
-                    <div class="teacher-form-grid">
-                      <label class="teacher-checkbox teacher-form-wide"><input id="editCommunityTeachingEnabled" type="checkbox"> Provide a teaching activity for Community Signs</label>
-                      <div class="form-field"><label for="editCommunityTeachingType">Teaching activity</label><select id="editCommunityTeachingType"><option value="built-in">Buddy Skills built-in lesson</option><option value="youtube">YouTube video</option><option value="external-link">External lesson link</option></select></div>
-                      <div class="form-field teacher-form-wide"><label for="editCommunityTeachingUrl">Community Signs lesson URL</label><input id="editCommunityTeachingUrl" type="url" maxlength="500" placeholder="Paste a school-approved video or lesson link"></div>
+                  <legend>Adaptive teaching and reteaching</legend>
+                  <div class="teacher-form-grid">
+                    <label class="teacher-checkbox teacher-form-wide"><input id="editAdaptiveTeachingEnabled" type="checkbox"> Automatically teach and retry when accuracy is at or below the selected threshold</label>
+                    <div class="form-field">
+                      <label for="editMasteryThreshold">Reteaching threshold</label>
+                      <select id="editMasteryThreshold">
+                        <option value="50">50% or less</option>
+                        <option value="60">60% or less</option>
+                        <option value="70">70% or less</option>
+                        <option value="80">80% or less</option>
+                        <option value="90">90% or less</option>
+                      </select>
                     </div>
-                  </div>
-                  <div class="skill-teaching-card">
-                    <h5>Shopping Budget</h5>
-                    <div class="teacher-form-grid">
-                      <label class="teacher-checkbox teacher-form-wide"><input id="editShoppingTeachingEnabled" type="checkbox"> Provide a teaching activity for Shopping Budget</label>
-                      <div class="form-field"><label for="editShoppingTeachingType">Teaching activity</label><select id="editShoppingTeachingType"><option value="built-in">Buddy Skills built-in lesson</option><option value="youtube">YouTube video</option><option value="external-link">External lesson link</option></select></div>
-                      <div class="form-field teacher-form-wide"><label for="editShoppingTeachingUrl">Shopping Budget lesson URL</label><input id="editShoppingTeachingUrl" type="url" maxlength="500" placeholder="Paste a school-approved video or lesson link"></div>
+                    <div class="form-field">
+                      <label for="editTeachingLessonType">Teaching lesson type</label>
+                      <select id="editTeachingLessonType">
+                        <option value="built-in">Buddy Skills built-in lesson</option>
+                        <option value="youtube">YouTube video</option>
+                        <option value="external-link">External lesson link</option>
+                        <option value="teacher-upload">Teacher-uploaded lesson (coming next)</option>
+                      </select>
                     </div>
+                    <div id="editTeachingLessonUrlField" class="form-field teacher-form-wide">
+                      <label for="editTeachingLessonUrl">Lesson URL</label>
+                      <input id="editTeachingLessonUrl" type="url" maxlength="500" placeholder="Paste a YouTube or school-approved lesson link">
+                      <small>YouTube lessons use the official privacy-enhanced embedded player. Buddy Skills does not download or rehost the video.</small>
+                    </div>
+                    <div class="form-field">
+                      <label for="editRetryTrialCount">Retry after teaching</label>
+                      <select id="editRetryTrialCount">
+                        <option value="same">Repeat the full trial set</option>
+                        <option value="5">5 new trials</option>
+                        <option value="10">10 new trials</option>
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label for="editMaximumReteachingCycles">Maximum reteaching cycles</label>
+                      <select id="editMaximumReteachingCycles">
+                        <option value="1">1 cycle, then staff review</option>
+                        <option value="2">2 cycles, then staff review</option>
+                      </select>
+                    </div>
+                    <label class="teacher-checkbox teacher-form-wide"><input id="editLessonRightsConfirmed" type="checkbox"> I created this lesson, have permission to use it, or am authorized to use or link to it for instruction.</label>
                   </div>
-                  <label class="teacher-checkbox teacher-form-wide"><input id="editLessonRightsConfirmed" type="checkbox"> I created these lessons, have permission to use them, or am authorized to link to them.</label>
+                  <small>Activities will record initial accuracy, reteaching, reassessment accuracy, improvement, and the number of cycles when they connect to this adaptive-teaching engine.</small>
                 </fieldset>
 
                 <div class="form-field">
@@ -454,10 +480,11 @@
         <button id="closeStudentAccessButton" class="teacher-secondary-button" type="button">Close</button>
       </div>
       <p id="studentAccessSummary" class="supporting-copy"></p>
+      <p class="supporting-copy"><strong>Permanent access:</strong> This QR code and link remain the same for this student.</p>
       <div class="student-access-grid">
         <div>
           <div id="studentAccessQr" class="student-access-qr" aria-label="QR code for student access"></div>
-          <p class="student-access-expiry">This access link expires after 12 hours.</p>
+          <p class="student-access-expiry">This QR code and link remain active until a teacher disables or regenerates them.</p>
         </div>
         <div class="student-access-actions">
           <label for="studentAccessUrl">Student link</label>
@@ -476,6 +503,6 @@
  <script src="adaptive-learning.js?v=2.2.0"></script>
 <script src="reports.js?v=2.4.1"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="teacher-center.js?v=2.4.9"></script>
+<script src="teacher-center.js?v=2.5.0"></script>
 </body>
 </html>

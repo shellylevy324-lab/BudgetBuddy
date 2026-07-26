@@ -37,8 +37,6 @@
     document.getElementById("cancelStudentEditButton")?.addEventListener("click", clearEditor);
     document.getElementById("editPromptingMode")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("editReinforcementSystem")?.addEventListener("change", updateControlledSettingsDisplay);
-    document.getElementById("editAdaptiveTeachingEnabled")?.addEventListener("change", updateControlledSettingsDisplay);
-    document.getElementById("editTeachingLessonType")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("newReinforcementPackageButton")?.addEventListener("click", () => openReinforcementEditor());
     document.getElementById("closeReinforcementEditorButton")?.addEventListener("click", closeReinforcementEditor);
     document.getElementById("reinforcementPackageForm")?.addEventListener("submit", saveCloudReinforcementPackage);
@@ -226,21 +224,39 @@
       return;
     }
     try {
-      showStatus("Creating secure student access...", "info");
-      const accessCode = createAccessCode();
-      const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
-      const { error } = await supabaseClient.from("student_access_links").insert({
-        owner_id: currentUser.id, student_id: student.id, access_code: accessCode, expires_at: expiresAt
-      });
-      if (error) throw error;
+      showStatus("Loading permanent student access...", "info");
+      let accessCode = "";
+      const { data: existingLinks, error: lookupError } = await supabaseClient
+        .from("student_access_links")
+        .select("access_code")
+        .eq("owner_id", currentUser.id)
+        .eq("student_id", student.id)
+        .is("revoked_at", null)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (lookupError) throw lookupError;
+
+      if (existingLinks?.length) {
+        accessCode = existingLinks[0].access_code;
+      } else {
+        accessCode = createAccessCode();
+        const { error: insertError } = await supabaseClient.from("student_access_links").insert({
+          owner_id: currentUser.id,
+          student_id: student.id,
+          access_code: accessCode,
+          expires_at: null
+        });
+        if (insertError) throw insertError;
+      }
+
       const url = new URL("training-station.html", window.location.href);
       url.searchParams.set("access", accessCode);
-      url.searchParams.set("v", "2.4.8");
+      url.searchParams.set("v", "2.5.0");
       showStudentAccess(student, url.toString());
-      showStatus("Student access is ready. Teacher Center will remain open.", "success");
+      showStatus("Permanent student access is ready. This QR code will stay the same.", "success");
     } catch (error) {
       console.error(error);
-      showStatus(`Could not create student access: ${friendlyError(error)}. Run the v2.4.6 Student Access SQL once in Supabase.`, "error");
+      showStatus(`Could not create student access: ${friendlyError(error)}. Run the v2.5.0 Permanent Student Access SQL once in Supabase.`, "error");
     }
   }
 
