@@ -160,6 +160,13 @@
                       </select>
                     </div>
                     <div class="form-field">
+                      <label for="editCommunitySignsResponseLevel">Answer level</label>
+                      <select id="editCommunitySignsResponseLevel">
+                        <option value="1">Level 1 — Identify with simple words</option>
+                        <option value="2">Level 2 — Functional meaning or action</option>
+                      </select>
+                    </div>
+                    <div>
                       <label for="editCommunitySignsTrialCount">Trials per session</label>
                       <select id="editCommunitySignsTrialCount">
                         <option value="5">5 trials</option>
@@ -176,7 +183,7 @@
                         <option value="8">8 seconds</option>
                       </select>
                     </div>
-                    <label class="teacher-checkbox teacher-form-wide"><input id="editCommunitySignsAudio" type="checkbox" checked> Use spoken directions and feedback</label>
+                    <label class="teacher-checkbox teacher-form-wide"><input id="editCommunitySignsAudio" type="checkbox" checked> Highlight and speak every answer before choices unlock</label>
                   </div>
                   <small>The default prompting mode and wait time above also control Community Signs. Baseline and Independent modes do not remove distractors.</small>
                 </fieldset>
@@ -470,6 +477,6 @@
   <script src="supabase-config.js"></script>
  <script src="adaptive-learning.js?v=2.2.0"></script>
 <script src="reports.js?v=2.4.1"></script>
-<script src="teacher-center.js?v=2.4.4"></script>
+<script src="teacher-center.js?v=2.4.7"></script>
 </body>
 </html>

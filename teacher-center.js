@@ -50,6 +50,9 @@
       document.getElementById(id)?.addEventListener("change", renderReports);
     });
     document.getElementById("exportReportCsvButton")?.addEventListener("click", exportReportCsv);
+    document.getElementById("closeStudentAccessButton")?.addEventListener("click", closeStudentAccess);
+    document.getElementById("copyStudentAccessButton")?.addEventListener("click", copyStudentAccessLink);
+    document.getElementById("openStudentTabButton")?.addEventListener("click", openStudentViewTab);
   }
 
 
@@ -223,52 +226,54 @@
       return;
     }
     try {
-      showStatus("Preparing the student profile...", "info");
-      const { data: settings, error: settingsError } = await supabaseClient.from(SETTINGS_TABLE)
-        .select("*").eq("student_id", student.id).maybeSingle();
-      if (settingsError) throw settingsError;
-      let reinforcementPackage = null;
-      const packageValue = settings?.reinforcement_package || "";
-
-      if (packageValue.startsWith("library:")) {
-        const packageId = packageValue.slice("library:".length);
-        const isUuid =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(packageId);
-
-        if (isUuid) {
-          const { data, error } = await supabaseClient
-            .from(REINFORCEMENT_TABLE)
-            .select(
-              "id, name, praise_text, token_url, completion_url, audio_url, token_path, completion_path, audio_path, active"
-            )
-            .eq("id", packageId)
-            .maybeSingle();
-
-          if (error) throw error;
-
-          reinforcementPackage = data
-            ? await hydrateReinforcementPackage(data)
-            : null;
-        }
-      }
-
-      const selectedStudent = {
-        id: student.id,
-        firstName: student.first_name || "",
-        lastName: student.last_name || "",
-        preferredName: student.preferred_name || student.first_name || "Student",
-        gradeLevel: student.grade_level || "",
-        jobCoach: student.job_coach || "",
-        instructionalSettings: settings || null,
-        cloudReinforcementPackage: reinforcementPackage
-      };
-      sessionStorage.setItem(SELECTED_STUDENT_KEY, JSON.stringify(selectedStudent));
-      sessionStorage.setItem("buddySkillsStudentMode", "active");
-      window.location.replace("training-station.html?v=2.4.4");
+      showStatus("Creating secure student access...", "info");
+      const accessCode = createAccessCode();
+      const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
+      const { error } = await supabaseClient.from("student_access_links").insert({
+        owner_id: currentUser.id, student_id: student.id, access_code: accessCode, expires_at: expiresAt
+      });
+      if (error) throw error;
+      const url = new URL("training-station.html", window.location.href);
+      url.searchParams.set("access", accessCode);
+      url.searchParams.set("v", "2.4.6");
+      showStudentAccess(student, url.toString());
+      showStatus("Student access is ready. Teacher Center will remain open.", "success");
     } catch (error) {
       console.error(error);
-      showStatus(`Could not prepare student activities: ${friendlyError(error)}`, "error");
+      showStatus(`Could not create student access: ${friendlyError(error)}. Run the v2.4.6 Student Access SQL once in Supabase.`, "error");
     }
+  }
+
+  function createAccessCode() {
+    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const bytes = new Uint8Array(10);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, value => alphabet[value % alphabet.length]).join("");
+  }
+
+  function showStudentAccess(student, url) {
+    const modal = document.getElementById("studentAccessModal");
+    const input = document.getElementById("studentAccessUrl");
+    document.getElementById("studentAccessSummary").textContent = `Scan this code to open ${displayName(student)}'s assigned activities.`;
+    input.value = url;
+    input.dataset.studentUrl = url;
+    const qr = document.getElementById("studentAccessQr");
+    qr.innerHTML = "";
+    if (window.QRCode) new QRCode(qr, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+    else qr.textContent = "QR generator unavailable. Use Copy Student Link.";
+    document.getElementById("studentAccessStatus").textContent = "";
+    modal.hidden = false;
+  }
+
+  function closeStudentAccess() { document.getElementById("studentAccessModal").hidden = true; }
+  async function copyStudentAccessLink() {
+    const input = document.getElementById("studentAccessUrl");
+    try { await navigator.clipboard.writeText(input.value); document.getElementById("studentAccessStatus").textContent = "Student link copied."; }
+    catch (_) { input.select(); document.execCommand("copy"); document.getElementById("studentAccessStatus").textContent = "Student link copied."; }
+  }
+  function openStudentViewTab() {
+    const url = document.getElementById("studentAccessUrl").value;
+    if (url) window.open(url, "_blank", "noopener");
   }
 
   function populateReinforcementPackages(selectedValue = "") {
@@ -392,6 +397,7 @@
         communitySigns: document.getElementById("editActivityCommunitySigns").checked
       },
       community_signs_set: numberValue("editCommunitySignsSet", 1),
+      community_signs_response_level: numberValue("editCommunitySignsResponseLevel", 1),
       community_signs_trial_count: numberValue("editCommunitySignsTrialCount", 10),
       community_signs_prompt_step_seconds: numberValue("editCommunitySignsPromptStep", 5),
       community_signs_audio_enabled: document.getElementById("editCommunitySignsAudio").checked,
@@ -425,6 +431,7 @@
       wait_time_seconds: 10,
       activity_access: { shoppingBudget: true, communitySigns: true },
       community_signs_set: 1,
+      community_signs_response_level: 1,
       community_signs_trial_count: 10,
       community_signs_prompt_step_seconds: 5,
       community_signs_audio_enabled: true,
@@ -456,6 +463,7 @@
     document.getElementById("editActivityShoppingBudget").checked = access.shoppingBudget !== false;
     document.getElementById("editActivityCommunitySigns").checked = access.communitySigns !== false;
     document.getElementById("editCommunitySignsSet").value = String(merged.community_signs_set ?? 1);
+    document.getElementById("editCommunitySignsResponseLevel").value = String(merged.community_signs_response_level ?? 1);
     document.getElementById("editCommunitySignsTrialCount").value = String(merged.community_signs_trial_count ?? 10);
     document.getElementById("editCommunitySignsPromptStep").value = String(merged.community_signs_prompt_step_seconds ?? 5);
     document.getElementById("editCommunitySignsAudio").checked = merged.community_signs_audio_enabled !== false;

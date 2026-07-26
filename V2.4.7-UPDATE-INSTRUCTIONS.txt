@@ -1,0 +1,17 @@
+Buddy Skills Platform v2.4.7
+
+1. Run SUPABASE-v2.4.7-COMMUNITY-SIGNS-LEVELS.sql once in Supabase SQL Editor.
+2. Replace:
+   - community-signs.js
+   - community-signs.html
+   - community-signs.css
+   - teacher-center.js
+   - teacher-center.html
+3. Commit and push to GitHub.
+4. Hard refresh with Ctrl+Shift+R.
+
+Changes:
+- All Community Signs stimuli use symbol-only artwork without visible sign-name text.
+- Teacher chooses Level 1 (simple identification) or Level 2 (functional action/meaning).
+- Each answer is highlighted and spoken in sequence before buttons unlock.
+- Latency begins only after choices unlock.

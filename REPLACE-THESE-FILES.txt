@@ -1,0 +1,13 @@
+Buddy Skills v2.4.6
+
+1. Run SUPABASE-v2.4.6-STUDENT-ACCESS.sql once in Supabase SQL Editor.
+2. Replace these files in BuddySkillsPlatform:
+   teacher-center.html
+   teacher-center.js
+   training-station.html
+   training-station.js
+   platform.css
+3. Commit/push to GitHub Pages.
+4. Hard refresh Teacher Center with Ctrl+Shift+R.
+
+Open Activities now shows a QR code, copyable student link, and Open Student View in New Tab button. Teacher Center stays open in the original tab. Student links expire after 12 hours.
