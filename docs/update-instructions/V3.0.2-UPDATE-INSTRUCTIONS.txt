@@ -1,0 +1,26 @@
+BUDDY SKILLS PLATFORM v3.0.2
+
+This update makes Money Identification customizable in Teacher Center and redesigns the activity around real U.S. coin photographs.
+
+REPLACE:
+- teacher-center.html
+- teacher-center.js
+- skill-registry.js
+- training-station.html
+- training-station.js
+- money-identification.html
+- money-identification.js
+- money-identification.css
+
+NO NEW SUPABASE SQL IS REQUIRED.
+
+Teacher Center > Students > Edit Student > Skill to customize > Money Identification now provides:
+- Level 1: match heads to tails
+- Level 2: identify value using varied notation (for example 25¢, 25 cents, $0.25)
+- coin selection
+- trial count
+- teaching resource settings
+
+Coin photographs are loaded from the official United States Mint image library. The activity therefore needs internet access to display the photographs.
+
+After uploading, commit/push, wait for GitHub Pages, then hard refresh with Ctrl + Shift + R.

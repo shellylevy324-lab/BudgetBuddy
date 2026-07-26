@@ -1,4 +1,4 @@
-/* Buddy Skills v3.0.1 - Skill Registry
+/* Buddy Skills v3.0.2 - Skill Registry
  * One source of truth for teacher controls, student cards, and activity metadata.
  */
 (function () {
@@ -46,8 +46,15 @@
       shortTitle: "Money ID",
       icon: "💵",
       description: "Identify U.S. coins and bills by name and value.",
-      href: "money-identification.html?v=3.0.1",
-      available: true
+      href: "money-identification.html?v=3.0.2",
+      available: true,
+      teacherPanelId: "moneySkillPanel",
+      accessInputId: "editActivityMoneyIdentification",
+      teaching: {
+        enabledInputId: "editMoneyTeachingEnabled",
+        typeInputId: "editMoneyTeachingType",
+        urlInputId: "editMoneyTeachingUrl"
+      }
     }
   ];
 
@@ -63,5 +70,5 @@
     return skills.find(skill => skill.key === key || skill.activityKey === key) || null;
   }
 
-  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.0.1" });
+  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.0.2" });
 })();
