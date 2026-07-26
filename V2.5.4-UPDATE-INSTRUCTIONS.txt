@@ -1,0 +1,10 @@
+Buddy Skills Platform v2.5.4
+
+Update: Replaced the Community Signs slippery-floor graphic with the teacher-selected standard yellow triangular slipping-person sign.
+
+Replace these files:
+- community-signs.js
+- community-signs.html
+
+No Supabase SQL changes are required.
+After publishing, hard refresh the browser with Ctrl + Shift + R.
