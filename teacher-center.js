@@ -225,47 +225,24 @@
     }
     try {
       showStatus("Loading permanent student access...", "info");
-      let accessCode = "";
-      const { data: existingLinks, error: lookupError } = await supabaseClient
-        .from("student_access_links")
-        .select("access_code")
-        .eq("owner_id", currentUser.id)
-        .eq("student_id", student.id)
-        .is("revoked_at", null)
-        .order("created_at", { ascending: false })
-        .limit(1);
-      if (lookupError) throw lookupError;
-
-      if (existingLinks?.length) {
-        accessCode = existingLinks[0].access_code;
-      } else {
-        accessCode = createAccessCode();
-        const { error: insertError } = await supabaseClient.from("student_access_links").insert({
-          owner_id: currentUser.id,
-          student_id: student.id,
-          access_code: accessCode,
-          expires_at: null
-        });
-        if (insertError) throw insertError;
-      }
+      const { data: accessCode, error: accessError } = await supabaseClient.rpc(
+        "get_or_create_student_access",
+        { p_student_id: student.id }
+      );
+      if (accessError) throw accessError;
+      if (!accessCode) throw new Error("Supabase did not return a student access code");
 
       const url = new URL("training-station.html", window.location.href);
       url.searchParams.set("access", accessCode);
-      url.searchParams.set("v", "2.5.0");
+      url.searchParams.set("v", "2.5.1");
       showStudentAccess(student, url.toString());
       showStatus("Permanent student access is ready. This QR code will stay the same.", "success");
     } catch (error) {
       console.error(error);
-      showStatus(`Could not create student access: ${friendlyError(error)}. Run the v2.5.0 Permanent Student Access SQL once in Supabase.`, "error");
+      showStatus(`Could not load permanent student access: ${friendlyError(error)}. Run the v2.5.1 Stable Student Access SQL once in Supabase.`, "error");
     }
   }
 
-  function createAccessCode() {
-    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    const bytes = new Uint8Array(10);
-    crypto.getRandomValues(bytes);
-    return Array.from(bytes, value => alphabet[value % alphabet.length]).join("");
-  }
 
   function showStudentAccess(student, url) {
     const modal = document.getElementById("studentAccessModal");
