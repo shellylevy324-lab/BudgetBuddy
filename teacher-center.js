@@ -417,12 +417,13 @@
         ? numberValue("editReinforcementRequirement", 5)
         : 5,
       differential_reinforcement: document.getElementById("editDifferentialReinforcement").value,
-      adaptive_teaching_enabled: document.getElementById("editAdaptiveTeachingEnabled").checked,
-      mastery_threshold: numberValue("editMasteryThreshold", 50),
-      teaching_lesson_type: document.getElementById("editTeachingLessonType").value,
-      teaching_lesson_url: optional(document.getElementById("editTeachingLessonUrl").value),
-      retry_trial_count: document.getElementById("editRetryTrialCount").value,
-      maximum_reteaching_cycles: numberValue("editMaximumReteachingCycles", 1),
+      activity_teaching_settings: { communitySigns: { enabled: document.getElementById("editCommunityTeachingEnabled").checked, type: document.getElementById("editCommunityTeachingType").value, url: optional(document.getElementById("editCommunityTeachingUrl").value) }, shoppingBudget: { enabled: document.getElementById("editShoppingTeachingEnabled").checked, type: document.getElementById("editShoppingTeachingType").value, url: optional(document.getElementById("editShoppingTeachingUrl").value) } },
+      adaptive_teaching_enabled: document.getElementById("editShoppingTeachingEnabled").checked,
+      mastery_threshold: 50,
+      teaching_lesson_type: document.getElementById("editShoppingTeachingType").value,
+      teaching_lesson_url: optional(document.getElementById("editShoppingTeachingUrl").value),
+      retry_trial_count: "same",
+      maximum_reteaching_cycles: 1,
       lesson_rights_confirmed: document.getElementById("editLessonRightsConfirmed").checked,
       staff_notes: optional(document.getElementById("editInstructionNotes").value),
       updated_at: new Date().toISOString()
@@ -452,6 +453,7 @@
       retry_trial_count: "same",
       maximum_reteaching_cycles: 1,
       lesson_rights_confirmed: false,
+      activity_teaching_settings: {communitySigns:{enabled:false,type:"built-in",url:null},shoppingBudget:{enabled:false,type:"built-in",url:null}},
       staff_notes: null
     };
   }
@@ -484,12 +486,13 @@
     populateReinforcementPackages(merged.reinforcement_package || "stars");
     document.getElementById("editReinforcementPackage").value = merged.reinforcement_package || "stars";
     document.getElementById("editDifferentialReinforcement").value = merged.differential_reinforcement || "all-correct";
-    document.getElementById("editAdaptiveTeachingEnabled").checked = merged.adaptive_teaching_enabled === true;
-    document.getElementById("editMasteryThreshold").value = String(merged.mastery_threshold ?? 50);
-    document.getElementById("editTeachingLessonType").value = merged.teaching_lesson_type || "built-in";
-    document.getElementById("editTeachingLessonUrl").value = merged.teaching_lesson_url || "";
-    document.getElementById("editRetryTrialCount").value = String(merged.retry_trial_count || "same");
-    document.getElementById("editMaximumReteachingCycles").value = String(merged.maximum_reteaching_cycles ?? 1);
+    const teaching=merged.activity_teaching_settings||{}; const community=teaching.communitySigns||{}; const shopping=teaching.shoppingBudget||{};
+    document.getElementById("editCommunityTeachingEnabled").checked=community.enabled===true;
+    document.getElementById("editCommunityTeachingType").value=community.type||"built-in";
+    document.getElementById("editCommunityTeachingUrl").value=community.url||"";
+    document.getElementById("editShoppingTeachingEnabled").checked=shopping.enabled===true||merged.adaptive_teaching_enabled===true;
+    document.getElementById("editShoppingTeachingType").value=shopping.type||merged.teaching_lesson_type||"built-in";
+    document.getElementById("editShoppingTeachingUrl").value=shopping.url||merged.teaching_lesson_url||"";
     document.getElementById("editLessonRightsConfirmed").checked = merged.lesson_rights_confirmed === true;
     document.getElementById("editInstructionNotes").value = merged.staff_notes || "";
     updateControlledSettingsDisplay();
@@ -521,13 +524,6 @@
     document.getElementById("editDifferentialReinforcement").disabled = !tokenBoard;
     document.getElementById("editDifferentialReinforcement").closest(".form-field").hidden = !tokenBoard;
 
-    const adaptiveEnabled = document.getElementById("editAdaptiveTeachingEnabled").checked;
-    const lessonType = document.getElementById("editTeachingLessonType").value;
-    ["editMasteryThreshold", "editTeachingLessonType", "editRetryTrialCount", "editMaximumReteachingCycles", "editLessonRightsConfirmed"].forEach(id => {
-      document.getElementById(id).disabled = !adaptiveEnabled;
-    });
-    document.getElementById("editTeachingLessonUrl").disabled = !adaptiveEnabled || lessonType === "built-in" || lessonType === "teacher-upload";
-    document.getElementById("editTeachingLessonUrlField").hidden = !adaptiveEnabled || lessonType === "built-in" || lessonType === "teacher-upload";
   }
 
   function clearEditor() {

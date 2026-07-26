@@ -1,0 +1,6 @@
+Buddy Skills v2.4.9
+1. Run SUPABASE-v2.4.9-SKILL-SPECIFIC-TEACHING.sql once.
+2. Replace community-signs.js, community-signs.html, community-signs.css, teacher-center.js, teacher-center.html, and platform.css.
+3. Hard refresh the browser.
+
+Changes: clearer slippery symbol; token board and completion reinforcement in Community Signs; skill-specific teaching links; student completion data hidden.
