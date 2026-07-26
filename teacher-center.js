@@ -35,6 +35,8 @@
     document.getElementById("newStudentButton")?.addEventListener("click", startNewStudent);
     document.getElementById("studentEditorForm")?.addEventListener("submit", saveStudent);
     document.getElementById("cancelStudentEditButton")?.addEventListener("click", clearEditor);
+    document.getElementById("backToStudentListButton")?.addEventListener("click", clearEditor);
+    document.querySelectorAll("[data-skill-tab]").forEach(button => button.addEventListener("click", () => switchSkillTab(button.dataset.skillTab)));
     document.getElementById("editPromptingMode")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("editReinforcementSystem")?.addEventListener("change", updateControlledSettingsDisplay);
     document.getElementById("newReinforcementPackageButton")?.addEventListener("click", () => openReinforcementEditor());
@@ -302,8 +304,30 @@
       : "stars";
   }
 
+  function showStudentEditor() {
+    const directory = document.getElementById("studentDirectoryView");
+    const editor = document.getElementById("studentEditorPanel");
+    if (directory) directory.hidden = true;
+    if (editor) editor.hidden = false;
+    switchSkillTab("community");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function switchSkillTab(skill) {
+    const selected = skill === "shopping" ? "shopping" : "community";
+    document.querySelectorAll("[data-skill-tab]").forEach(button => {
+      const active = button.dataset.skillTab === selected;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    document.querySelectorAll("[data-skill-panel]").forEach(panel => {
+      panel.hidden = panel.dataset.skillPanel !== selected;
+    });
+  }
+
   function startNewStudent() {
     showSection("students");
+    showStudentEditor();
     document.getElementById("studentEditorForm").reset();
     document.getElementById("studentId").value = "";
     document.getElementById("editActive").checked = true;
@@ -316,6 +340,7 @@
   }
 
   async function editStudent(student) {
+    showStudentEditor();
     document.getElementById("studentId").value = student.id;
     document.getElementById("editFirstName").value = student.first_name || "";
     document.getElementById("editLastName").value = student.last_name || "";
@@ -356,7 +381,7 @@
     };
     if (!profile.first_name) return showStatus("First name is required.", "error");
     setEditorEnabled(false);
-    showStatus(id ? "Saving profile and shared settings..." : "Creating student profile...", "info");
+    showStatus(id ? "Saving student settings..." : "Creating student profile...", "info");
     try {
       let studentId = id;
       if (id) {
@@ -372,13 +397,24 @@
       if (settingsError) throw settingsError;
       await Promise.all([loadStudents(), loadCloudReinforcementPackages()]);
       clearEditor();
-      showStatus(id ? "Student profile and shared settings updated." : "Student profile and shared settings created.", "success");
+      showStatus(id ? "Student settings updated." : "Student profile and settings created.", "success");
     } catch (error) {
       console.error(error);
       showStatus(`Changes could not be saved: ${friendlyError(error)}`, "error");
     } finally {
       setEditorEnabled(true);
     }
+  }
+
+
+  function checkedValue(id, fallback = false) {
+    const element = document.getElementById(id);
+    return element ? element.checked : fallback;
+  }
+
+  function fieldValue(id, fallback = "") {
+    const element = document.getElementById(id);
+    return element ? element.value : fallback;
   }
 
   function collectSettings(studentId) {
@@ -410,11 +446,11 @@
         ? numberValue("editReinforcementRequirement", 5)
         : 5,
       differential_reinforcement: document.getElementById("editDifferentialReinforcement").value,
-      activity_teaching_settings: { communitySigns: { enabled: document.getElementById("editCommunityTeachingEnabled").checked, type: document.getElementById("editCommunityTeachingType").value, url: optional(document.getElementById("editCommunityTeachingUrl").value) }, shoppingBudget: { enabled: document.getElementById("editShoppingTeachingEnabled").checked, type: document.getElementById("editShoppingTeachingType").value, url: optional(document.getElementById("editShoppingTeachingUrl").value) } },
-      adaptive_teaching_enabled: document.getElementById("editShoppingTeachingEnabled").checked,
+      activity_teaching_settings: { communitySigns: { enabled: checkedValue("editCommunityTeachingEnabled"), type: fieldValue("editCommunityTeachingType", "built-in"), url: optional(fieldValue("editCommunityTeachingUrl")) }, shoppingBudget: { enabled: checkedValue("editShoppingTeachingEnabled"), type: fieldValue("editShoppingTeachingType", "built-in"), url: optional(fieldValue("editShoppingTeachingUrl")) } },
+      adaptive_teaching_enabled: checkedValue("editShoppingTeachingEnabled"),
       mastery_threshold: 50,
-      teaching_lesson_type: document.getElementById("editShoppingTeachingType").value,
-      teaching_lesson_url: optional(document.getElementById("editShoppingTeachingUrl").value),
+      teaching_lesson_type: fieldValue("editShoppingTeachingType", "built-in"),
+      teaching_lesson_url: optional(fieldValue("editShoppingTeachingUrl")),
       retry_trial_count: "same",
       maximum_reteaching_cycles: 1,
       lesson_rights_confirmed: document.getElementById("editLessonRightsConfirmed").checked,
@@ -480,12 +516,12 @@
     document.getElementById("editReinforcementPackage").value = merged.reinforcement_package || "stars";
     document.getElementById("editDifferentialReinforcement").value = merged.differential_reinforcement || "all-correct";
     const teaching=merged.activity_teaching_settings||{}; const community=teaching.communitySigns||{}; const shopping=teaching.shoppingBudget||{};
-    document.getElementById("editCommunityTeachingEnabled").checked=community.enabled===true;
-    document.getElementById("editCommunityTeachingType").value=community.type||"built-in";
-    document.getElementById("editCommunityTeachingUrl").value=community.url||"";
-    document.getElementById("editShoppingTeachingEnabled").checked=shopping.enabled===true||merged.adaptive_teaching_enabled===true;
-    document.getElementById("editShoppingTeachingType").value=shopping.type||merged.teaching_lesson_type||"built-in";
-    document.getElementById("editShoppingTeachingUrl").value=shopping.url||merged.teaching_lesson_url||"";
+    checkedValue("editCommunityTeachingEnabled")=community.enabled===true;
+    fieldValue("editCommunityTeachingType", "built-in")=community.type||"built-in";
+    fieldValue("editCommunityTeachingUrl")=community.url||"";
+    checkedValue("editShoppingTeachingEnabled")=shopping.enabled===true||merged.adaptive_teaching_enabled===true;
+    fieldValue("editShoppingTeachingType", "built-in")=shopping.type||merged.teaching_lesson_type||"built-in";
+    fieldValue("editShoppingTeachingUrl")=shopping.url||merged.teaching_lesson_url||"";
     document.getElementById("editLessonRightsConfirmed").checked = merged.lesson_rights_confirmed === true;
     document.getElementById("editInstructionNotes").value = merged.staff_notes || "";
     updateControlledSettingsDisplay();
@@ -521,8 +557,12 @@
 
   function clearEditor() {
     document.getElementById("studentEditorForm").hidden = true;
+    const editor = document.getElementById("studentEditorPanel");
+    const directory = document.getElementById("studentDirectoryView");
+    if (editor) editor.hidden = true;
+    if (directory) directory.hidden = false;
     document.getElementById("studentEditorHeading").textContent = "Select a student";
-    document.getElementById("editorHelp").textContent = "Choose Edit Profile to manage settings, or Open Activities to launch student mode.";
+    document.getElementById("editorHelp").textContent = "Select one student to edit.";
   }
 
   function showSection(name) {
