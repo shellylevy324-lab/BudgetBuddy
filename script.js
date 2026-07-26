@@ -9,7 +9,7 @@ const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="bu
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={classroom:{name:"My Classroom",leadTeacher:""},portableMeta:{revision:1,lastProgramChange:"",lastExport:"",lastImport:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false};
+const appState={classroom:{name:"My Classroom",leadTeacher:""},portableMeta:{revision:1,lastProgramChange:"",lastExport:"",lastImport:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false,cloudReportingFinalized:false};
 let pendingLibraryTokenData="";
 let pendingLibraryTokenFileName="";
 let pendingLibraryCompletionData="";
@@ -750,36 +750,16 @@ function loadStudents(){
         });
 
         const inherited=classroomStudent.instructionalSettings||{};
-      const inheritedProfile = {
-    id: classroomStudent.id,
-    name: classroomStudent.name,
-
-    promptStyle:
-        inherited.prompting_mode === "baseline"
-            ? "baseline"
-            : inherited.reinforcement_system === "token-board"
-                ? "prompt-fading-token"
-                : "least-to-most",
-
-    waitTimeSeconds:
-        Number(inherited.wait_time_seconds) || 10,
-
-    tokenGoal:
-        Number(inherited.token_requirement) || 5,
-
-    reinforcementPackage:
-        inherited.reinforcement_package || "stars",
-
-    differentialReinforcement:
-        inherited.differential_reinforcement || "all-correct",
-
-    reinforcementType:
-        inherited.reinforcement_system === "token-board"
-            ? "text-sound"
-            : inherited.reinforcement_system === "none"
-                ? "none"
-                : "text"
-};
+        const inheritedProfile={
+            id:classroomStudent.id,
+            name:classroomStudent.name,
+            promptStyle:inherited.prompting_mode==="baseline"?"baseline":"least-to-most",
+            waitTimeSeconds:Number(inherited.wait_time_seconds)||10,
+            tokenGoal:Number(inherited.token_requirement)||5,
+            reinforcementPackage:inherited.reinforcement_package||"stars",
+            differentialReinforcement:inherited.differential_reinforcement||"all-correct",
+            reinforcementType:inherited.reinforcement_system==="token-board"?"text-sound":"text"
+        };
         if(existingIndex>=0){
             appState.students[existingIndex]=normalizeStudent({
                 ...appState.students[existingIndex],
@@ -1730,7 +1710,26 @@ async function startSession(){
 
     appState.selectedAdministratorId=administrator.id;
     saveSelectedAdministrator();
-appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){
+appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.cloudReportingFinalized=false;appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];
+if(window.BuddySessionEngine){
+    try{
+        await window.BuddySessionEngine.startSession({
+            studentId:appState.currentStudent.id,
+            activityKey:"budget-buddy",
+            activityName:"Budget Buddy",
+            teachingPhase:getCloudTeachingPhase(),
+            sessionType:isTokenTeachingSession()?"prompt-fading-token":"standard",
+            promptingMode:appState.currentStudent.promptStyle,
+            reinforcementPackageId:appState.currentStudent.reinforcementPackage,
+            staffName:administrator.name,
+            startedAt:appState.sessionStartedAt,
+            moduleVersion:"2.2.0"
+        });
+    }catch(reportingError){
+        console.error("Cloud reporting session could not start:",reportingError);
+    }
+}
+studentGreeting.textContent=appState.currentStudent.name+"'s Shopping Practice";showScreen(groceryScreen);renderTokenBoard();loadNextTrial()}catch(e){
         console.error("Session could not start:",e);
         alert("The session could not start. Please refresh and try again.");
     }}
@@ -1850,8 +1849,32 @@ function displayCurrentTrial(){
     itemImage.alt=appState.currentItem.name;
 }
 
+function getCloudTeachingPhase(){
+    if(appState.currentStudent?.promptStyle==="baseline")return "baseline";
+    if(appState.currentStudent?.promptStyle==="prompt-fading-token")return "prompt-fading";
+    return "intervention";
+}
+
+function saveTrialToCloud(record){
+    if(!window.BuddySessionEngine)return;
+    window.BuddySessionEngine.recordTrial({
+        ...record,
+        target:record.item,
+        studentResponse:record.studentAnswer,
+        taskData:{
+            category:record.category||null,
+            price:Number(record.price)||0,
+            budget:Number(record.budget)||0,
+            correctAnswer:record.correctAnswer||null,
+            postPromptLatencySeconds:record.postPromptLatencySeconds??null,
+            listItems:Array.isArray(record.listItems)?record.listItems:[],
+            cartAttempts:record.cartAttempts??null
+        }
+    });
+}
+
 function recordTrial(answer,correct,ok,latency,postPromptLatency){
-    appState.responses.push({
+    const trialRecord={
         trialNumber:appState.currentTrial,
         item:isListAffordabilityLevel()
             ? appState.currentListItems.map(function(item){return item.name}).join(" + ")
@@ -1872,7 +1895,9 @@ function recordTrial(answer,correct,ok,latency,postPromptLatency){
         independent:appState.currentPromptLevel==="independent",
         rapidResponse:latency<rapidResponseThresholdSeconds,
         timestamp:new Date().toISOString()
-    });
+    };
+    appState.responses.push(trialRecord);
+    saveTrialToCloud(trialRecord);
 }
 
 function finishSession(){
@@ -1923,6 +1948,24 @@ function finishSession(){
     appState.sessions.unshift(sessionRecord);
     appState.selectedSessionId=sessionRecord.id;
     saveSessions();
+
+    if(window.BuddySessionEngine && !appState.cloudReportingFinalized){
+        appState.cloudReportingFinalized=true;
+        const endedAt=sessionRecord.completedAt;
+        const durationSeconds=Math.max(0,Math.round((new Date(endedAt)-new Date(appState.sessionStartedAt))/1000));
+        window.BuddySessionEngine.endSession({
+            endedAt:endedAt,
+            durationSeconds:durationSeconds,
+            totalTrials:trials.length,
+            correctTrials:correctCount,
+            independentTrials:independentCount,
+            promptedTrials:trials.filter(function(record){return record.correct&&!record.independent}).length,
+            incorrectTrials:trials.length-correctCount,
+            averageLatencySeconds:sessionRecord.averageLatencySeconds
+        }).catch(function(reportingError){
+            console.error("Cloud reporting session could not be finalized:",reportingError);
+        });
+    }
 
     completionMessage.textContent=isTokenTeachingSession()
         ? "Shopping finished! You earned "+appState.tokensEarned+" token"+(appState.tokensEarned===1?".":"s.")
@@ -2054,7 +2097,7 @@ function recordCartTrial(ok,latency,postPromptLatency){
             return appState.cartChoices[index];
         });
 
-    appState.responses.push({
+    const trialRecord={
         trialNumber:appState.currentTrial,
         item:selectedItems.map(function(item){
             return item.name;
@@ -2078,7 +2121,9 @@ function recordCartTrial(ok,latency,postPromptLatency){
         rapidResponse:latency<rapidResponseThresholdSeconds,
         cartAttempts:appState.cartAttempts,
         timestamp:new Date().toISOString()
-    });
+    };
+    appState.responses.push(trialRecord);
+    saveTrialToCloud(trialRecord);
 }
 
 
