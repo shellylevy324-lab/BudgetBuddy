@@ -1,0 +1,32 @@
+Buddy Skills v3.2.0 - Daily Classroom Summary
+
+REPLACE:
+- teacher-center.html
+- teacher-center.js
+- reports.js
+- platform.css
+
+RUN ONCE IN SUPABASE:
+- SUPABASE-v3.2.0-DAILY-CLASSROOM-SUMMARY.sql
+
+WHAT WORKS AFTER THAT SQL:
+- Teacher Settings has Daily Classroom Summary controls.
+- One saved classroom-wide summary is generated at 3:00 PM Monday-Friday.
+- Reports shows saved Daily Classroom Summaries.
+- Generate Today's Summary Now can be used for testing.
+
+OPTIONAL EMAIL DELIVERY (requires an email provider):
+Buddy Skills v3.2.0 includes a Supabase Edge Function that sends through Resend.
+1. Create/verify a Resend sender for a school-approved sending address/domain.
+2. Deploy supabase/functions/daily-classroom-summary/index.ts as an Edge Function named daily-classroom-summary.
+3. Set these Edge Function secrets in Supabase:
+   RESEND_API_KEY = your Resend API key
+   SUMMARY_FROM_EMAIL = a verified sender, e.g. Buddy Skills <buddy@your-school-domain.org>
+   BUDDY_DAILY_SUMMARY_SECRET = a long random secret you choose
+4. Open SUPABASE-v3.2.0-EMAIL-SCHEDULER-TEMPLATE.sql, replace its two PLACEHOLDER values with:
+   - the SAME random secret
+   - your Edge Function URL
+5. Run that email scheduler SQL once.
+6. In Teacher Center > Settings, turn on Email the summary and save a school-approved destination address.
+
+The saved 3 PM summary does NOT depend on Resend. If email setup is incomplete or email fails, the summary is still stored in Buddy Skills Reports.

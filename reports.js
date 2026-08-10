@@ -4,6 +4,7 @@
   const SESSION_TABLE = "student_sessions";
   const TRIAL_TABLE = "student_trials";
   const SETTINGS_TABLE = "student_instructional_settings";
+  const DAILY_SUMMARY_TABLE = "daily_classroom_summaries";
   const LOCAL_SESSION_KEY = "budgetBuddySessions";
   let getClient = () => null;
   let getStudents = () => [];
@@ -130,6 +131,7 @@
     updateSummary(filteredSessions);
     renderRecentSkillSummary(filteredSessions, studentId, currentStudentSettings);
     renderSessions(filteredSessions);
+    await renderDailyClassroomSummaries(client);
     const exportButton = document.getElementById("exportReportCsvButton");
     if (exportButton) exportButton.disabled = filteredSessions.length === 0;
 
@@ -328,6 +330,28 @@
       <td>${row.token_earned ? "Yes" : "No"}</td>
       <td>${escapeHtml(row.error_correction || "—")}</td>
     </tr>`).join("");
+  }
+
+  async function renderDailyClassroomSummaries(client) {
+    const body = document.getElementById("dailyClassroomSummaryTableBody");
+    const detail = document.getElementById("dailyClassroomSummaryDetail");
+    if (!body) return;
+    if (detail) { detail.hidden = true; detail.innerHTML = ""; }
+    if (!client) return;
+    const { data, error } = await client.from(DAILY_SUMMARY_TABLE).select("id, summary_date, generated_at, sessions_count, students_count, summary_json, email_status, email_sent_at").order("summary_date",{ascending:false}).limit(15);
+    if (error) { body.innerHTML = `<tr><td colspan="6" class="reports-empty-cell">${String(error.code||"")==="42P01" ? "Run the v3.2.0 Daily Summary SQL once in Supabase." : escapeHtml(friendlyError(error))}</td></tr>`; return; }
+    const rows = data || [];
+    if (!rows.length) { body.innerHTML = '<tr><td colspan="6" class="reports-empty-cell">No daily classroom summaries have been generated yet.</td></tr>'; return; }
+    body.innerHTML = rows.map(row => `<tr><td>${escapeHtml(formatDate(row.summary_date))}</td><td>${Number(row.students_count||0)}</td><td>${Number(row.sessions_count||0)}</td><td>${escapeHtml(({sent:"Sent",pending:"Pending",disabled:"Email off",failed:"Send failed"})[row.email_status]||"Not sent")}</td><td>${escapeHtml(new Date(row.generated_at).toLocaleString())}</td><td><button class="teacher-secondary-button" type="button" data-daily-summary-id="${row.id}">View</button></td></tr>`).join("");
+    const byId = new Map(rows.map(row => [String(row.id),row]));
+    body.querySelectorAll("[data-daily-summary-id]").forEach(btn => btn.addEventListener("click",()=>renderDailySummaryDetail(byId.get(btn.dataset.dailySummaryId))));
+  }
+
+  function renderDailySummaryDetail(row) {
+    const detail = document.getElementById("dailyClassroomSummaryDetail"); if (!detail || !row) return;
+    const students = Array.isArray(row.summary_json?.students) ? row.summary_json.students : [];
+    detail.hidden = false;
+    detail.innerHTML = `<h4>Classroom Summary · ${escapeHtml(formatDate(row.summary_date))}</h4>` + (students.length ? students.map(student => `<section class="daily-summary-student"><h5>${escapeHtml(student.student_name||"Student")}</h5><p>${Number(student.sessions||0)} session${Number(student.sessions||0)===1?"":"s"} · ${Number(student.trials||0)} trials</p><ul>${(student.skills||[]).map(skill=>`<li><strong>${escapeHtml(skill.activity_name||skill.activity_key||"Skill")}</strong>: ${percent(Number(skill.correct_trials||0),Number(skill.total_trials||0))} accuracy · ${percent(Number(skill.independent_trials||0),Number(skill.total_trials||0))} independent${skill.average_latency_seconds==null?"":` · ${Number(skill.average_latency_seconds).toFixed(2)} s avg latency`}</li>`).join("")}</ul></section>`).join("") : '<p>No student sessions were completed in this summary window.</p>');
   }
 
   function resetDetail() {

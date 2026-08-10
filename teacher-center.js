@@ -7,6 +7,7 @@
   const BUILT_IN_PACKAGES = ["stars", "rockets", "dinosaurs", "rainbow", "trains", "music", "none"];
   const REINFORCEMENT_TABLE = "reinforcement_packages";
   const REINFORCEMENT_BUCKET = "reinforcement-library";
+  const DAILY_SUMMARY_PREFS_TABLE = "daily_summary_preferences";
 
   let supabaseClient = null;
   let students = [];
@@ -52,6 +53,8 @@
     document.getElementById("forgotPasswordButton")?.addEventListener("click", sendPasswordReset);
     document.getElementById("teacherLogoutButton")?.addEventListener("click", logout);
     document.getElementById("changePasswordForm")?.addEventListener("submit", changePassword);
+    document.getElementById("dailySummarySettingsForm")?.addEventListener("submit", saveDailySummarySettings);
+    document.getElementById("generateDailySummaryNowButton")?.addEventListener("click", generateDailySummaryNow);
     document.querySelectorAll("[data-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.section)));
     document.querySelectorAll("[data-open-section]").forEach(button => button.addEventListener("click", () => showSection(button.dataset.openSection)));
     document.getElementById("newStudentButton")?.addEventListener("click", startNewStudent);
@@ -166,7 +169,7 @@
     try {
       await supabaseClient.rpc("claim_buddy_skills_pilot_data");
       populateReinforcementPackages();
-      await Promise.all([loadStudents(), loadCloudReinforcementPackages()]);
+      await Promise.all([loadStudents(), loadCloudReinforcementPackages(), loadDailySummarySettings()]);
       showSection(requestedSectionFromHash());
     } catch (error) {
       console.error(error);
@@ -174,6 +177,39 @@
     }
   }
 
+
+  async function loadDailySummarySettings() {
+    if (!supabaseClient || !currentUser) return;
+    const emailInput = document.getElementById("dailySummaryEmail");
+    if (emailInput && !emailInput.value) emailInput.value = currentUser.email || "";
+    const { data, error } = await supabaseClient.from(DAILY_SUMMARY_PREFS_TABLE).select("enabled, email_enabled, delivery_email, timezone").eq("owner_id", currentUser.id).maybeSingle();
+    if (error) { if (String(error.code || "") !== "42P01") console.warn(error); return; }
+    if (!data) return;
+    document.getElementById("dailySummaryEnabled").checked = data.enabled !== false;
+    document.getElementById("dailySummaryEmailEnabled").checked = data.email_enabled === true;
+    if (emailInput) emailInput.value = data.delivery_email || currentUser.email || "";
+    if (data.timezone) document.getElementById("dailySummaryTimezone").value = data.timezone;
+  }
+
+  async function saveDailySummarySettings(event) {
+    event.preventDefault();
+    const status = document.getElementById("dailySummarySettingsStatus");
+    const setStatus = (m,t="info") => { if(status){status.textContent=m;status.dataset.state=t;} };
+    const deliveryEmail = clean(document.getElementById("dailySummaryEmail")?.value).toLowerCase();
+    const emailEnabled = Boolean(document.getElementById("dailySummaryEmailEnabled")?.checked);
+    if (emailEnabled && !deliveryEmail) return setStatus("Enter a school-approved summary email address.", "error");
+    const payload = { owner_id: currentUser.id, enabled: Boolean(document.getElementById("dailySummaryEnabled")?.checked), email_enabled: emailEnabled, delivery_email: deliveryEmail || null, timezone: document.getElementById("dailySummaryTimezone")?.value || "America/New_York", summary_hour: 15, updated_at: new Date().toISOString() };
+    const { error } = await supabaseClient.from(DAILY_SUMMARY_PREFS_TABLE).upsert(payload,{onConflict:"owner_id"});
+    setStatus(error ? friendlyError(error) : "Daily summary settings saved for 3:00 PM on school days.", error ? "error" : "success");
+  }
+
+  async function generateDailySummaryNow() {
+    const status = document.getElementById("dailySummarySettingsStatus");
+    const setStatus = (m,t="info") => { if(status){status.textContent=m;status.dataset.state=t;} };
+    setStatus("Generating today’s classroom summary...", "info");
+    const { error } = await supabaseClient.rpc("generate_my_daily_classroom_summary");
+    setStatus(error ? friendlyError(error) : "Today’s classroom summary was generated and saved. Open Reports to view it.", error ? "error" : "success");
+  }
 
   async function changePassword(event) {
     event.preventDefault();
