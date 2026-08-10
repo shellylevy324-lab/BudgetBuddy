@@ -1,0 +1,31 @@
+Buddy Skills Platform v3.1.2 - Student QR Session Reporting
+
+WHY THIS UPDATE
+Student activities launched from permanent QR links are intentionally not signed in as the teacher.
+Earlier versions therefore skipped cloud reporting on those devices. v3.1.2 uses the student's
+permanent access code to securely save only that student's session/trial data.
+
+STEP 1 - SUPABASE (RUN ONCE)
+Run this file in Supabase SQL Editor:
+  SUPABASE-v3.1.2-STUDENT-SESSION-REPORTING.sql
+
+This adds three access-code-scoped reporting functions. It does not make the reporting tables public.
+
+STEP 2 - REPLACE THESE FILES
+  session-engine.js
+  budget-buddy.html
+  community-signs.html
+  money-identification.html
+  money-amounts.html
+
+STEP 3 - DEPLOY
+Commit and push the five web files, wait for GitHub Pages to deploy, then hard refresh (Ctrl+F5).
+
+STEP 4 - TEST
+Launch a student using the permanent QR/direct link, complete a short activity, then open:
+Teacher Center > Reports > select that student > All Time / All Activities.
+The new session should appear in the Recent Skill Summary and the session list.
+
+IMPORTANT
+Sessions that were never saved to Supabase in earlier versions cannot be reconstructed from another
+device. v3.1.2 fixes reporting for sessions completed after this patch is installed.
