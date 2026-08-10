@@ -978,3 +978,11 @@ body.platform-page {
 .shared-token img { width: 34px; height: 34px; object-fit: contain; }
 .shared-completion-icon { font-size: 4rem; margin-bottom: .5rem; }
 .shared-completion-icon img { max-width: 220px; max-height: 180px; object-fit: contain; }
+
+/* Buddy Skills v3.1.1 - Recent Skill Summary */
+.reports-recent-card { margin-bottom: 22px; }
+.reports-recent-table td strong { color: var(--bs-primary); }
+.reports-no-recent { color: var(--bs-muted); font-style: italic; }
+@media (max-width: 720px) {
+  .reports-recent-table th, .reports-recent-table td { padding: 11px 10px; }
+}

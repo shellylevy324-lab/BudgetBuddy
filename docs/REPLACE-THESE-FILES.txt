@@ -1,13 +1,24 @@
-Buddy Skills v2.4.6
+Buddy Skills Platform v3.1.1 - Recent Skill Summary
 
-1. Run SUPABASE-v2.4.6-STUDENT-ACCESS.sql once in Supabase SQL Editor.
-2. Replace these files in BuddySkillsPlatform:
-   teacher-center.html
-   teacher-center.js
-   training-station.html
-   training-station.js
-   platform.css
-3. Commit/push to GitHub Pages.
-4. Hard refresh Teacher Center with Ctrl+Shift+R.
+Replace these 3 files in the MAIN/root BuddySkillsPlatform folder:
 
-Open Activities now shows a QR code, copyable student link, and Open Student View in New Tab button. Teacher Center stays open in the original tab. Student links expire after 12 hours.
+1. teacher-center.html
+2. reports.js
+3. platform.css
+
+No Supabase SQL is required.
+
+After replacing:
+1. Commit the 3 files in GitHub Desktop.
+2. Push origin.
+3. Wait for the GitHub Pages deployment green checkmark.
+4. Open Teacher Center and press Ctrl+F5.
+5. Go to Reports and choose ONE student.
+
+The new Recent Skill Summary shows the latest session in the selected date range for:
+- Community Signs
+- Money Identification
+- Build the Amount
+- Shopping Budget
+
+It shows current configured level, accuracy, independence, average latency, and last-practiced date.

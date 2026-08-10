@@ -3,12 +3,14 @@
 
   const SESSION_TABLE = "student_sessions";
   const TRIAL_TABLE = "student_trials";
+  const SETTINGS_TABLE = "student_instructional_settings";
   const LOCAL_SESSION_KEY = "budgetBuddySessions";
   let getClient = () => null;
   let getStudents = () => [];
   let showStatus = () => {};
   let filteredSessions = [];
   let sessionTrials = new Map();
+  let currentStudentSettings = null;
 
   function initialize(options = {}) {
     if (typeof options.getClient === "function") getClient = options.getClient;
@@ -124,7 +126,9 @@
 
     filteredSessions = cloudRows.length ? cloudRows : localRows;
     sessionTrials.clear();
+    currentStudentSettings = await loadStudentSettings(studentId, client);
     updateSummary(filteredSessions);
+    renderRecentSkillSummary(filteredSessions, studentId, currentStudentSettings);
     renderSessions(filteredSessions);
     const exportButton = document.getElementById("exportReportCsvButton");
     if (exportButton) exportButton.disabled = filteredSessions.length === 0;
@@ -151,6 +155,7 @@
   function setEmpty(message) {
     filteredSessions = [];
     updateSummary([]);
+    renderRecentSkillSummary([], document.getElementById("reportStudentFilter")?.value || "all", null);
     const body = document.getElementById("reportSessionTableBody");
     if (body) body.innerHTML = `<tr><td colspan="9" class="reports-empty-cell">${escapeHtml(message)}</td></tr>`;
     const exportButton = document.getElementById("exportReportCsvButton");
@@ -172,6 +177,67 @@
     setText("reportPromptedPercent", percent(prompted, totalTrials));
     setText("reportIncorrectPercent", percent(incorrect, totalTrials));
     setText("reportAverageLatency", weightedLatencyTrials ? `${(weightedLatency / weightedLatencyTrials).toFixed(2)} s` : "—");
+  }
+
+  async function loadStudentSettings(studentId, client) {
+    if (!client || !studentId || studentId === "all") return null;
+    try {
+      const { data, error } = await client.from(SETTINGS_TABLE).select("*").eq("student_id", studentId).maybeSingle();
+      if (error) { console.warn("Could not load settings for recent skill summary:", error); return null; }
+      return data || null;
+    } catch (error) {
+      console.warn("Could not load settings for recent skill summary:", error);
+      return null;
+    }
+  }
+
+  function skillLevel(activityKey, settings) {
+    if (!settings) return "—";
+    const teaching = settings.activity_teaching_settings || {};
+    if (activityKey === "community-signs") {
+      const set = Number(settings.community_signs_set || 1);
+      const level = Number(settings.community_signs_response_level || 1);
+      return `Set ${set} · Level ${level}`;
+    }
+    if (activityKey === "money-identification") return `Level ${Number(teaching.moneyIdentification?.level || 1)}`;
+    if (activityKey === "money-amounts") return `Level ${Number(teaching.moneyAmounts?.level || 1)}`;
+    if (activityKey === "budget-buddy") return "Current program";
+    return "—";
+  }
+
+  function renderRecentSkillSummary(sessions, studentId, settings) {
+    const body = document.getElementById("reportRecentSkillTableBody");
+    if (!body) return;
+    if (!studentId || studentId === "all") {
+      body.innerHTML = '<tr><td class="reports-empty-cell" colspan="6">Select one student to view the recent skill summary.</td></tr>';
+      return;
+    }
+    const skills = [
+      ["community-signs", "Community Signs"],
+      ["money-identification", "Money Identification"],
+      ["money-amounts", "Build the Amount"],
+      ["budget-buddy", "Shopping Budget"]
+    ];
+    const rows = skills.map(([key, label]) => {
+      const latest = sessions
+        .filter(row => row.student_id === studentId && row.activity_key === key)
+        .sort((a, b) => new Date(b.started_at || 0) - new Date(a.started_at || 0))[0];
+      if (!latest) return `<tr><td><strong>${escapeHtml(label)}</strong></td><td>${escapeHtml(skillLevel(key, settings))}</td><td colspan="4" class="reports-no-recent">No recent session</td></tr>`;
+      const total = Number(latest.total_trials || 0);
+      const correct = Number(latest.correct_trials || 0);
+      const independent = Number(latest.independent_trials || 0);
+      const latency = latest.average_latency_seconds === null || latest.average_latency_seconds === undefined
+        ? "—" : `${Number(latest.average_latency_seconds).toFixed(2)} s`;
+      return `<tr>
+        <td><strong>${escapeHtml(latest.activity_name || label)}</strong></td>
+        <td>${escapeHtml(skillLevel(key, settings))}</td>
+        <td>${percent(correct, total)}</td>
+        <td>${percent(independent, total)}</td>
+        <td>${latency}</td>
+        <td>${escapeHtml(formatDate(latest.started_at))}</td>
+      </tr>`;
+    });
+    body.innerHTML = rows.join("");
   }
 
   function renderSessions(sessions) {

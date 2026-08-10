@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="platform.css" rel="stylesheet"/>
+<link href="platform.css?v=3.1.1" rel="stylesheet"/>
 </head>
 <body class="platform-page teacher-page">
 <section aria-labelledby="teacherLoginHeading" class="teacher-login-shell" id="teacherLogin">
@@ -276,7 +276,10 @@
 <label for="reportActivityFilter">Activity</label>
 <select id="reportActivityFilter">
 <option value="all">All activities</option>
-<option value="budget-buddy">Budget Buddy</option>
+<option value="budget-buddy">Shopping Budget</option>
+<option value="community-signs">Community Signs</option>
+<option value="money-identification">Money Identification</option>
+<option value="money-amounts">Build the Amount</option>
 </select>
 </div>
 <div class="form-field">
@@ -310,6 +313,21 @@
 <article class="reports-summary-card"><span>Incorrect</span><strong id="reportIncorrectPercent">—</strong></article>
 <article class="reports-summary-card"><span>Average latency</span><strong id="reportAverageLatency">—</strong></article>
 </div>
+<article class="card reports-recent-card" id="reportRecentSkillCard">
+<div class="section-heading-row">
+<div>
+<p class="eyebrow">At-a-glance progress</p>
+<h3 class="section-title">Recent Skill Summary</h3>
+<p class="supporting-copy">Select one student above to see the most recent session for each skill in the current date range.</p>
+</div>
+</div>
+<div class="reports-table-wrap">
+<table class="reports-table reports-recent-table">
+<thead><tr><th>Skill</th><th>Current level</th><th>Accuracy</th><th>Independent</th><th>Average latency</th><th>Last practiced</th></tr></thead>
+<tbody id="reportRecentSkillTableBody"><tr><td class="reports-empty-cell" colspan="6">Select one student to view the recent skill summary.</td></tr></tbody>
+</table>
+</div>
+</article>
 <article class="card reports-table-card">
 <div class="section-heading-row">
 <div>
@@ -386,8 +404,8 @@
 <script src="skill-registry.js?v=3.1.0"></script>
 <script src="skill-framework.js?v=3.1.0"></script>
 <script src="adaptive-learning.js?v=3.0.0"></script>
-<script src="reports.js?v=2.4.1"></script>
+<script src="reports.js?v=3.1.1"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="teacher-center.js?v=3.1.0"></script>
+<script src="teacher-center.js?v=3.1.1"></script>
 </body>
 </html>
