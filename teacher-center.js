@@ -40,6 +40,7 @@
       "editActivityShoppingBudget", "editShoppingTeachingEnabled", "editShoppingTeachingType",
       "editActivityMoneyIdentification", "editMoneyLevel", "editMoneyTrialCount", "editMoneyCoinPenny", "editMoneyCoinNickel", "editMoneyCoinDime", "editMoneyCoinQuarter", "editMoneyTeachingEnabled", "editMoneyTeachingType", "editMoneyTeachingUrl",
       "editActivityMoneyAmounts", "editMoneyAmountsLevel", "editMoneyAmountsTrialCount", "editMoneyAmountsMaxDollars", "editMoneyAmountsIncludePennies", "editMoneyAmountsTeachingEnabled", "editMoneyAmountsTeachingType", "editMoneyAmountsTeachingUrl",
+      "editActivityRelationships", "editRelationshipsLevel", "editRelationshipsTrialCount", "editRelationshipsAudio", "editRelationshipsTeachingEnabled", "editRelationshipsTeachingType", "editRelationshipsTeachingUrl",
       "editShoppingTeachingUrl", "editLessonRightsConfirmed", "editInstructionNotes"
     ];
     return required.filter(id => !document.getElementById(id));
@@ -386,7 +387,7 @@
   }
 
   function switchSkillTab(skill) {
-    const selected = ["community", "shopping", "money", "moneyAmounts"].includes(skill) ? skill : "community";
+    const selected = ["community", "shopping", "money", "moneyAmounts", "relationships"].includes(skill) ? skill : "community";
     const selector = document.getElementById("skillSettingsSelect");
     if (selector) selector.value = selected;
     document.querySelectorAll("[data-skill-panel]").forEach(panel => {
@@ -527,7 +528,7 @@
         ? numberValue("editReinforcementRequirement", 5)
         : 5,
       differential_reinforcement: fieldValue("editDifferentialReinforcement", "all-correct"),
-      activity_teaching_settings: { communitySigns: { enabled: checkedValue("editCommunityTeachingEnabled"), type: fieldValue("editCommunityTeachingType", "built-in"), url: optional(fieldValue("editCommunityTeachingUrl")) }, shoppingBudget: { enabled: checkedValue("editShoppingTeachingEnabled"), type: fieldValue("editShoppingTeachingType", "built-in"), url: optional(fieldValue("editShoppingTeachingUrl")) }, moneyIdentification: { enabled: checkedValue("editMoneyTeachingEnabled"), type: fieldValue("editMoneyTeachingType", "built-in"), url: optional(fieldValue("editMoneyTeachingUrl")), level: numberValue("editMoneyLevel", 1), trialCount: numberValue("editMoneyTrialCount", 10), coins: ["penny","nickel","dime","quarter"].filter(id => checkedValue(`editMoneyCoin${id[0].toUpperCase()+id.slice(1)}`, false)), generalization: { coinNames: checkedValue("editMoneyGeneralizeCoinNames", true), writtenValues: checkedValue("editMoneyGeneralizeWrittenValues", true), coinSides: checkedValue("editMoneyGeneralizeCoinSides", true), rotation: checkedValue("editMoneyGeneralizeRotation", true), backgrounds: checkedValue("editMoneyGeneralizeBackgrounds", true), relativeSize: checkedValue("editMoneyGeneralizeRelativeSize", true) } }, moneyAmounts: { enabled: checkedValue("editMoneyAmountsTeachingEnabled"), type: fieldValue("editMoneyAmountsTeachingType", "built-in"), url: optional(fieldValue("editMoneyAmountsTeachingUrl")), level: numberValue("editMoneyAmountsLevel", 1), trialCount: numberValue("editMoneyAmountsTrialCount", 8), maxDollars: numberValue("editMoneyAmountsMaxDollars", 5), includePennies: checkedValue("editMoneyAmountsIncludePennies", true) } },
+      activity_teaching_settings: { communitySigns: { enabled: checkedValue("editCommunityTeachingEnabled"), type: fieldValue("editCommunityTeachingType", "built-in"), url: optional(fieldValue("editCommunityTeachingUrl")) }, shoppingBudget: { enabled: checkedValue("editShoppingTeachingEnabled"), type: fieldValue("editShoppingTeachingType", "built-in"), url: optional(fieldValue("editShoppingTeachingUrl")) }, moneyIdentification: { enabled: checkedValue("editMoneyTeachingEnabled"), type: fieldValue("editMoneyTeachingType", "built-in"), url: optional(fieldValue("editMoneyTeachingUrl")), level: numberValue("editMoneyLevel", 1), trialCount: numberValue("editMoneyTrialCount", 10), coins: ["penny","nickel","dime","quarter"].filter(id => checkedValue(`editMoneyCoin${id[0].toUpperCase()+id.slice(1)}`, false)), generalization: { coinNames: checkedValue("editMoneyGeneralizeCoinNames", true), writtenValues: checkedValue("editMoneyGeneralizeWrittenValues", true), coinSides: checkedValue("editMoneyGeneralizeCoinSides", true), rotation: checkedValue("editMoneyGeneralizeRotation", true), backgrounds: checkedValue("editMoneyGeneralizeBackgrounds", true), relativeSize: checkedValue("editMoneyGeneralizeRelativeSize", true) } }, moneyAmounts: { enabled: checkedValue("editMoneyAmountsTeachingEnabled"), type: fieldValue("editMoneyAmountsTeachingType", "built-in"), url: optional(fieldValue("editMoneyAmountsTeachingUrl")), level: numberValue("editMoneyAmountsLevel", 1), trialCount: numberValue("editMoneyAmountsTrialCount", 8), maxDollars: numberValue("editMoneyAmountsMaxDollars", 5), includePennies: checkedValue("editMoneyAmountsIncludePennies", true) }, relationshipBoundaries: { enabled: checkedValue("editRelationshipsTeachingEnabled"), type: fieldValue("editRelationshipsTeachingType", "built-in"), url: optional(fieldValue("editRelationshipsTeachingUrl")), level: 1, trialCount: numberValue("editRelationshipsTrialCount", 10), audio: checkedValue("editRelationshipsAudio", true), promptHierarchy: ["Independent","All Category Colors","Correct Color Only","Full Model"] } },
       adaptive_teaching_enabled: checkedValue("editShoppingTeachingEnabled"),
       mastery_threshold: 50,
       teaching_lesson_type: fieldValue("editShoppingTeachingType", "built-in"),
@@ -544,7 +545,7 @@
     return {
       prompting_mode: "least-to-most",
       wait_time_seconds: 10,
-      activity_access: { shoppingBudget: true, communitySigns: true, moneyIdentification: true, moneyAmounts: true },
+      activity_access: { shoppingBudget: true, communitySigns: true, moneyIdentification: true, moneyAmounts: true, relationshipBoundaries: true },
       community_signs_set: 1,
       community_signs_response_level: 1,
       community_signs_trial_count: 10,
@@ -563,7 +564,7 @@
       retry_trial_count: "same",
       maximum_reteaching_cycles: 1,
       lesson_rights_confirmed: false,
-      activity_teaching_settings: {communitySigns:{enabled:false,type:"built-in",url:null},shoppingBudget:{enabled:false,type:"built-in",url:null},moneyIdentification:{enabled:false,type:"built-in",url:null,level:1,trialCount:10,coins:["penny","nickel","dime","quarter"],generalization:{coinNames:true,writtenValues:true,coinSides:true,rotation:true,backgrounds:true,relativeSize:true}},moneyAmounts:{enabled:false,type:"built-in",url:null,level:1,trialCount:8,maxDollars:5,includePennies:true}},
+      activity_teaching_settings: {communitySigns:{enabled:false,type:"built-in",url:null},shoppingBudget:{enabled:false,type:"built-in",url:null},moneyIdentification:{enabled:false,type:"built-in",url:null,level:1,trialCount:10,coins:["penny","nickel","dime","quarter"],generalization:{coinNames:true,writtenValues:true,coinSides:true,rotation:true,backgrounds:true,relativeSize:true}},moneyAmounts:{enabled:false,type:"built-in",url:null,level:1,trialCount:8,maxDollars:5,includePennies:true},relationshipBoundaries:{enabled:false,type:"built-in",url:null,level:1,trialCount:10,audio:true,promptHierarchy:["Independent","All Category Colors","Correct Color Only","Full Model"]}},
       staff_notes: null
     };
   }
@@ -575,11 +576,12 @@
       : legacyPromptingMode(merged);
     document.getElementById("editPromptingMode").value = promptingMode;
     document.getElementById("editWaitTime").value = String(merged.wait_time_seconds ?? 10);
-    const access = merged.activity_access || { shoppingBudget: true, communitySigns: true, moneyIdentification: true, moneyAmounts: true };
+    const access = merged.activity_access || { shoppingBudget: true, communitySigns: true, moneyIdentification: true, moneyAmounts: true, relationshipBoundaries: true };
     document.getElementById("editActivityShoppingBudget").checked = access.shoppingBudget !== false;
     document.getElementById("editActivityCommunitySigns").checked = access.communitySigns !== false;
     setChecked("editActivityMoneyIdentification", access.moneyIdentification !== false);
     setChecked("editActivityMoneyAmounts", access.moneyAmounts !== false);
+    setChecked("editActivityRelationships", access.relationshipBoundaries !== false);
     document.getElementById("editCommunitySignsSet").value = String(merged.community_signs_set ?? 1);
     document.getElementById("editCommunitySignsResponseLevel").value = String(merged.community_signs_response_level ?? 1);
     document.getElementById("editCommunitySignsTrialCount").value = String(merged.community_signs_trial_count ?? 10);
@@ -598,7 +600,7 @@
     populateReinforcementPackages(merged.reinforcement_package || "stars");
     document.getElementById("editReinforcementPackage").value = merged.reinforcement_package || "stars";
     document.getElementById("editDifferentialReinforcement").value = merged.differential_reinforcement || "all-correct";
-    const teaching=merged.activity_teaching_settings||{}; const community=teaching.communitySigns||{}; const shopping=teaching.shoppingBudget||{}; const money=teaching.moneyIdentification||{}; const moneyAmounts=teaching.moneyAmounts||{};
+    const teaching=merged.activity_teaching_settings||{}; const community=teaching.communitySigns||{}; const shopping=teaching.shoppingBudget||{}; const money=teaching.moneyIdentification||{}; const moneyAmounts=teaching.moneyAmounts||{}; const relationships=teaching.relationshipBoundaries||{};
     setChecked("editCommunityTeachingEnabled", community.enabled === true);
     setFieldValue("editCommunityTeachingType", community.type || "built-in");
     setFieldValue("editCommunityTeachingUrl", community.url || "");
@@ -626,6 +628,12 @@
     setFieldValue("editMoneyAmountsTrialCount", String(moneyAmounts.trialCount || 8));
     setFieldValue("editMoneyAmountsMaxDollars", String(moneyAmounts.maxDollars || 5));
     setChecked("editMoneyAmountsIncludePennies", moneyAmounts.includePennies !== false);
+    setChecked("editRelationshipsTeachingEnabled", relationships.enabled === true);
+    setFieldValue("editRelationshipsTeachingType", relationships.type || "built-in");
+    setFieldValue("editRelationshipsTeachingUrl", relationships.url || "");
+    setFieldValue("editRelationshipsLevel", "1");
+    setFieldValue("editRelationshipsTrialCount", String(relationships.trialCount || 10));
+    setChecked("editRelationshipsAudio", relationships.audio !== false);
     document.getElementById("editLessonRightsConfirmed").checked = merged.lesson_rights_confirmed === true;
     document.getElementById("editInstructionNotes").value = merged.staff_notes || "";
     updateControlledSettingsDisplay();

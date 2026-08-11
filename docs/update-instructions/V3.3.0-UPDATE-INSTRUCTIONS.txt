@@ -1,0 +1,23 @@
+Buddy Skills Platform v3.3.0
+
+REPLACE:
+- teacher-center.html
+- teacher-center.js
+- platform.css
+- skill-registry.js
+- training-station.html
+- training-station.js
+- reports.js
+
+ADD:
+- relationships-boundaries.html
+- relationships-boundaries.js
+- relationships-boundaries.css
+
+No Supabase SQL is required. Relationship & Boundaries settings are stored inside the existing JSON settings fields.
+
+Teacher Center changes:
+- Student information and general settings are collapsible to reduce scrolling.
+- Only one selected skill panel is displayed at a time.
+- Relationships & Boundaries Level 1 is configurable.
+- Its least-to-most hierarchy is: Independent -> All Category Colors -> Correct Color Only -> Full Model.

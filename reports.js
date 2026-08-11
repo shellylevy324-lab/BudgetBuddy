@@ -203,6 +203,7 @@
     }
     if (activityKey === "money-identification") return `Level ${Number(teaching.moneyIdentification?.level || 1)}`;
     if (activityKey === "money-amounts") return `Level ${Number(teaching.moneyAmounts?.level || 1)}`;
+    if (activityKey === "relationships-boundaries") return `Level ${Number(teaching.relationshipBoundaries?.level || 1)}`;
     if (activityKey === "budget-buddy") return "Current program";
     return "—";
   }
@@ -218,6 +219,7 @@
       ["community-signs", "Community Signs"],
       ["money-identification", "Money Identification"],
       ["money-amounts", "Build the Amount"],
+      ["relationships-boundaries", "Relationships & Boundaries"],
       ["budget-buddy", "Shopping Budget"]
     ];
     const rows = skills.map(([key, label]) => {

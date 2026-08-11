@@ -92,18 +92,15 @@
 </div>
 <form class="platform-form" hidden="" id="studentEditorForm">
 <input id="studentId" type="hidden"/>
-<fieldset class="instruction-fieldset"><legend>Student information</legend>
-<div class="teacher-form-grid">
+<details class="instruction-disclosure student-general-disclosure" open><summary><span><strong>Student information</strong><small>Name and basic profile information</small></span></summary><div class="instruction-disclosure-body"><div class="teacher-form-grid">
 <div class="form-field"><label for="editFirstName">First name *</label><input id="editFirstName" maxlength="60" required=""/></div>
 <div class="form-field"><label for="editLastName">Last name</label><input id="editLastName" maxlength="60"/></div>
 <div class="form-field"><label for="editPreferredName">Preferred name</label><input id="editPreferredName" maxlength="60"/></div>
 <div class="form-field"><label for="editGradeLevel">Grade or program</label><input id="editGradeLevel" maxlength="40"/></div>
 <div class="form-field teacher-form-wide"><label for="editJobCoach">Job coach</label><input id="editJobCoach" maxlength="80"/></div>
 <label class="teacher-checkbox teacher-form-wide"><input checked="" id="editActive" type="checkbox"/> Active student</label>
-</div>
-</fieldset>
-<section class="settings-layer shared-settings-layer">
-<div class="instruction-settings-heading"><div><p class="eyebrow">Across every assigned activity</p><h4>Shared Settings</h4></div><span class="teacher-pilot-badge">All skills</span></div>
+</div></div></details>
+<details class="instruction-disclosure shared-settings-layer"><summary><span><strong>General settings used across skills</strong><small>Processing time, reinforcement, and staff notes</small></span><span class="teacher-pilot-badge">All skills</span></summary><div class="instruction-disclosure-body">
 <fieldset class="instruction-fieldset"><legend>Prompting</legend><div class="teacher-form-grid">
 <div class="form-field teacher-form-wide"><label for="editPromptingMode">Default prompting mode</label><select id="editPromptingMode"><option value="baseline">Baseline — no prompts or trial reinforcement</option><option value="independent">Independent — independent opportunity only</option><option value="least-to-most">Least-to-Most — visual, audio, then model</option></select></div>
 <div class="form-field"><label for="editWaitTime">Wait time before prompting</label><select id="editWaitTime"><option value="5">5 seconds</option><option value="10">10 seconds</option><option value="15">15 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option></select></div>
@@ -115,11 +112,11 @@
 <div class="form-field teacher-form-wide"><label for="editDifferentialReinforcement" id="editDifferentialReinforcementLabel">When to award tokens</label><select id="editDifferentialReinforcement"><option value="all-correct">Every correct first response</option><option value="independent-only">Independent correct responses only</option><option value="independent-bonus">All correct responses, with a larger independent celebration</option></select></div>
 </div></fieldset>
 <div class="form-field"><label for="editInstructionNotes">Staff implementation notes</label><textarea id="editInstructionNotes" maxlength="1000" rows="3"></textarea></div>
-</section>
+</div></details>
 <section class="settings-layer skill-settings-layer">
 <div class="instruction-settings-heading"><div><p class="eyebrow">Customize one activity at a time</p><h4>Skill Settings</h4></div></div>
 <div class="skill-picker-row">
-<div class="form-field teacher-form-wide"><label for="skillSettingsSelect">Skill to customize</label><select id="skillSettingsSelect"><option value="community">Community Signs</option><option value="shopping">Shopping Budget</option><option value="money">Money Identification</option><option value="moneyAmounts">Build the Amount</option></select><small>Only the selected skill's settings are shown below.</small></div>
+<div class="form-field teacher-form-wide"><label for="skillSettingsSelect">Skill to customize</label><select id="skillSettingsSelect"><option value="community">Community Signs</option><option value="shopping">Shopping Budget</option><option value="money">Money Identification</option><option value="moneyAmounts">Build the Amount</option><option value="relationships">Relationships &amp; Boundaries</option></select><small>Only the selected skill's settings are shown below.</small></div>
 </div>
 <div class="skill-settings-panel" data-skill-panel="community" id="communitySkillPanel">
 <fieldset class="instruction-fieldset"><legend>Community Signs access and practice</legend><div class="teacher-form-grid">
@@ -184,6 +181,29 @@
 <label class="teacher-checkbox teacher-form-wide"><input id="editMoneyAmountsTeachingEnabled" type="checkbox"/> Use a teaching activity or video for this skill</label>
 <div class="form-field"><label for="editMoneyAmountsTeachingType">Teaching type</label><select id="editMoneyAmountsTeachingType"><option value="built-in">Buddy Skills built-in lesson</option><option value="youtube">YouTube video</option><option value="external-link">External lesson link</option></select></div>
 <div class="form-field teacher-form-wide"><label for="editMoneyAmountsTeachingUrl">Lesson URL</label><input id="editMoneyAmountsTeachingUrl" maxlength="500" placeholder="Paste a school-approved link" type="url"/></div>
+</div></fieldset>
+</div>
+
+<div class="skill-settings-panel" data-skill-panel="relationships" hidden id="relationshipsSkillPanel">
+<fieldset class="instruction-fieldset"><legend>Relationships &amp; Boundaries — Level 1</legend><div class="teacher-form-grid">
+<label class="teacher-checkbox teacher-form-wide"><input checked id="editActivityRelationships" type="checkbox"/> Show Relationships &amp; Boundaries in this student's activities</label>
+<div class="form-field teacher-form-wide"><label for="editRelationshipsLevel">Instructional level</label><select id="editRelationshipsLevel"><option value="1">Level 1 — Who is this person to me?</option></select><small>Later levels will address interactions, privacy, consent, and boundary/safety generalization.</small></div>
+<div class="form-field"><label for="editRelationshipsTrialCount">Trials per session</label><select id="editRelationshipsTrialCount"><option value="5">5 trials</option><option value="10" selected>10 trials</option><option value="15">15 trials</option></select></div>
+<label class="teacher-checkbox teacher-form-wide"><input checked id="editRelationshipsAudio" type="checkbox"/> Read the scenario and answer choices aloud</label>
+</div></fieldset>
+<fieldset class="instruction-fieldset relationship-prompt-fieldset"><legend>Prompting for this skill</legend>
+<p class="fieldHelp">When the student's general prompting mode is Least-to-Most, this skill uses its own category-color hierarchy. Colors are hidden during the independent opportunity.</p>
+<ol class="relationship-prompt-sequence">
+<li><strong>1. Independent</strong><span>Neutral answer choices; no category colors.</span></li>
+<li><strong>2. All Category Colors</strong><span>Each possible answer receives its relationship-category color.</span></li>
+<li><strong>3. Correct Color Only</strong><span>Incorrect choices return to neutral; only the correct category keeps its color.</span></li>
+<li><strong>4. Full Model</strong><span>The correct category is named, highlighted, and modeled for the student to complete.</span></li>
+</ol>
+</fieldset>
+<fieldset class="instruction-fieldset"><legend>Relationships &amp; Boundaries teaching activity</legend><div class="teacher-form-grid">
+<label class="teacher-checkbox teacher-form-wide"><input id="editRelationshipsTeachingEnabled" type="checkbox"/> Use a teaching activity or video for this skill</label>
+<div class="form-field"><label for="editRelationshipsTeachingType">Teaching type</label><select id="editRelationshipsTeachingType"><option value="built-in">Buddy Skills built-in lesson</option><option value="youtube">YouTube video</option><option value="external-link">External lesson link</option></select></div>
+<div class="form-field teacher-form-wide"><label for="editRelationshipsTeachingUrl">Lesson URL</label><input id="editRelationshipsTeachingUrl" maxlength="500" placeholder="Paste a school-approved link" type="url"/></div>
 </div></fieldset>
 </div>
 <label class="teacher-checkbox"><input id="editLessonRightsConfirmed" type="checkbox"/> I am authorized to use or link to these instructional materials.</label>
@@ -280,6 +300,7 @@
 <option value="community-signs">Community Signs</option>
 <option value="money-identification">Money Identification</option>
 <option value="money-amounts">Build the Amount</option>
+<option value="relationships-boundaries">Relationships &amp; Boundaries</option>
 </select>
 </div>
 <div class="form-field">
@@ -418,11 +439,11 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-<script src="skill-registry.js?v=3.1.0"></script>
+<script src="skill-registry.js?v=3.3.0"></script>
 <script src="skill-framework.js?v=3.1.0"></script>
 <script src="adaptive-learning.js?v=3.0.0"></script>
-<script src="reports.js?v=3.2.0"></script>
+<script src="reports.js?v=3.3.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="teacher-center.js?v=3.2.0"></script>
+<script src="teacher-center.js?v=3.3.0"></script>
 </body>
 </html>

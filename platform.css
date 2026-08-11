@@ -989,3 +989,20 @@ body.platform-page {
 
 /* Buddy Skills v3.2.0 - Daily classroom summaries */
 .daily-summary-settings-card{margin-top:20px}.daily-summary-detail{margin-top:18px;padding:18px;border:2px solid #d9e2ec;border-radius:16px;background:#f8fbfd}.daily-summary-detail h4{margin:0 0 14px}.daily-summary-student{padding:14px 0;border-top:1px solid #d9e2ec}.daily-summary-student:first-of-type{border-top:0;padding-top:0}.daily-summary-student h5{margin:0 0 6px;font-size:1.05rem}.daily-summary-student p{margin:0 0 8px;color:#52667a}.daily-summary-student ul{margin:0;padding-left:22px}.daily-summary-student li{margin:5px 0}
+
+
+/* Buddy Skills v3.3.0 - focused student editor */
+.instruction-disclosure{margin:1rem 0;border:2px solid rgba(31,61,96,.13);border-radius:18px;background:#fbfdff;overflow:hidden}
+.instruction-disclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.1rem;cursor:pointer;list-style:none;font-weight:700}
+.instruction-disclosure>summary::-webkit-details-marker{display:none}
+.instruction-disclosure>summary span:first-child{display:grid;gap:.2rem}
+.instruction-disclosure>summary small{font-weight:500;color:#52667a}
+.instruction-disclosure>summary:after{content:'+';font-size:1.35rem;line-height:1;color:#52667a}
+.instruction-disclosure[open]>summary:after{content:'−'}
+.instruction-disclosure-body{padding:0 1.1rem 1.1rem}
+.skill-settings-layer{margin-top:1.25rem;padding-top:1.25rem;border-top:2px solid rgba(31,61,96,.12)}
+.skill-picker-row{position:sticky;top:.5rem;z-index:8;padding:.8rem;border:2px solid rgba(31,61,96,.12);border-radius:16px;background:#fff;box-shadow:0 5px 18px rgba(31,61,96,.08);margin-bottom:1rem}
+.relationship-prompt-sequence{display:grid;gap:.65rem;margin:.8rem 0 0;padding:0;list-style:none}
+.relationship-prompt-sequence li{display:grid;grid-template-columns:minmax(150px,.8fr) 2fr;gap:.75rem;padding:.75rem;border:1px solid #d9e2ec;border-radius:12px;background:#fff}
+.relationship-prompt-sequence li span{color:#52667a}
+@media(max-width:680px){.relationship-prompt-sequence li{grid-template-columns:1fr}.skill-picker-row{position:static}}

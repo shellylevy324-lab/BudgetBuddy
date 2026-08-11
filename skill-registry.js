@@ -6,6 +6,23 @@
 
   const skills = [
     {
+      key: "relationshipBoundaries",
+      activityKey: "relationships-boundaries",
+      title: "Relationships & Boundaries",
+      shortTitle: "Relationships",
+      icon: "🤝",
+      description: "Practice identifying relationship categories and safe social boundaries.",
+      href: "relationships-boundaries.html?v=3.3.0",
+      available: true,
+      teacherPanelId: "relationshipsSkillPanel",
+      accessInputId: "editActivityRelationships",
+      teaching: {
+        enabledInputId: "editRelationshipsTeachingEnabled",
+        typeInputId: "editRelationshipsTeachingType",
+        urlInputId: "editRelationshipsTeachingUrl"
+      }
+    },
+    {
       key: "communitySigns",
       activityKey: "community-signs",
       title: "Community Signs",
@@ -87,5 +104,5 @@
     return skills.find(skill => skill.key === key || skill.activityKey === key) || null;
   }
 
-  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.1.0" });
+  window.BuddySkillRegistry = Object.freeze({ all, available, find, version: "3.3.0" });
 })();
