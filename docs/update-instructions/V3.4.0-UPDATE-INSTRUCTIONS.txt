@@ -1,0 +1,11 @@
+Buddy Skills v3.4.0 - Relationship Photo Library
+
+1. Run SUPABASE-v3.4.0-RELATIONSHIP-PHOTO-LIBRARY.sql once in Supabase.
+2. Replace: teacher-center.html, teacher-center.js, platform.css, skill-registry.js, training-station.html, training-station.js, relationships-boundaries.html, relationships-boundaries.js, relationships-boundaries.css.
+3. Add the SQL file to your project documentation/supabase folder if desired.
+4. Commit and push to GitHub.
+5. Hard refresh Teacher Center (Ctrl+F5).
+6. Edit a student > Relationships & Boundaries > Relationship Photo Library. Upload photos and assign categories.
+7. Test the student permanent QR link. Level 1 will use uploaded photos for the question and, when available, photo exemplars in the answer choices.
+
+Privacy: Only upload images your district authorizes for this service. Photos are not placed in the public GitHub repository.

@@ -8,6 +8,7 @@
   const REINFORCEMENT_TABLE = "reinforcement_packages";
   const REINFORCEMENT_BUCKET = "reinforcement-library";
   const DAILY_SUMMARY_PREFS_TABLE = "daily_summary_preferences";
+  const RELATIONSHIP_PHOTO_TABLE = "relationship_photo_library";
 
   let supabaseClient = null;
   let students = [];
@@ -79,6 +80,7 @@
     document.getElementById("closeStudentAccessButton")?.addEventListener("click", closeStudentAccess);
     document.getElementById("copyStudentAccessButton")?.addEventListener("click", copyStudentAccessLink);
     document.getElementById("openStudentTabButton")?.addEventListener("click", openStudentViewTab);
+    document.getElementById("relationshipPhotoUploadButton")?.addEventListener("click", saveRelationshipPhoto);
   }
 
 
@@ -407,6 +409,7 @@
     document.getElementById("editorHelp").textContent = "Create a de-identified cloud profile and shared instructional defaults.";
     document.getElementById("studentEditorForm").hidden = false;
     document.getElementById("editFirstName").focus();
+    renderRelationshipPhotoLibraryMessage("Save this student before adding relationship photos.");
   }
 
   async function editStudent(student) {
@@ -429,6 +432,7 @@
       if (error) throw error;
       populateReinforcementPackages(data?.reinforcement_package || "");
       applySettingsToForm(data || defaultSettings());
+      await loadRelationshipPhotoLibrary(student.id);
       showStatus("Student profile ready.", "success");
     } catch (error) {
       console.error(error);
@@ -509,7 +513,8 @@
         shoppingBudget: checkedValue("editActivityShoppingBudget", true),
         communitySigns: checkedValue("editActivityCommunitySigns", true),
         moneyIdentification: checkedValue("editActivityMoneyIdentification", true),
-        moneyAmounts: checkedValue("editActivityMoneyAmounts", true)
+        moneyAmounts: checkedValue("editActivityMoneyAmounts", true),
+        relationshipBoundaries: checkedValue("editActivityRelationships", true)
       },
       community_signs_set: numberValue("editCommunitySignsSet", 1),
       community_signs_response_level: numberValue("editCommunitySignsResponseLevel", 1),
@@ -718,6 +723,136 @@
     window.BuddyReports?.exportCsv();
   }
 
+
+  const RELATIONSHIP_CATEGORIES = Object.freeze({
+    family: { label: "Family or close caregiver", color: "blue" },
+    friend: { label: "Close friend", color: "green" },
+    helper: { label: "Familiar helper or staff", color: "yellow" },
+    acquaintance: { label: "Acquaintance or community person", color: "orange" },
+    stranger: { label: "Stranger or new person", color: "red" }
+  });
+
+  function relationshipPhotoStatus(message, type = "info") {
+    const status = document.getElementById("relationshipPhotoStatus");
+    if (!status) return;
+    status.textContent = message || "";
+    status.className = `classroom-status classroom-status-${type}`;
+  }
+
+  function renderRelationshipPhotoLibraryMessage(message) {
+    const list = document.getElementById("relationshipPhotoLibrary");
+    if (list) list.innerHTML = `<p class="empty-message">${escapeHtml(message)}</p>`;
+  }
+
+  async function loadRelationshipPhotoLibrary(studentId = fieldValue("studentId")) {
+    const list = document.getElementById("relationshipPhotoLibrary");
+    if (!list) return;
+    if (!studentId || !supabaseClient) return renderRelationshipPhotoLibraryMessage("Save this student before adding relationship photos.");
+    renderRelationshipPhotoLibraryMessage("Loading relationship photos...");
+    const { data, error } = await supabaseClient.from(RELATIONSHIP_PHOTO_TABLE)
+      .select("id,student_id,label,category,image_data,active,created_at")
+      .or(`student_id.is.null,student_id.eq.${studentId}`)
+      .eq("active", true)
+      .order("category", { ascending: true })
+      .order("created_at", { ascending: true });
+    if (error) {
+      renderRelationshipPhotoLibraryMessage("Relationship Photo Library setup is not complete. Run SUPABASE-v3.4.0-RELATIONSHIP-PHOTO-LIBRARY.sql.");
+      relationshipPhotoStatus(friendlyError(error), "error");
+      return;
+    }
+    renderRelationshipPhotos(data || [], studentId);
+  }
+
+  function renderRelationshipPhotos(items, studentId) {
+    const list = document.getElementById("relationshipPhotoLibrary");
+    if (!list) return;
+    list.innerHTML = "";
+    if (!items.length) return renderRelationshipPhotoLibraryMessage("No relationship photos yet. Add the first photo above.");
+    items.forEach(item => {
+      const category = RELATIONSHIP_CATEGORIES[item.category] || { label: item.category || "Category", color: "" };
+      const card = document.createElement("article");
+      card.className = "relationship-photo-card";
+      card.innerHTML = `
+        <img src="${escapeHtml(item.image_data || "")}" alt="">
+        <div class="relationship-photo-card-copy"><strong>${escapeHtml(item.label || "Unlabeled photo")}</strong><span>${escapeHtml(category.label)}</span><small>${item.student_id ? "This student" : "Classroom/general"}</small></div>
+        <button class="teacher-row-button teacher-row-button-secondary" type="button">Remove</button>`;
+      card.querySelector("button").addEventListener("click", () => deleteRelationshipPhoto(item.id, studentId));
+      list.appendChild(card);
+    });
+  }
+
+  async function saveRelationshipPhoto() {
+    const studentId = fieldValue("studentId");
+    if (!studentId) return relationshipPhotoStatus("Save the student profile first, then add relationship photos.", "error");
+    if (!checkedValue("relationshipPhotoRightsConfirmed")) return relationshipPhotoStatus("Confirm that you are authorized to use this image.", "error");
+    const input = document.getElementById("relationshipPhotoFile");
+    const file = input?.files?.[0];
+    if (!file) return relationshipPhotoStatus("Choose a JPG, PNG, or WebP image first.", "error");
+    if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) return relationshipPhotoStatus("Use a JPG, PNG, or WebP image.", "error");
+    if (file.size > 8 * 1024 * 1024) return relationshipPhotoStatus("Choose an image smaller than 8 MB.", "error");
+    const button = document.getElementById("relationshipPhotoUploadButton");
+    if (button) button.disabled = true;
+    relationshipPhotoStatus("Preparing and saving photo...", "info");
+    try {
+      const imageData = await compressRelationshipPhoto(file);
+      const scope = fieldValue("relationshipPhotoScope", "student");
+      const payload = {
+        owner_id: currentUser.id,
+        student_id: scope === "classroom" ? null : studentId,
+        label: optional(fieldValue("relationshipPhotoLabel")),
+        category: fieldValue("relationshipPhotoCategory", "stranger"),
+        image_data: imageData,
+        mime_type: "image/jpeg",
+        active: true
+      };
+      const { error } = await supabaseClient.from(RELATIONSHIP_PHOTO_TABLE).insert(payload);
+      if (error) throw error;
+      input.value = "";
+      setFieldValue("relationshipPhotoLabel", "");
+      setChecked("relationshipPhotoRightsConfirmed", false);
+      relationshipPhotoStatus("Photo added to the Relationship Photo Library.", "success");
+      await loadRelationshipPhotoLibrary(studentId);
+    } catch (error) {
+      console.error(error);
+      relationshipPhotoStatus(`Photo could not be saved: ${friendlyError(error)}`, "error");
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }
+
+  function compressRelationshipPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        try {
+          const max = 720;
+          const scale = Math.min(1, max / Math.max(img.naturalWidth || 1, img.naturalHeight || 1));
+          const width = Math.max(1, Math.round(img.naturalWidth * scale));
+          const height = Math.max(1, Math.round(img.naturalHeight * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = width; canvas.height = height;
+          const context = canvas.getContext("2d");
+          context.fillStyle = "#ffffff"; context.fillRect(0, 0, width, height);
+          context.drawImage(img, 0, 0, width, height);
+          const data = canvas.toDataURL("image/jpeg", 0.82);
+          URL.revokeObjectURL(url);
+          if (data.length > 1200000) reject(new Error("The compressed image is still too large. Try a smaller photo."));
+          else resolve(data);
+        } catch (error) { URL.revokeObjectURL(url); reject(error); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("The selected image could not be read.")); };
+      img.src = url;
+    });
+  }
+
+  async function deleteRelationshipPhoto(photoId, studentId) {
+    if (!confirm("Remove this photo from the Relationship Photo Library?")) return;
+    const { error } = await supabaseClient.from(RELATIONSHIP_PHOTO_TABLE).delete().eq("id", photoId);
+    if (error) return relationshipPhotoStatus(`Photo could not be removed: ${friendlyError(error)}`, "error");
+    relationshipPhotoStatus("Photo removed.", "success");
+    await loadRelationshipPhotoLibrary(studentId);
+  }
 
   async function loadCloudReinforcementPackages() {
     const list = document.getElementById("reinforcementPackageList");

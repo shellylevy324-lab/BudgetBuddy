@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="platform.css?v=3.1.1" rel="stylesheet"/>
+<link href="platform.css?v=3.4.0" rel="stylesheet"/>
 </head>
 <body class="platform-page teacher-page">
 <section aria-labelledby="teacherLoginHeading" class="teacher-login-shell" id="teacherLogin">
@@ -59,7 +59,7 @@
 <p class="eyebrow">Protected teacher area</p>
 <h2 id="sectionTitle">Dashboard</h2>
 </div>
-<span class="teacher-pilot-badge">Version 3.0.0</span>
+<span class="teacher-pilot-badge">Version 3.4.0</span>
 </header>
 <p aria-live="polite" class="classroom-status" id="teacherStatus" role="status"></p>
 <section class="teacher-section" id="dashboardSection">
@@ -200,6 +200,22 @@
 <li><strong>4. Full Model</strong><span>The correct category is named, highlighted, and modeled for the student to complete.</span></li>
 </ol>
 </fieldset>
+
+<fieldset class="instruction-fieldset relationship-photo-library-fieldset"><legend>Relationship Photo Library</legend>
+<p class="fieldHelp">Upload instructional photos you are authorized to use, then assign each photo to the relationship category it represents for this student. Classroom/general exemplars can be reused with every student.</p>
+<div class="relationship-photo-upload-grid">
+<div class="form-field"><label for="relationshipPhotoScope">Use this photo for</label><select id="relationshipPhotoScope"><option value="student">This student only</option><option value="classroom">Classroom/general exemplar</option></select></div>
+<div class="form-field"><label for="relationshipPhotoCategory">Relationship category</label><select id="relationshipPhotoCategory"><option value="family">Family or close caregiver</option><option value="friend">Close friend</option><option value="helper">Familiar helper or staff</option><option value="acquaintance">Acquaintance or community person</option><option value="stranger">Stranger or new person</option></select></div>
+<div class="form-field"><label for="relationshipPhotoLabel">Teacher label</label><input id="relationshipPhotoLabel" maxlength="80" placeholder="Example: Mom, Ms. Lee, cashier" type="text"><small>This label is for teacher organization and is not shown as the student answer.</small></div>
+<div class="form-field"><label for="relationshipPhotoFile">Photo</label><input id="relationshipPhotoFile" accept="image/jpeg,image/png,image/webp" type="file"></div>
+<label class="teacher-checkbox teacher-form-wide"><input id="relationshipPhotoRightsConfirmed" type="checkbox"> I am authorized to use this image with these students.</label>
+<div class="teacher-form-wide"><button class="platform-button" id="relationshipPhotoUploadButton" type="button">Add Photo to Library</button></div>
+</div>
+<p aria-live="polite" class="classroom-status" id="relationshipPhotoStatus" role="status"></p>
+<div class="relationship-photo-library-grid" id="relationshipPhotoLibrary"><p class="empty-message">Select an existing student to load the photo library.</p></div>
+<p class="privacy-note"><strong>Privacy:</strong> Follow district rules for identifiable student, staff, and family photos. Buddy Skills stores these photos in the protected Supabase relationship library rather than the public GitHub site.</p>
+</fieldset>
+
 <fieldset class="instruction-fieldset"><legend>Relationships &amp; Boundaries teaching activity</legend><div class="teacher-form-grid">
 <label class="teacher-checkbox teacher-form-wide"><input id="editRelationshipsTeachingEnabled" type="checkbox"/> Use a teaching activity or video for this skill</label>
 <div class="form-field"><label for="editRelationshipsTeachingType">Teaching type</label><select id="editRelationshipsTeachingType"><option value="built-in">Buddy Skills built-in lesson</option><option value="youtube">YouTube video</option><option value="external-link">External lesson link</option></select></div>
@@ -439,11 +455,11 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-<script src="skill-registry.js?v=3.3.0"></script>
+<script src="skill-registry.js?v=3.4.0"></script>
 <script src="skill-framework.js?v=3.1.0"></script>
 <script src="adaptive-learning.js?v=3.0.0"></script>
-<script src="reports.js?v=3.3.0"></script>
+<script src="reports.js?v=3.4.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="teacher-center.js?v=3.3.0"></script>
+<script src="teacher-center.js?v=3.4.0"></script>
 </body>
 </html>

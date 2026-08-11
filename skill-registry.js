@@ -12,7 +12,7 @@
       shortTitle: "Relationships",
       icon: "🤝",
       description: "Practice identifying relationship categories and safe social boundaries.",
-      href: "relationships-boundaries.html?v=3.3.0",
+      href: "relationships-boundaries.html?v=3.4.0",
       available: true,
       teacherPanelId: "relationshipsSkillPanel",
       accessInputId: "editActivityRelationships",
