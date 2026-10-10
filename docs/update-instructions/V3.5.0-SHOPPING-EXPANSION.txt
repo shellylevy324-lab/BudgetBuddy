@@ -1,0 +1,30 @@
+BUDDY SKILLS v3.5.0 — SHOPPING EXPANSION
+
+BASELINE: Uploaded BuddySkillsPlatform(6).zip (v3.4.0).
+
+REPLACE/ADD THESE FILES:
+  budget-buddy.html
+  script.js
+  data/shopping-items.json (NEW)
+
+INSTALLATION:
+1. Make a backup of your working BuddySkillsPlatform folder.
+2. Copy the three files above to the same paths in your existing repository.
+3. Commit and push the changes to GitHub; wait for GitHub Pages to deploy.
+4. Refresh Budget Buddy (hard refresh Ctrl+Shift+R if necessary).
+5. Choose a store on the welcome screen and begin a session.
+6. Test all three existing activity levels, data collection, and student-device behavior before classroom rollout.
+
+WHAT IS NEW:
+- Four stores with 15 items each (60 total).
+- Store selection or Surprise Me random store before each session.
+- Each store has a shuffled item rotation in single-item mode.
+- Existing photos remain for five original products. Other products use clearly labeled placeholder tiles until photos are supplied.
+- The same store is used throughout a session; store choice is saved on the current device only.
+- Existing student profiles, reinforcement, reporting and Supabase schemas are unchanged.
+
+IMPORTANT:
+- Prices are sample instructional prices, not current retail prices.
+- This update does not yet add a teacher store-permission editor or photo upload interface.
+- No new Supabase SQL is needed.
+- No changes to your existing grocery.json are required.

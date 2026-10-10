@@ -1,0 +1,367 @@
+[
+  {
+    "name": "Milk",
+    "price": 3.5,
+    "category": "Dairy",
+    "store": "grocery",
+    "image": "milk.jpg"
+  },
+  {
+    "name": "Bread",
+    "price": 2.99,
+    "category": "Bakery",
+    "store": "grocery",
+    "image": "bread.jpg"
+  },
+  {
+    "name": "Apples",
+    "price": 4.0,
+    "category": "Produce",
+    "store": "grocery",
+    "image": "apples.jpg"
+  },
+  {
+    "name": "Cereal",
+    "price": 5.49,
+    "category": "Pantry",
+    "store": "grocery",
+    "image": "cereal.jpg"
+  },
+  {
+    "name": "Eggs",
+    "price": 3.29,
+    "category": "Dairy",
+    "store": "grocery"
+  },
+  {
+    "name": "Bananas",
+    "price": 1.79,
+    "category": "Produce",
+    "store": "grocery"
+  },
+  {
+    "name": "Yogurt",
+    "price": 1.19,
+    "category": "Dairy",
+    "store": "grocery"
+  },
+  {
+    "name": "Rice",
+    "price": 2.49,
+    "category": "Pantry",
+    "store": "grocery"
+  },
+  {
+    "name": "Pasta",
+    "price": 1.79,
+    "category": "Pantry",
+    "store": "grocery"
+  },
+  {
+    "name": "Cheese",
+    "price": 3.89,
+    "category": "Dairy",
+    "store": "grocery"
+  },
+  {
+    "name": "Carrots",
+    "price": 1.99,
+    "category": "Produce",
+    "store": "grocery"
+  },
+  {
+    "name": "Orange Juice",
+    "price": 4.29,
+    "category": "Drinks",
+    "store": "grocery"
+  },
+  {
+    "name": "Frozen Pizza",
+    "price": 6.49,
+    "category": "Frozen",
+    "store": "grocery"
+  },
+  {
+    "name": "Peanut Butter",
+    "price": 3.19,
+    "category": "Pantry",
+    "store": "grocery"
+  },
+  {
+    "name": "Crackers",
+    "price": 2.79,
+    "category": "Snacks",
+    "store": "grocery"
+  },
+  {
+    "name": "Toothpaste",
+    "price": 3.79,
+    "category": "Personal Care",
+    "store": "pharmacy",
+    "image": "toothpaste.jpg"
+  },
+  {
+    "name": "Toothbrush",
+    "price": 2.49,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Shampoo",
+    "price": 5.99,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Body Wash",
+    "price": 4.79,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Soap",
+    "price": 1.99,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Tissues",
+    "price": 2.29,
+    "category": "Household",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Bandages",
+    "price": 3.49,
+    "category": "First Aid",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Hand Sanitizer",
+    "price": 2.99,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Cotton Balls",
+    "price": 2.39,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Deodorant",
+    "price": 4.59,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Lotion",
+    "price": 5.29,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Lip Balm",
+    "price": 1.79,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Floss",
+    "price": 2.99,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Sunscreen",
+    "price": 8.49,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Comb",
+    "price": 2.19,
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "name": "Water Bottle",
+    "price": 1.49,
+    "category": "Drinks",
+    "store": "convenience"
+  },
+  {
+    "name": "Juice Box",
+    "price": 1.29,
+    "category": "Drinks",
+    "store": "convenience"
+  },
+  {
+    "name": "Sports Drink",
+    "price": 2.49,
+    "category": "Drinks",
+    "store": "convenience"
+  },
+  {
+    "name": "Chips",
+    "price": 2.19,
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "name": "Granola Bar",
+    "price": 1.39,
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "name": "Pretzels",
+    "price": 1.89,
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "name": "Trail Mix",
+    "price": 3.29,
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "name": "Gum",
+    "price": 1.69,
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "name": "Popcorn",
+    "price": 2.49,
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "name": "Cookies",
+    "price": 2.79,
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "name": "Banana",
+    "price": 0.89,
+    "category": "Produce",
+    "store": "convenience"
+  },
+  {
+    "name": "Apple",
+    "price": 1.19,
+    "category": "Produce",
+    "store": "convenience"
+  },
+  {
+    "name": "Sandwich",
+    "price": 5.49,
+    "category": "Prepared Food",
+    "store": "convenience"
+  },
+  {
+    "name": "Muffin",
+    "price": 2.59,
+    "category": "Prepared Food",
+    "store": "convenience"
+  },
+  {
+    "name": "Milk Carton",
+    "price": 1.99,
+    "category": "Drinks",
+    "store": "convenience"
+  },
+  {
+    "name": "Notebook",
+    "price": 2.49,
+    "category": "School Supplies",
+    "store": "general"
+  },
+  {
+    "name": "Pencils",
+    "price": 1.99,
+    "category": "School Supplies",
+    "store": "general"
+  },
+  {
+    "name": "Markers",
+    "price": 4.49,
+    "category": "School Supplies",
+    "store": "general"
+  },
+  {
+    "name": "Folders",
+    "price": 1.29,
+    "category": "School Supplies",
+    "store": "general"
+  },
+  {
+    "name": "Socks",
+    "price": 5.99,
+    "category": "Clothing",
+    "store": "general"
+  },
+  {
+    "name": "T-Shirt",
+    "price": 8.99,
+    "category": "Clothing",
+    "store": "general"
+  },
+  {
+    "name": "Hat",
+    "price": 7.49,
+    "category": "Clothing",
+    "store": "general"
+  },
+  {
+    "name": "Laundry Detergent",
+    "price": 9.99,
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "name": "Sponges",
+    "price": 2.99,
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "name": "Dish Soap",
+    "price": 3.49,
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "name": "Paper Towels",
+    "price": 6.99,
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "name": "Trash Bags",
+    "price": 5.79,
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "name": "Storage Bin",
+    "price": 7.99,
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "name": "Batteries",
+    "price": 4.99,
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "name": "Water Bottle",
+    "price": 6.49,
+    "category": "Household",
+    "store": "general"
+  }
+]

@@ -9,7 +9,7 @@ const STUDENT_STORAGE_KEY="budgetBuddyStudents",SELECTED_STUDENT_STORAGE_KEY="bu
 const PROMPT_LEVELS={independent:0,visual:1,audio:2,gesture:3},PROMPT_LABELS={independent:"Independent",visual:"Visual price comparison prompt",audio:"Secondary audio prompt",gesture:"Gestural answer prompt"};
 const budgetOptions=[2,3,4,5,6,8,10];
 const starterStudents=[{id:"shelly-test",name:"Shelly (Test)",totalTrials:10,promptStyle:"baseline",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true},{id:"student-a",name:"Student A",totalTrials:5,promptStyle:"least-to-most",waitTimeSeconds:10,promptStepTimeSeconds:5,audioSdEnabled:true}];
-const appState={classroom:{name:"My Classroom",leadTeacher:""},portableMeta:{revision:1,lastProgramChange:"",lastExport:"",lastImport:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false,cloudReportingFinalized:false,answerPlan:[],currentPlannedAnswer:null};
+const appState={classroom:{name:"My Classroom",leadTeacher:""},portableMeta:{revision:1,lastProgramChange:"",lastExport:"",lastImport:""},staff:[],reinforcementLibrary:[],selectedAdministratorId:"",students:[],sessions:[],selectedStudentId:"",selectedSessionId:"",currentStudent:null,currentSessionId:"",sessionStartedAt:null,currentTrial:0,tokensEarned:0,awaitingModelCorrection:false,lastTrialCorrected:false,firstResponseRecorded:false,buttonActivatedAt:null,responses:[],items:[],shuffledItems:[],currentItem:null,currentListItems:[],currentListTotal:0,cartChoices:[],selectedCartIndexes:[],cartAttempts:0,currentBudget:0,trialStartedAt:null,firstPromptAt:null,currentPromptLevel:"independent",promptTimeouts:[],responseUnlockTimeout:null,acceptingResponse:false,previewingCompletion:false,cloudReportingFinalized:false,answerPlan:[],currentPlannedAnswer:null,selectedStore:"grocery",shoppingCatalog:[]};
 let pendingLibraryTokenData="";
 let pendingLibraryTokenFileName="";
 let pendingLibraryCompletionData="";
@@ -903,13 +903,40 @@ function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;updateAd
         welcomeSessionDetails.textContent=
             "You will complete "+s.totalTrials+" shopping trial"+
             (s.totalTrials===1?".":"s.");
-    }showScreen(welcomeScreen)}
+    }renderStoreChooser();showScreen(welcomeScreen)}
+const SHOPPING_STORES={grocery:"Grocery Store",pharmacy:"Pharmacy",convenience:"Convenience Store",general:"General Merchandise"};
+function shoppingImage(item){
+    if(item.image)return "assets/images/grocery/"+item.image;
+    const title=String(item.name||"Item");
+    const category=String(item.category||"Shopping");
+    const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="300" viewBox="0 0 360 300"><rect width="360" height="300" rx="24" fill="#f3f5f8"/><rect x="25" y="26" width="310" height="248" rx="18" fill="#fff" stroke="#d8dee7" stroke-width="3"/><text x="180" y="120" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#667085">${esc(category)}</text><foreignObject x="37" y="135" width="286" height="105"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:29px;font-weight:bold;color:#253858;text-align:center;overflow-wrap:break-word">${esc(title)}</div></foreignObject></svg>`;
+    return "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+}
+function renderStoreChooser(){
+    const select=document.getElementById("shoppingStoreSelect");
+    if(!select)return;
+    const saved=localStorage.getItem("buddySkillsShoppingStore")||"grocery";
+    select.value=SHOPPING_STORES[saved]?saved:(saved==="random"?saved:"grocery");
+}
 const formatCurrency=v=>"$"+Number(v).toFixed(2);
 const formatSeconds=v=>v===null||v===undefined?"—":Number(v).toFixed(2)+" sec";
 const average=a=>a.length?a.reduce((t,v)=>t+v,0)/a.length:0;
 function median(a){if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y),m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2}
 
-async function loadGroceryItems(){const r=await fetch("data/grocery.json");if(!r.ok)throw new Error("Could not load grocery.json.");const items=await r.json();if(!Array.isArray(items)||!items.length)throw new Error("The grocery item list is empty.");appState.items=items}
+async function loadGroceryItems(){
+    const response=await fetch("data/shopping-items.json",{cache:"no-store"});
+    if(!response.ok)throw new Error("Could not load shopping-items.json.");
+    const catalog=await response.json();
+    if(!Array.isArray(catalog)||!catalog.length)throw new Error("The shopping item list is empty.");
+    appState.shoppingCatalog=catalog;
+    const selection=document.getElementById("shoppingStoreSelect")?.value||"grocery";
+    const store=selection==="random"?Object.keys(SHOPPING_STORES)[Math.floor(Math.random()*Object.keys(SHOPPING_STORES).length)]:selection;
+    appState.selectedStore=store;
+    appState.items=catalog.filter(item=>item.store===store);
+    if(appState.items.length<5)throw new Error("Not enough items in "+store);
+    localStorage.setItem("buddySkillsShoppingStore",selection);
+}
 function shuffleArray(a){const c=[...a];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]]}return c}
 function getNextItem(){if(!appState.shuffledItems.length)appState.shuffledItems=shuffleArray(appState.items);return appState.shuffledItems.pop()}
 
@@ -996,7 +1023,7 @@ function renderCartBuilder(){
         }
 
         const image=document.createElement("img");
-        image.src="assets/images/grocery/"+item.image;
+        image.src=shoppingImage(item);
         image.alt="";
 
         const text=document.createElement("span");
@@ -1786,7 +1813,7 @@ async function startSession(){
 
     appState.selectedAdministratorId=administrator.id;
     saveSelectedAdministrator();
-appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{if(!appState.items.length)await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.cloudReportingFinalized=false;appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];appState.answerPlan=createBalancedAnswerPlan(getPlannedSessionLength());appState.currentPlannedAnswer=null;
+appState.currentStudent=getSelectedStudent();if(!appState.currentStudent){alert("Please select a student first.");return;}disableAnswerButtons();try{await loadGroceryItems();appState.currentSessionId="session-"+Date.now();appState.sessionStartedAt=new Date().toISOString();appState.cloudReportingFinalized=false;appState.currentTrial=0;appState.tokensEarned=0;appState.responses=[];appState.shuffledItems=[];appState.answerPlan=createBalancedAnswerPlan(getPlannedSessionLength());appState.currentPlannedAnswer=null;
 if(window.BuddySessionEngine){
     try{
         await window.BuddySessionEngine.startSession({
@@ -1927,7 +1954,7 @@ function displayCurrentTrial(){
         itemImage.removeAttribute("src");
         itemImage.alt="Image unavailable for "+appState.currentItem.name;
     };
-    itemImage.src="assets/images/grocery/"+appState.currentItem.image;
+    itemImage.src=shoppingImage(appState.currentItem);
     itemImage.alt=appState.currentItem.name;
 }
 
@@ -2657,7 +2684,7 @@ function renderCurrentListTrial(){
 
         const image=document.createElement("img");
         image.className="groceryListThumb";
-        image.src="assets/images/grocery/"+item.image;
+        image.src=shoppingImage(item);
         image.alt="";
 
         const name=document.createElement("span");
