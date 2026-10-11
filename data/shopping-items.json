@@ -4,40 +4,42 @@
     "price": 3.5,
     "category": "Dairy",
     "store": "grocery",
-    "image": "milk.jpg"
+    "image": "catalog/milk.png"
   },
   {
     "name": "Bread",
     "price": 2.99,
     "category": "Bakery",
     "store": "grocery",
-    "image": "bread.jpg"
+    "image": "catalog/bread.png"
   },
   {
     "name": "Apples",
     "price": 4.0,
     "category": "Produce",
     "store": "grocery",
-    "image": "apples.jpg"
+    "image": "catalog/apples.png"
   },
   {
     "name": "Cereal",
     "price": 5.49,
     "category": "Pantry",
     "store": "grocery",
-    "image": "cereal.jpg"
+    "image": "catalog/cereal.png"
   },
   {
     "name": "Eggs",
     "price": 3.29,
     "category": "Dairy",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/eggs.png"
   },
   {
     "name": "Bananas",
     "price": 1.79,
     "category": "Produce",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/bananas.png"
   },
   {
     "name": "Yogurt",
@@ -49,19 +51,22 @@
     "name": "Rice",
     "price": 2.49,
     "category": "Pantry",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/rice.png"
   },
   {
     "name": "Pasta",
     "price": 1.79,
     "category": "Pantry",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/pasta.png"
   },
   {
     "name": "Cheese",
     "price": 3.89,
     "category": "Dairy",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/cheese.png"
   },
   {
     "name": "Carrots",
@@ -73,44 +78,50 @@
     "name": "Orange Juice",
     "price": 4.29,
     "category": "Drinks",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/orange-juice.png"
   },
   {
     "name": "Frozen Pizza",
     "price": 6.49,
     "category": "Frozen",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/frozen-pizza.png"
   },
   {
     "name": "Peanut Butter",
     "price": 3.19,
     "category": "Pantry",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/peanut-butter.png"
   },
   {
     "name": "Crackers",
     "price": 2.79,
     "category": "Snacks",
-    "store": "grocery"
+    "store": "grocery",
+    "image": "catalog/crackers.png"
   },
   {
     "name": "Toothpaste",
     "price": 3.79,
     "category": "Personal Care",
     "store": "pharmacy",
-    "image": "toothpaste.jpg"
+    "image": "catalog/toothpaste.png"
   },
   {
     "name": "Toothbrush",
     "price": 2.49,
     "category": "Personal Care",
-    "store": "pharmacy"
+    "store": "pharmacy",
+    "image": "catalog/toothbrush.png"
   },
   {
     "name": "Shampoo",
     "price": 5.99,
     "category": "Personal Care",
-    "store": "pharmacy"
+    "store": "pharmacy",
+    "image": "catalog/shampoo.png"
   },
   {
     "name": "Body Wash",
@@ -122,19 +133,22 @@
     "name": "Soap",
     "price": 1.99,
     "category": "Personal Care",
-    "store": "pharmacy"
+    "store": "pharmacy",
+    "image": "catalog/soap.png"
   },
   {
     "name": "Tissues",
     "price": 2.29,
     "category": "Household",
-    "store": "pharmacy"
+    "store": "pharmacy",
+    "image": "catalog/tissues.png"
   },
   {
     "name": "Bandages",
     "price": 3.49,
     "category": "First Aid",
-    "store": "pharmacy"
+    "store": "pharmacy",
+    "image": "catalog/bandages.png"
   },
   {
     "name": "Hand Sanitizer",
@@ -152,7 +166,8 @@
     "name": "Deodorant",
     "price": 4.59,
     "category": "Personal Care",
-    "store": "pharmacy"
+    "store": "pharmacy",
+    "image": "catalog/deodorant.png"
   },
   {
     "name": "Lotion",
@@ -206,7 +221,8 @@
     "name": "Chips",
     "price": 2.19,
     "category": "Snacks",
-    "store": "convenience"
+    "store": "convenience",
+    "image": "catalog/chips.png"
   },
   {
     "name": "Granola Bar",
@@ -242,7 +258,8 @@
     "name": "Cookies",
     "price": 2.79,
     "category": "Snacks",
-    "store": "convenience"
+    "store": "convenience",
+    "image": "catalog/cookies.png"
   },
   {
     "name": "Banana",
@@ -320,31 +337,36 @@
     "name": "Laundry Detergent",
     "price": 9.99,
     "category": "Household",
-    "store": "general"
+    "store": "general",
+    "image": "catalog/laundry-detergent.png"
   },
   {
     "name": "Sponges",
     "price": 2.99,
     "category": "Household",
-    "store": "general"
+    "store": "general",
+    "image": "catalog/sponges.png"
   },
   {
     "name": "Dish Soap",
     "price": 3.49,
     "category": "Household",
-    "store": "general"
+    "store": "general",
+    "image": "catalog/dish-soap.png"
   },
   {
     "name": "Paper Towels",
     "price": 6.99,
     "category": "Household",
-    "store": "general"
+    "store": "general",
+    "image": "catalog/paper-towels.png"
   },
   {
     "name": "Trash Bags",
     "price": 5.79,
     "category": "Household",
-    "store": "general"
+    "store": "general",
+    "image": "catalog/trash-bags.png"
   },
   {
     "name": "Storage Bin",
@@ -356,7 +378,8 @@
     "name": "Batteries",
     "price": 4.99,
     "category": "Household",
-    "store": "general"
+    "store": "general",
+    "image": "catalog/batteries.png"
   },
   {
     "name": "Water Bottle",

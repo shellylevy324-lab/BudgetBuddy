@@ -906,7 +906,7 @@ function openStudentWelcome(){const s=getSelectedStudent();if(!s)return;updateAd
     }renderStoreChooser();showScreen(welcomeScreen)}
 const SHOPPING_STORES={grocery:"Grocery Store",pharmacy:"Pharmacy",convenience:"Convenience Store",general:"General Merchandise"};
 function shoppingImage(item){
-    if(item.image)return "assets/images/grocery/"+item.image;
+    if(item.image)return "assets/images/"+(item.image.startsWith("catalog/")?item.image:"grocery/"+item.image);
     const title=String(item.name||"Item");
     const category=String(item.category||"Shopping");
     const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
