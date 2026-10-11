@@ -1,0 +1,198 @@
+[
+  {
+    "id": "item-001",
+    "name": "Milk",
+    "image": "assets/images/catalog/milk.png",
+    "category": "Dairy",
+    "store": "grocery"
+  },
+  {
+    "id": "item-002",
+    "name": "Bread",
+    "image": "assets/images/catalog/bread.png",
+    "category": "Bakery",
+    "store": "grocery"
+  },
+  {
+    "id": "item-003",
+    "name": "Apples",
+    "image": "assets/images/catalog/apples.png",
+    "category": "Produce",
+    "store": "grocery"
+  },
+  {
+    "id": "item-004",
+    "name": "Cereal",
+    "image": "assets/images/catalog/cereal.png",
+    "category": "Pantry",
+    "store": "grocery"
+  },
+  {
+    "id": "item-005",
+    "name": "Eggs",
+    "image": "assets/images/catalog/eggs.png",
+    "category": "Dairy",
+    "store": "grocery"
+  },
+  {
+    "id": "item-006",
+    "name": "Bananas",
+    "image": "assets/images/catalog/bananas.png",
+    "category": "Produce",
+    "store": "grocery"
+  },
+  {
+    "id": "item-008",
+    "name": "Rice",
+    "image": "assets/images/catalog/rice.png",
+    "category": "Pantry",
+    "store": "grocery"
+  },
+  {
+    "id": "item-009",
+    "name": "Pasta",
+    "image": "assets/images/catalog/pasta.png",
+    "category": "Pantry",
+    "store": "grocery"
+  },
+  {
+    "id": "item-010",
+    "name": "Cheese",
+    "image": "assets/images/catalog/cheese.png",
+    "category": "Dairy",
+    "store": "grocery"
+  },
+  {
+    "id": "item-012",
+    "name": "Orange Juice",
+    "image": "assets/images/catalog/orange-juice.png",
+    "category": "Drinks",
+    "store": "grocery"
+  },
+  {
+    "id": "item-013",
+    "name": "Frozen Pizza",
+    "image": "assets/images/catalog/frozen-pizza.png",
+    "category": "Frozen",
+    "store": "grocery"
+  },
+  {
+    "id": "item-014",
+    "name": "Peanut Butter",
+    "image": "assets/images/catalog/peanut-butter.png",
+    "category": "Pantry",
+    "store": "grocery"
+  },
+  {
+    "id": "item-015",
+    "name": "Crackers",
+    "image": "assets/images/catalog/crackers.png",
+    "category": "Snacks",
+    "store": "grocery"
+  },
+  {
+    "id": "item-016",
+    "name": "Toothpaste",
+    "image": "assets/images/catalog/toothpaste.png",
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "id": "item-017",
+    "name": "Toothbrush",
+    "image": "assets/images/catalog/toothbrush.png",
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "id": "item-018",
+    "name": "Shampoo",
+    "image": "assets/images/catalog/shampoo.png",
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "id": "item-020",
+    "name": "Soap",
+    "image": "assets/images/catalog/soap.png",
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "id": "item-021",
+    "name": "Tissues",
+    "image": "assets/images/catalog/tissues.png",
+    "category": "Household",
+    "store": "pharmacy"
+  },
+  {
+    "id": "item-022",
+    "name": "Bandages",
+    "image": "assets/images/catalog/bandages.png",
+    "category": "First Aid",
+    "store": "pharmacy"
+  },
+  {
+    "id": "item-025",
+    "name": "Deodorant",
+    "image": "assets/images/catalog/deodorant.png",
+    "category": "Personal Care",
+    "store": "pharmacy"
+  },
+  {
+    "id": "item-034",
+    "name": "Chips",
+    "image": "assets/images/catalog/chips.png",
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "id": "item-040",
+    "name": "Cookies",
+    "image": "assets/images/catalog/cookies.png",
+    "category": "Snacks",
+    "store": "convenience"
+  },
+  {
+    "id": "item-053",
+    "name": "Laundry Detergent",
+    "image": "assets/images/catalog/laundry-detergent.png",
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "id": "item-054",
+    "name": "Sponges",
+    "image": "assets/images/catalog/sponges.png",
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "id": "item-055",
+    "name": "Dish Soap",
+    "image": "assets/images/catalog/dish-soap.png",
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "id": "item-056",
+    "name": "Paper Towels",
+    "image": "assets/images/catalog/paper-towels.png",
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "id": "item-057",
+    "name": "Trash Bags",
+    "image": "assets/images/catalog/trash-bags.png",
+    "category": "Household",
+    "store": "general"
+  },
+  {
+    "id": "item-059",
+    "name": "Batteries",
+    "image": "assets/images/catalog/batteries.png",
+    "category": "Household",
+    "store": "general"
+  }
+]

@@ -6,6 +6,16 @@
 
   const skills = [
     {
+      key: "functionalSorting",
+      activityKey: "functional-sorting",
+      title: "Functional Sorting",
+      shortTitle: "Sorting",
+      icon: "🧺",
+      description: "Sort everyday items by food/nonfood or where they belong.",
+      href: "functional-sorting.html?v=1.0.0",
+      available: true
+    },
+    {
       key: "relationshipBoundaries",
       activityKey: "relationships-boundaries",
       title: "Relationships & Boundaries",
