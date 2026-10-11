@@ -910,7 +910,16 @@ function shoppingImage(item){
     const title=String(item.name||"Item");
     const category=String(item.category||"Shopping");
     const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="300" viewBox="0 0 360 300"><rect width="360" height="300" rx="24" fill="#f3f5f8"/><rect x="25" y="26" width="310" height="248" rx="18" fill="#fff" stroke="#d8dee7" stroke-width="3"/><text x="180" y="120" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#667085">${esc(category)}</text><foreignObject x="37" y="135" width="286" height="105"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,sans-serif;font-size:29px;font-weight:bold;color:#253858;text-align:center;overflow-wrap:break-word">${esc(title)}</div></foreignObject></svg>`;
+    const safeCategory=esc(category.slice(0,28));
+    const words=title.split(/\s+/);
+    const lines=[];
+    let line="";
+    for(const word of words){
+        if((line+" "+word).trim().length>18 && line){lines.push(line);line=word;}else{line=(line+" "+word).trim();}
+    }
+    if(line)lines.push(line);
+    const textLines=lines.slice(0,3).map((part,index)=>`<text x="180" y="${163+index*38}" text-anchor="middle" font-family="Arial,sans-serif" font-size="29" font-weight="bold" fill="#253858">${esc(part)}</text>`).join("");
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="360" height="300" viewBox="0 0 360 300"><rect width="360" height="300" rx="24" fill="#f3f5f8"/><rect x="25" y="26" width="310" height="248" rx="18" fill="#fff" stroke="#d8dee7" stroke-width="3"/><text x="180" y="105" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#667085">${safeCategory}</text>${textLines}</svg>`;
     return "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
 }
 function renderStoreChooser(){
