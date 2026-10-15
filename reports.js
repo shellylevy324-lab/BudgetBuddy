@@ -349,11 +349,49 @@
     body.querySelectorAll("[data-daily-summary-id]").forEach(btn => btn.addEventListener("click",()=>renderDailySummaryDetail(byId.get(btn.dataset.dailySummaryId))));
   }
 
+  function dailySummaryPlainText(row) {
+    const students = Array.isArray(row.summary_json?.students) ? row.summary_json.students : [];
+    const lines = [`Buddy Skills Classroom Summary - ${formatDate(row.summary_date)}`, `${Number(row.students_count||0)} students; ${Number(row.sessions_count||0)} sessions`, ""];
+    if (!students.length) lines.push("No student sessions were completed in this summary window.");
+    for (const student of students) {
+      lines.push(`${student.student_name || "Student"}: ${Number(student.sessions||0)} sessions; ${Number(student.trials||0)} trials`);
+      for (const skill of (student.skills || [])) lines.push(`- ${skill.activity_name || skill.activity_key || "Skill"}: ${percent(Number(skill.correct_trials||0),Number(skill.total_trials||0))} accuracy; ${percent(Number(skill.independent_trials||0),Number(skill.total_trials||0))} independent${skill.average_latency_seconds == null ? "" : `; ${Number(skill.average_latency_seconds).toFixed(2)}s average latency`}`);
+      lines.push("");
+    }
+    return lines.join("\n");
+  }
+
+  function downloadDailySummary(row) {
+    const blob = new Blob([dailySummaryPlainText(row)], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `buddy-skills-summary-${row.summary_date}.txt`;
+    document.body.appendChild(link);
+    link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function emailDailySummary(row) {
+    const body = dailySummaryPlainText(row);
+    const subject = `Buddy Skills Classroom Summary - ${formatDate(row.summary_date)}`;
+    const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (!window.confirm("This opens a draft in your computer's default email application (which may not be your school Outlook). Continue only if it is your school-approved email account and the recipient is authorized to receive student information. Opening a draft does NOT send it.")) return;
+    if (mailto.length > 1900) {
+      downloadDailySummary(row);
+      window.alert("This report is too long for a reliable email draft link. A text copy was downloaded instead. Use only your school's approved email system to share it securely.");
+      return;
+    }
+    window.location.href = mailto;
+  }
+
   function renderDailySummaryDetail(row) {
     const detail = document.getElementById("dailyClassroomSummaryDetail"); if (!detail || !row) return;
     const students = Array.isArray(row.summary_json?.students) ? row.summary_json.students : [];
     detail.hidden = false;
-    detail.innerHTML = `<h4>Classroom Summary · ${escapeHtml(formatDate(row.summary_date))}</h4>` + (students.length ? students.map(student => `<section class="daily-summary-student"><h5>${escapeHtml(student.student_name||"Student")}</h5><p>${Number(student.sessions||0)} session${Number(student.sessions||0)===1?"":"s"} · ${Number(student.trials||0)} trials</p><ul>${(student.skills||[]).map(skill=>`<li><strong>${escapeHtml(skill.activity_name||skill.activity_key||"Skill")}</strong>: ${percent(Number(skill.correct_trials||0),Number(skill.total_trials||0))} accuracy · ${percent(Number(skill.independent_trials||0),Number(skill.total_trials||0))} independent${skill.average_latency_seconds==null?"":` · ${Number(skill.average_latency_seconds).toFixed(2)} s avg latency`}</li>`).join("")}</ul></section>`).join("") : '<p>No student sessions were completed in this summary window.</p>');
+    detail.innerHTML = `<div class="daily-summary-actions"><button type="button" class="teacher-secondary-button" id="dailySummaryEmailButton">Email with Outlook / default mail app</button> <button type="button" class="teacher-secondary-button" id="dailySummaryDownloadButton">Download Summary</button></div><p class="reports-help">Email opens a draft only; it does not send or update the Pending status. Confirm your school-approved account and recipient before sending.</p>` + `<h4>Classroom Summary · ${escapeHtml(formatDate(row.summary_date))}</h4>` + (students.length ? students.map(student => `<section class="daily-summary-student"><h5>${escapeHtml(student.student_name||"Student")}</h5><p>${Number(student.sessions||0)} session${Number(student.sessions||0)===1?"":"s"} · ${Number(student.trials||0)} trials</p><ul>${(student.skills||[]).map(skill=>`<li><strong>${escapeHtml(skill.activity_name||skill.activity_key||"Skill")}</strong>: ${percent(Number(skill.correct_trials||0),Number(skill.total_trials||0))} accuracy · ${percent(Number(skill.independent_trials||0),Number(skill.total_trials||0))} independent${skill.average_latency_seconds==null?"":` · ${Number(skill.average_latency_seconds).toFixed(2)} s avg latency`}</li>`).join("")}</ul></section>`).join("") : '<p>No student sessions were completed in this summary window.</p>');
+    document.getElementById("dailySummaryEmailButton")?.addEventListener("click", () => emailDailySummary(row));
+    document.getElementById("dailySummaryDownloadButton")?.addEventListener("click", () => downloadDailySummary(row));
   }
 
   function resetDetail() {
@@ -410,7 +448,7 @@
   }
   function percent(value, total) { return total ? `${Math.round((value / total) * 100)}%` : "—"; }
   function setText(id, value) { const element = document.getElementById(id); if (element) element.textContent = value; }
-  function formatDate(value) { return value ? new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "—"; }
+  function formatDate(value) { if (!value) return "—"; const date = /^\d{4}-\d{2}-\d{2}$/.test(String(value)) ? new Date(`${value}T12:00:00`) : new Date(value); return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
   function isoDate(value) { const date = value instanceof Date ? value : new Date(value); return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10); }
   function formatPhase(value) { return String(value || "").replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase()); }
   function friendlyError(error) { return error?.message || "An unexpected reporting error occurred."; }
